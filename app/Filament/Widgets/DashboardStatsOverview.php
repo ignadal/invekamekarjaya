@@ -13,9 +13,19 @@ use App\Models\Barang;
 use Illuminate\Support\Number;
 use Illuminate\Support\Carbon;
 
+use Livewire\Attributes\On;
+
 class DashboardStatsOverview extends StatsOverviewWidget
 {
-    use InteractsWithPageFilters;
+    public ?string $bulan = null;
+    public ?string $tahun = null;
+
+    #[On('dashboard-filter-changed')]
+    public function updateFilter(?string $bulan = null, ?string $tahun = null): void
+    {
+        $this->bulan = $bulan;
+        $this->tahun = $tahun;
+    }
 
     protected function getColumns(): int
     {
@@ -24,25 +34,25 @@ class DashboardStatsOverview extends StatsOverviewWidget
 
     protected function getStats(): array
     {
-        $bulan = $this->filters['bulan'] ?? now()->month;
-        $tahun = $this->filters['tahun'] ?? now()->year;
+        $bulan = $this->bulan;
+        $tahun = $this->tahun;
 
         $omset = Penjualan::where('status_persetujuan', 'disetujui')
-            ->whereYear('tanggal_beli', $tahun)
-            ->whereMonth('tanggal_beli', $bulan)
+            ->when($tahun, fn($q) => $q->whereYear('tanggal_beli', $tahun))
+            ->when($bulan, fn($q) => $q->whereMonth('tanggal_beli', $bulan))
             ->sum('total_penjualan');
 
         $piutang = Penjualan::where('status_persetujuan', 'disetujui')
-            ->whereYear('tanggal_beli', $tahun)
-            ->whereMonth('tanggal_beli', $bulan)
+            ->when($tahun, fn($q) => $q->whereYear('tanggal_beli', $tahun))
+            ->when($bulan, fn($q) => $q->whereMonth('tanggal_beli', $bulan))
             ->sum('sisa_pembayaran');
 
-        $pengeluaranSupplier = PembelianSupplier::whereYear('created_at', $tahun)
-            ->whereMonth('created_at', $bulan)
+        $pengeluaranSupplier = PembelianSupplier::when($tahun, fn($q) => $q->whereYear('created_at', $tahun))
+            ->when($bulan, fn($q) => $q->whereMonth('created_at', $bulan))
             ->sum('total_pembelian');
 
-        $pengeluaranGaji = PayrollSales::where('tahun', $tahun)
-            ->where('bulan', $bulan)
+        $pengeluaranGaji = PayrollSales::when($tahun, fn($q) => $q->where('tahun', $tahun))
+            ->when($bulan, fn($q) => $q->where('bulan', $bulan))
             ->sum('total_gaji');
 
         $totalPengeluaran = $pengeluaranSupplier + $pengeluaranGaji;
@@ -51,36 +61,38 @@ class DashboardStatsOverview extends StatsOverviewWidget
         $totalBarang = Barang::count();
         $barangHampirHabis = Barang::whereColumn('stok', '<', 'stok_minimum')->count();
         $notaPending = Penjualan::where('status_persetujuan', 'pending')
-            ->whereYear('tanggal_beli', $tahun)
-            ->whereMonth('tanggal_beli', $bulan)
+            ->when($tahun, fn($q) => $q->whereYear('tanggal_beli', $tahun))
+            ->when($bulan, fn($q) => $q->whereMonth('tanggal_beli', $bulan))
             ->count();
 
         // Total barang terjual (qty) in this period
         $barangTerjual = PenjualanDetail::whereHas('penjualan', function ($query) use ($tahun, $bulan) {
             $query->where('status_persetujuan', 'disetujui')
-                ->whereYear('tanggal_beli', $tahun)
-                ->whereMonth('tanggal_beli', $bulan);
+                ->when($tahun, fn($q) => $q->whereYear('tanggal_beli', $tahun))
+                ->when($bulan, fn($q) => $q->whereMonth('tanggal_beli', $bulan));
         })->sum('qty');
 
-        $namaBulan = Carbon::create()->month((int) $bulan)->translatedFormat('F');
+        $namaBulan = $bulan ? Carbon::create()->month((int) $bulan)->translatedFormat('F') : 'Semua Bulan';
+        $namaTahun = $tahun ?: 'Semua Tahun';
+        $periodeDesc = ($bulan || $tahun) ? trim(($bulan ? $namaBulan : '') . ' ' . ($tahun ? $namaTahun : '')) : 'Semua Waktu';
 
         return [
-            Stat::make('Total Penghasilan Bersih', Number::currency($penghasilanBersih, 'IDR', 'id'))
-                ->description($namaBulan . ' ' . $tahun)
+            Stat::make('Total Penghasilan Bersih', new \Illuminate\Support\HtmlString('<span class="whitespace-normal break-words break-all">Rp ' . Number::format($penghasilanBersih, locale: 'id') . '</span>'))
+                ->description($periodeDesc)
                 ->descriptionIcon('heroicon-m-arrow-trending-up')
                 ->color($penghasilanBersih >= 0 ? 'success' : 'danger'),
-            Stat::make('Total Omset', Number::currency($omset, 'IDR', 'id'))
-                ->description($namaBulan . ' ' . $tahun)
+            Stat::make('Total Omset', new \Illuminate\Support\HtmlString('<span class="whitespace-normal break-words break-all">Rp ' . Number::format($omset, locale: 'id') . '</span>'))
+                ->description($periodeDesc)
                 ->descriptionIcon('heroicon-m-banknotes'),
-            Stat::make('Total Piutang', Number::currency($piutang, 'IDR', 'id'))
-                ->description($namaBulan . ' ' . $tahun)
+            Stat::make('Total Piutang', new \Illuminate\Support\HtmlString('<span class="whitespace-normal break-words break-all">Rp ' . Number::format($piutang, locale: 'id') . '</span>'))
+                ->description($periodeDesc)
                 ->descriptionIcon('heroicon-m-credit-card')
                 ->color($piutang > 0 ? 'warning' : 'success'),
-            Stat::make('Total Pengeluaran', Number::currency($totalPengeluaran, 'IDR', 'id'))
-                ->description($namaBulan . ' ' . $tahun)
+            Stat::make('Total Pengeluaran', new \Illuminate\Support\HtmlString('<span class="whitespace-normal break-words break-all">Rp ' . Number::format($totalPengeluaran, locale: 'id') . '</span>'))
+                ->description($periodeDesc)
                 ->descriptionIcon('heroicon-m-arrow-trending-down'),
             Stat::make('Barang Terjual', Number::format($barangTerjual, locale: 'id') . ' pcs')
-                ->description($namaBulan . ' ' . $tahun)
+                ->description($periodeDesc)
                 ->descriptionIcon('heroicon-m-shopping-cart')
                 ->color('primary'),
             Stat::make('Total Barang', $totalBarang)
@@ -92,7 +104,7 @@ class DashboardStatsOverview extends StatsOverviewWidget
                 ->descriptionIcon($barangHampirHabis > 0 ? 'heroicon-m-exclamation-triangle' : 'heroicon-m-check-circle'),
             Stat::make('Nota Pending Approval', $notaPending)
                 ->color($notaPending > 0 ? 'warning' : 'success')
-                ->description($namaBulan . ' ' . $tahun)
+                ->description($periodeDesc)
                 ->descriptionIcon('heroicon-m-clock'),
         ];
     }

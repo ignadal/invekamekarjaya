@@ -24,31 +24,31 @@ class LabaChart extends ApexChartWidget
     public function updateFilter(?string $bulan, ?string $tahun): void
     {
         $this->bulan = $bulan;
-        $this->tahun = $tahun ?: now()->year;
+        $this->tahun = $tahun;
         $this->updateOptions();
     }
 
     protected function getOptions(): array
     {
-        $tahun = $this->tahun ?: now()->year;
+        $tahun = $this->tahun;
 
         $data = [];
         $months = [];
 
         for ($i = 1; $i <= 12; $i++) {
-            $month = Carbon::create($tahun, $i, 1);
+            $month = Carbon::create($tahun ?: now()->year, $i, 1);
             $months[] = $month->translatedFormat('M');
 
             $omset = Penjualan::where('status_persetujuan', 'disetujui')
-                ->whereYear('tanggal_beli', $tahun)
+                ->when($tahun, fn($q) => $q->whereYear('tanggal_beli', $tahun))
                 ->whereMonth('tanggal_beli', $i)
                 ->sum('total_penjualan');
 
-            $pembelian = PembelianSupplier::whereYear('created_at', $tahun)
+            $pembelian = PembelianSupplier::when($tahun, fn($q) => $q->whereYear('created_at', $tahun))
                 ->whereMonth('created_at', $i)
                 ->sum('total_pembelian');
 
-            $gaji = PayrollSales::where('tahun', $tahun)
+            $gaji = PayrollSales::when($tahun, fn($q) => $q->where('tahun', $tahun))
                 ->where('bulan', $i)
                 ->sum('total_gaji');
 

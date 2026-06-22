@@ -29,7 +29,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->brandname('Mekar Jaya')
             ->sidebarFullyCollapsibleOnDesktop()
-            ->sidebarWidth('19rem')
+            ->sidebarWidth('17rem')
             ->default()
             ->id('admin')
             ->path('admin')
@@ -55,17 +55,23 @@ class AdminPanelProvider extends PanelProvider
                             padding-left: 1.5rem !important;
                             padding-right: 1.5rem !important;
                             box-sizing: border-box;
-                            margin-right: 1.5rem !important;
                         }
                         html:not(.dark) .fi-topbar-start button { color: white !important; }
                         html:not(.dark) .fi-topbar-start button:hover { background-color: rgba(255,255,255,0.1) !important; }
 
                         /* 1. When sidebar is OPEN */
-                        html:not(.dark):has(.fi-main-ctn-sidebar-open) .fi-topbar-start { width: var(--sidebar-width) !important; }
+                        html:not(.dark):has(.fi-main-ctn-sidebar-open) .fi-topbar-start { width: var(--sidebar-width, 17rem) !important; }
                         html:not(.dark):has(.fi-main-ctn-sidebar-open) .fi-topbar-start .fi-logo { color: white !important; margin-left: 0 !important; }
                         
                         /* 2. When sidebar is COLLAPSED */
-                        html:not(.dark):not(:has(.fi-main-ctn-sidebar-open)) .fi-topbar-start { width: calc(var(--collapsed-sidebar-width) + 15px) !important; }
+                        html:not(.dark):not(:has(.fi-main-ctn-sidebar-open)) .fi-topbar-start { 
+                            background-color: transparent !important;
+                            width: auto !important; 
+                            padding-left: 1.5rem !important; 
+                            padding-right: 1.5rem !important;
+                        }
+                        html:not(.dark):not(:has(.fi-main-ctn-sidebar-open)) .fi-topbar-start button { color: #b91c1c !important; }
+                        html:not(.dark):not(:has(.fi-main-ctn-sidebar-open)) .fi-topbar-start button:hover { background-color: rgba(185,28,28,0.1) !important; }
                         body:not(:has(.fi-main-ctn-sidebar-open)) .fi-topbar-start .fi-logo { 
                             display: none !important;
                         }
@@ -107,33 +113,101 @@ class AdminPanelProvider extends PanelProvider
                     html:not(.dark) aside.fi-sidebar { scrollbar-color: rgba(255, 255, 255, 0.3) transparent !important; scrollbar-width: thin; }
                     html:not(.dark) aside.fi-sidebar *::-webkit-scrollbar { width: 6px; height: 6px; }
                     html:not(.dark) aside.fi-sidebar *::-webkit-scrollbar-track { background: transparent !important; }
-                    html:not(.dark) aside.fi-sidebar *::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3) !important; border-radius: 10px; }
+                    html:not(.dark) aside.fi-sidebar *::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3) !important; border-radius: 4px; }
                     html:not(.dark) aside.fi-sidebar *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.5) !important; }
 
+                    /* Sidebar Collapsed State (White background, Red icons) */
+                    @media (min-width: 1024px) {
+                        html:not(.dark):not(:has(.fi-main-ctn-sidebar-open)) aside.fi-sidebar {
+                            background: white !important;
+                            border-right: 1px solid #fecaca !important;
+                        }
+                        html:not(.dark):not(:has(.fi-main-ctn-sidebar-open)) aside.fi-sidebar span,
+                        html:not(.dark):not(:has(.fi-main-ctn-sidebar-open)) aside.fi-sidebar svg,
+                        html:not(.dark):not(:has(.fi-main-ctn-sidebar-open)) aside.fi-sidebar a {
+                            color: #b91c1c !important;
+                        }
+                        html:not(.dark):not(:has(.fi-main-ctn-sidebar-open)) aside.fi-sidebar .fi-sidebar-item-active > a,
+                        html:not(.dark):not(:has(.fi-main-ctn-sidebar-open)) aside.fi-sidebar .fi-sidebar-item-active > button,
+                        html:not(.dark):not(:has(.fi-main-ctn-sidebar-open)) aside.fi-sidebar .fi-active > a,
+                        html:not(.dark):not(:has(.fi-main-ctn-sidebar-open)) aside.fi-sidebar .fi-active > button {
+                            background-color: rgba(185, 28, 28, 0.1) !important;
+                        }
+                        html:not(.dark):not(:has(.fi-main-ctn-sidebar-open)) aside.fi-sidebar a:hover:not(.fi-sidebar-item-active > a),
+                        html:not(.dark):not(:has(.fi-main-ctn-sidebar-open)) aside.fi-sidebar button:hover:not(.fi-sidebar-item-active > button) { 
+                            background-color: rgba(185, 28, 28, 0.05) !important; 
+                        }
+                        
+                        /* Scrollbar when collapsed (Red tinted) */
+                        html:not(.dark):not(:has(.fi-main-ctn-sidebar-open)) aside.fi-sidebar { scrollbar-color: rgba(185, 28, 28, 0.3) transparent !important; }
+                        html:not(.dark):not(:has(.fi-main-ctn-sidebar-open)) aside.fi-sidebar *::-webkit-scrollbar-thumb { background: rgba(185, 28, 28, 0.3) !important; }
+                        html:not(.dark):not(:has(.fi-main-ctn-sidebar-open)) aside.fi-sidebar *::-webkit-scrollbar-thumb:hover { background: rgba(185, 28, 28, 0.5) !important; }
+                    }
+
                     /* Dashboard Filter Bar Styling - Red Gradient Header */
-                    .fi-page-header > form { width: 100% !important; max-width: 100% !important; }
+                    .fi-page-header > form,
+                    .fi-page-header form.fi-form,
+                    div:has(> .red-gradient-filter),
+                    form:has(.red-gradient-filter) { 
+                        width: 100% !important; 
+                        max-width: 100% !important; 
+                    }
                     
-                    .red-gradient-filter { 
-                        background: linear-gradient(135deg, #991b1b, #dc2626) !important;
+                    /* Apply Red Gradient in Light Mode (Dark Red) */
+                    html:not(.dark) .red-gradient-filter { 
+                        background: linear-gradient(to right, #7f1d1d, #b91c1c) !important; /* red-900 to red-700 */
                         border-radius: 0.75rem !important;
                         margin-bottom: 1.5rem !important;
                         border: none !important;
-                        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1) !important;
                     }
-                    /* Remove default backgrounds from Filament Section inner wrappers */
+                    
+                    /* Apply VERY Dark Red Gradient in Dark Mode (Very Dark Red) */
+                    html.dark .red-gradient-filter { 
+                        background: linear-gradient(to right, #450a0a, #7f1d1d) !important; /* red-950 to red-900 */
+                        border-radius: 0.75rem !important;
+                        margin-bottom: 1.5rem !important;
+                        border: none !important;
+                    }
+                    .red-gradient-filter .fi-section-header,
+                    .red-gradient-filter header,
+                    .red-gradient-filter hr { 
+                        border-bottom: none !important; 
+                        border-bottom-width: 0 !important; 
+                        border-top-width: 0 !important;
+                    }
+                    
+                    /* Force inner section containers to be transparent so the gradient shows */
                     .red-gradient-filter,
                     .red-gradient-filter > div,
+                    .red-gradient-filter section,
                     .red-gradient-filter header,
                     .red-gradient-filter header > div {
                         background-color: transparent !important;
-                        border-color: transparent !important;
                     }
-                    .red-gradient-filter * { color: white !important; }
-                    .red-gradient-filter .fi-input { background: rgba(255,255,255,0.15) !important; border: 1px solid rgba(255,255,255,0.3) !important; color: white !important; }
-                    .red-gradient-filter .fi-input:focus { border-color: white !important; }
-                    .red-gradient-filter select, .red-gradient-filter option { color: #111827 !important; }
-                    .red-gradient-filter .fi-select-trigger { background: rgba(255,255,255,0.15) !important; border: 1px solid rgba(255,255,255,0.3) !important; }
-                    .red-gradient-filter .fi-select-trigger * { color: white !important; }
+                    
+                    /* Reset Filter Button */
+                    .reset-filter-btn {
+                        background-color: #171717 !important;
+                        color: white !important;
+                        border: none !important;
+                        box-shadow: none !important;
+                        margin-bottom: 2px !important;
+                    }
+                    .reset-filter-btn:hover { background-color: #262626 !important; }
+                    
+                    html.dark .reset-filter-btn {
+                        background-color: #3f3f46 !important; /* Lighter black for dark mode */
+                    }
+                    html.dark .reset-filter-btn:hover { background-color: #52525b !important; }
+                    
+                    /* Make the text white so it contrasts with the red gradient */
+                    html:not(.dark) .red-gradient-filter header h3,
+                    html:not(.dark) .red-gradient-filter header p,
+                    html:not(.dark) .red-gradient-filter .fi-fo-field-wrp-label span {
+                        color: white !important;
+                    }
+                    
+                    /* We leave the select dropdowns alone so they follow Filament default styles */
 
                     /* Stat Card Bottom Border - Both Light and Dark Mode */
                     .fi-wi-stats-overview-stat { border-bottom: 3px solid #dc2626 !important; border-radius: 0.75rem; overflow: hidden; }

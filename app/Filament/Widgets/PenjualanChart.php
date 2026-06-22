@@ -21,23 +21,23 @@ class PenjualanChart extends ApexChartWidget
     public function updateFilter(?string $bulan, ?string $tahun): void
     {
         $this->bulan = $bulan;
-        $this->tahun = $tahun ?: now()->year;
+        $this->tahun = $tahun;
         $this->updateOptions();
     }
 
     protected function getOptions(): array
     {
-        $tahun = $this->tahun ?: now()->year;
+        $tahun = $this->tahun;
 
         $data = [];
         $months = [];
 
         for ($i = 1; $i <= 12; $i++) {
-            $month = Carbon::create($tahun, $i, 1);
+            $month = Carbon::create($tahun ?: now()->year, $i, 1);
             $months[] = $month->translatedFormat('M');
 
             $total = Penjualan::where('status_persetujuan', 'disetujui')
-                ->whereYear('tanggal_beli', $tahun)
+                ->when($tahun, fn($q) => $q->whereYear('tanggal_beli', $tahun))
                 ->whereMonth('tanggal_beli', $i)
                 ->sum('total_penjualan');
 
