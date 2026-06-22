@@ -75,17 +75,16 @@ class PengeluaranChart extends ApexChartWidget
                     'style' => [
                         'fontFamily' => 'inherit',
                     ],
-                    'formatter' => 'function (val) { return "Rp " + new Intl.NumberFormat("id-ID").format(val); }',
                 ],
             ],
-            'colors' => ['#b91c1c'],
+            'colors' => ['#dc2626'],
             'fill' => [
                 'type' => 'gradient',
                 'gradient' => [
                     'shade' => 'light',
                     'type' => 'vertical',
                     'shadeIntensity' => 0.5,
-                    'gradientToColors' => ['#fca5a5'],
+                    'gradientToColors' => ['#fecaca'],
                     'opacityFrom' => 0.7,
                     'opacityTo' => 0.1,
                 ],
@@ -97,7 +96,6 @@ class PengeluaranChart extends ApexChartWidget
             'dataLabels' => ['enabled' => false],
             'tooltip' => [
                 'y' => [
-                    'formatter' => 'function (val) { return "Rp " + new Intl.NumberFormat("id-ID").format(val); }',
                 ],
             ],
             'grid' => [
@@ -105,5 +103,27 @@ class PengeluaranChart extends ApexChartWidget
                 'strokeDashArray' => 4,
             ],
         ];
+    }
+
+    protected function extraJsOptions(): ?\Filament\Support\RawJs
+    {
+        return \Filament\Support\RawJs::make(<<<'JS'
+        {
+            yaxis: {
+                labels: {
+                    formatter: function (val, index) {
+                        return 'Rp ' + Number(val).toLocaleString('id-ID');
+                    }
+                }
+            },
+            tooltip: {
+                y: {
+                    formatter: function (val) {
+                        return 'Rp ' + Number(val).toLocaleString('id-ID');
+                    }
+                }
+            }
+        }
+        JS);
     }
 }

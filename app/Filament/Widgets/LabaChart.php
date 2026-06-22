@@ -82,10 +82,9 @@ class LabaChart extends ApexChartWidget
                     'style' => [
                         'fontFamily' => 'inherit',
                     ],
-                    'formatter' => 'function (val) { return "Rp " + new Intl.NumberFormat("id-ID").format(val); }',
                 ],
             ],
-            'colors' => ['#991b1b'],
+            'colors' => ['#dc2626'],
             'fill' => [
                 'type' => 'gradient',
                 'gradient' => [
@@ -104,7 +103,6 @@ class LabaChart extends ApexChartWidget
             'dataLabels' => ['enabled' => false],
             'tooltip' => [
                 'y' => [
-                    'formatter' => 'function (val) { return "Rp " + new Intl.NumberFormat("id-ID").format(val); }',
                 ],
             ],
             'grid' => [
@@ -112,5 +110,27 @@ class LabaChart extends ApexChartWidget
                 'strokeDashArray' => 4,
             ],
         ];
+    }
+
+    protected function extraJsOptions(): ?\Filament\Support\RawJs
+    {
+        return \Filament\Support\RawJs::make(<<<'JS'
+        {
+            yaxis: {
+                labels: {
+                    formatter: function (val, index) {
+                        return 'Rp ' + Number(val).toLocaleString('id-ID');
+                    }
+                }
+            },
+            tooltip: {
+                y: {
+                    formatter: function (val) {
+                        return 'Rp ' + Number(val).toLocaleString('id-ID');
+                    }
+                }
+            }
+        }
+        JS);
     }
 }

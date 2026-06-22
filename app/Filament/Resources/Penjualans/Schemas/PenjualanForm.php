@@ -117,14 +117,26 @@ class PenjualanForm
                             ->relationship()
                             ->schema([
                                 Select::make('barang_id')
-                                    ->relationship('barang', 'nama_barang')
+                                    ->label('Barang')
+                                    ->options(function () {
+                                        return Barang::where('stok', '>', 0)
+                                            ->get()
+                                            ->pluck('nama_barang', 'id')
+                                            ->map(function ($nama, $id) {
+                                                $barang = Barang::find($id);
+                                                return $nama . ' - Stok ' . $barang->stok;
+                                            });
+                                    })
                                     ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                                     ->required()
+                                    ->searchable()
                                     ->live()
                                     ->afterStateUpdated(function (Set $set, $state) {
                                         $barang = Barang::find($state);
                                         if ($barang) {
                                             $set('harga_jual', $barang->harga_jual);
+                                            $set('qty', 1);
+                                            $set('subtotal', $barang->harga_jual);
                                         }
                                     }),
 
@@ -132,8 +144,18 @@ class PenjualanForm
                                     ->numeric()
                                     ->required()
                                     ->default(1)
+                                    ->minValue(1)
+                                    ->maxValue(function (Get $get) {
+                                        $barang = Barang::find($get('barang_id'));
+                                        return $barang ? $barang->stok : 1;
+                                    })
                                     ->live(debounce: 500)
                                     ->afterStateUpdated(function (Set $set, Get $get, $state) {
+                                        $barang = Barang::find($get('barang_id'));
+                                        if ($barang && $state > $barang->stok) {
+                                            $state = $barang->stok;
+                                            $set('qty', $state);
+                                        }
                                         $set('subtotal', $state * (int)$get('harga_jual'));
                                         $details = $get('../../details');
                                         $total = 0;

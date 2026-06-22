@@ -71,17 +71,16 @@ class PenjualanChart extends ApexChartWidget
                     'style' => [
                         'fontFamily' => 'inherit',
                     ],
-                    'formatter' => 'function (val) { return "Rp " + new Intl.NumberFormat("id-ID").format(val); }',
                 ],
             ],
-            'colors' => ['#ef4444'],
+            'colors' => ['#dc2626'],
             'fill' => [
                 'type' => 'gradient',
                 'gradient' => [
                     'shade' => 'light',
                     'type' => 'vertical',
                     'shadeIntensity' => 0.5,
-                    'gradientToColors' => ['#fee2e2'],
+                    'gradientToColors' => ['#fecaca'],
                     'opacityFrom' => 0.7,
                     'opacityTo' => 0.1,
                 ],
@@ -93,7 +92,6 @@ class PenjualanChart extends ApexChartWidget
             'dataLabels' => ['enabled' => false],
             'tooltip' => [
                 'y' => [
-                    'formatter' => 'function (val) { return "Rp " + new Intl.NumberFormat("id-ID").format(val); }',
                 ],
             ],
             'grid' => [
@@ -101,5 +99,27 @@ class PenjualanChart extends ApexChartWidget
                 'strokeDashArray' => 4,
             ],
         ];
+    }
+
+    protected function extraJsOptions(): ?\Filament\Support\RawJs
+    {
+        return \Filament\Support\RawJs::make(<<<'JS'
+        {
+            yaxis: {
+                labels: {
+                    formatter: function (val, index) {
+                        return 'Rp ' + Number(val).toLocaleString('id-ID');
+                    }
+                }
+            },
+            tooltip: {
+                y: {
+                    formatter: function (val) {
+                        return 'Rp ' + Number(val).toLocaleString('id-ID');
+                    }
+                }
+            }
+        }
+        JS);
     }
 }

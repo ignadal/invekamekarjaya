@@ -62,6 +62,41 @@ class BarangsTable
                 TrashedFilter::make(),
             ])
             ->recordActions([
+                \Filament\Actions\Action::make('Penyesuaian Stok')
+                    ->icon('heroicon-o-arrows-up-down')
+                    ->iconButton()
+                    ->tooltip('Penyesuaian Stok (Manual)')
+                    ->color('warning')
+                    ->form([
+                        \Filament\Forms\Components\Radio::make('tipe')
+                            ->label('Tipe Penyesuaian')
+                            ->options([
+                                'tambah' => 'Tambah Stok',
+                                'kurang' => 'Kurang Stok',
+                            ])
+                            ->required(),
+                        \Filament\Forms\Components\TextInput::make('jumlah')
+                            ->label('Jumlah')
+                            ->numeric()
+                            ->minValue(1)
+                            ->required(),
+                        \Filament\Forms\Components\Textarea::make('keterangan')
+                            ->label('Keterangan / Alasan')
+                            ->placeholder('Contoh: Dipakai sendiri, barang rusak, dsb.')
+                            ->required(),
+                    ])
+                    ->action(function ($record, array $data) {
+                        if ($data['tipe'] === 'tambah') {
+                            $record->increment('stok', $data['jumlah']);
+                        } else {
+                            $record->decrement('stok', $data['jumlah']);
+                        }
+                        
+                        \Filament\Notifications\Notification::make()
+                            ->title('Stok berhasil disesuaikan')
+                            ->success()
+                            ->send();
+                    }),
                 \Filament\Actions\ViewAction::make()->iconButton()->tooltip('Detail Barang'),
                 \Filament\Actions\EditAction::make()->iconButton()->tooltip('Edit'),
             ])
