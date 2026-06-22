@@ -153,9 +153,9 @@ class AdminPanelProvider extends PanelProvider
                         max-width: 100% !important; 
                     }
                     
-                    /* Apply Red Gradient in Light Mode (Dark Red) */
+                    /* Apply Red Gradient in Light Mode (Brighter Red) */
                     html:not(.dark) .red-gradient-filter { 
-                        background: linear-gradient(to right, #7f1d1d, #b91c1c) !important; /* red-900 to red-700 */
+                        background: linear-gradient(to right, #991b1b, #dc2626) !important; /* red-800 to red-600 */
                         border-radius: 0.75rem !important;
                         margin-bottom: 1.5rem !important;
                         border: none !important;
@@ -206,7 +206,59 @@ class AdminPanelProvider extends PanelProvider
                     html:not(.dark) .red-gradient-filter .fi-fo-field-wrp-label span {
                         color: white !important;
                     }
+                    /* Table Toolbar Background (Behind Search) - Light Mode Only */
+                    html:not(.dark) .fi-ta-header-toolbar {
+                        background-color: #dc2626 !important; /* Brighter Red */
+                        border-bottom: none !important;
+                        border-top-left-radius: 0.75rem !important; /* Rounded corners */
+                        border-top-right-radius: 0.75rem !important;
+                    }
+                    /* Make action icon buttons in toolbar (like column toggle/filters) white */
+                    html:not(.dark) .fi-ta-header-toolbar .fi-icon-btn,
+                    html:not(.dark) .fi-ta-header-toolbar .fi-icon-btn svg {
+                        color: white !important;
+                    }
                     
+                    /* Form Section Headers (e.g. Detail Kategori) - Light Mode Only */
+                    html:not(.dark) .fi-section-header {
+                        background-color: #dc2626 !important;
+                        border-bottom: none !important;
+                        border-top-left-radius: calc(0.75rem - 1px) !important;
+                        border-top-right-radius: calc(0.75rem - 1px) !important;
+                        padding: 1rem 1.5rem !important;
+                    }
+                    html:not(.dark) .fi-section-header .fi-section-header-heading,
+                    html:not(.dark) .fi-section-header .fi-section-header-description,
+                    html:not(.dark) .fi-section-header .fi-icon-btn,
+                    html:not(.dark) .fi-section-header .fi-icon-btn svg {
+                        color: white !important;
+                    }
+
+                    /* Page Title Text Color - Light Mode Only */
+                    html:not(.dark) .fi-header-heading {
+                        color: #dc2626 !important;
+                    }
+                    
+                    /* Table Header Styling (Red) - Light Mode Only */
+                    html:not(.dark) .fi-ta-table thead,
+                    html:not(.dark) .fi-ta-table thead tr,
+                    html:not(.dark) .fi-ta-table thead th,
+                    html:not(.dark) .fi-ta-table-stacked-header-row,
+                    html:not(.dark) .fi-ta-table-stacked-header-cell {
+                        background-color: #dc2626 !important; /* Brighter Red */
+                        border-bottom: none !important;
+                    }
+                    
+                    /* Force text color to white for ALL header contents */
+                    html:not(.dark) .fi-ta-table thead th,
+                    html:not(.dark) .fi-ta-table thead th *,
+                    html:not(.dark) .fi-ta-table thead th span,
+                    html:not(.dark) .fi-ta-table-stacked-header-cell,
+                    html:not(.dark) .fi-ta-table-stacked-header-cell *,
+                    html:not(.dark) .fi-ta-table-stacked-header-cell span {
+                        color: #ffffff !important;
+                    }
+
                     /* We leave the select dropdowns alone so they follow Filament default styles */
 
                     /* Stat Card Bottom Border - Both Light and Dark Mode */
