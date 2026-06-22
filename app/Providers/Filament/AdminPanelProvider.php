@@ -239,6 +239,14 @@ class AdminPanelProvider extends PanelProvider
                         color: #dc2626 !important;
                     }
                     
+                    /* Table Checkboxes Border (Light Mode Only) */
+                    html:not(.dark) .fi-checkbox-input {
+                        border: 2px solid #dc2626 !important;
+                    }
+                    html:not(.dark) .fi-checkbox-input:checked {
+                        background-color: #dc2626 !important;
+                    }
+                    
                     /* Table Header Styling (Red) - Light Mode Only */
                     html:not(.dark) .fi-ta-table thead,
                     html:not(.dark) .fi-ta-table thead tr,
