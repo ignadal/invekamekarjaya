@@ -19,6 +19,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        \App\Models\Penjualan::observe(\App\Observers\PenjualanObserver::class);
+        \App\Models\PembelianSupplierDetail::observe(\App\Observers\PembelianSupplierDetailObserver::class);
+
+        \Filament\Support\Facades\FilamentIcon::register([
+            'panels::sidebar.expand-button' => 'heroicon-o-bars-3',
+            'panels::sidebar.collapse-button' => 'heroicon-o-bars-3',
+        ]);
     }
 }

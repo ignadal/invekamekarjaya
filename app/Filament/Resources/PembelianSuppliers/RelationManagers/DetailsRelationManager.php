@@ -11,8 +11,8 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 
 class DetailsRelationManager extends RelationManager
 {
@@ -46,39 +46,31 @@ class DetailsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                TextInput::make('qty')
-                    ->numeric()
-                    ->live()
-                    ->required()
-                    ->afterStateUpdated(function (Get $get, Set $set) {
-                        $set(
-                            'subtotal',
-                            ((float) $get('qty')) * ((float) $get('harga_beli'))
-                        );
-                    }),
+                TextColumn::make('barang.nama_barang')
+                    ->searchable()
+                    ->sortable(),
 
-                TextInput::make('harga_beli')
+                TextColumn::make('qty')
                     ->numeric()
-                    ->live()
-                    ->required()
-                    ->afterStateUpdated(function (Get $get, Set $set) {
-                        $set(
-                            'subtotal',
-                            ((float) $get('qty')) * ((float) $get('harga_beli'))
-                        );
-                    }),
+                    ->sortable(),
 
-                TextInput::make('subtotal')
-                    ->numeric()
-                    ->readOnly()
-                    ->dehydrated(),
+                TextColumn::make('harga_beli')
+                    ->money('IDR')
+                    ->sortable(),
+
+                TextColumn::make('subtotal')
+                    ->money('IDR')
+                    ->sortable(),
             ])
             ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
             ])
             ->headerActions([
-                CreateAction::make(),
+                CreateAction::make()
+                ->label('')
+                ->icon('heroicon-o-plus')
+                ->tooltip('Tambah Data'),
             ]);
     }
 }

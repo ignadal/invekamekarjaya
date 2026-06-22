@@ -15,38 +15,57 @@ class PembelianSupplierForm
     public static function configure(Schema $schema): Schema
     {
        return $schema
+        ->columns(1)
         ->components([
             Section::make('Data Pembelian')
                 ->schema([
 
-                    Grid::make(2)
+                    Grid::make(1)
                         ->schema([
 
                             DatePicker::make('tanggal_pembelian')
-                                ->required(),
+                                ->required()
+                                ->minDate(today()->subDays(7))
+                                ->maxDate(today())
+                                ->disabled(fn (string $operation) => $operation === 'edit'),
 
                             Select::make('supplier_id')
                                 ->relationship('supplier', 'nama_supplier')
                                 ->searchable()
                                 ->preload()
-                                ->required(),
+                                ->required()
+                                ->disabled(fn (string $operation) => $operation === 'edit'),
 
                             Select::make('metode')
                                 ->options([
                                     'lunas' => 'Lunas',
                                     'nyicil' => 'Nyicil',
                                 ])
-                                ->required(),
+                                ->required()
+                                ->live()
+                                ->disabled(fn (string $operation) => $operation === 'edit'),
 
-                            DatePicker::make('jatuh_tempo'),
+                            DatePicker::make('jatuh_tempo')
+                                ->visible(fn (\Filament\Schemas\Components\Utilities\Get $get) => $get('metode') === 'nyicil')
+                                ->required(fn (\Filament\Schemas\Components\Utilities\Get $get) => $get('metode') === 'nyicil')
+                                ->minDate(today())
+                                ->disabled(fn (string $operation) => $operation === 'edit'),
 
                             TextInput::make('sudah_dibayar')
                                 ->numeric()
-                                ->default(0),
+                                ->default(0)
+                                ->live(debounce: 500)
+                                ->visible(fn (\Filament\Schemas\Components\Utilities\Get $get) => $get('metode') === 'nyicil')
+                                ->disabled(fn (string $operation) => $operation === 'edit')
+                                ->afterStateUpdated(function (\Filament\Schemas\Components\Utilities\Set $set, \Filament\Schemas\Components\Utilities\Get $get, $state) {
+                                    $set('sisa_pembayaran', (int)$get('total_pembelian') - (int)$state);
+                                }),
 
                             TextInput::make('sisa_pembayaran')
                                 ->numeric()
-                                ->default(0),
+                                ->default(0)
+                                ->visible(fn (\Filament\Schemas\Components\Utilities\Get $get) => $get('metode') === 'nyicil')
+                                ->readOnly(),
 
                         ]),
                 ]),
@@ -62,26 +81,88 @@ class PembelianSupplierForm
                                 ->relationship('barang', 'nama_barang')
                                 ->searchable()
                                 ->preload()
-                                ->required(),
+                                ->required()
+                                ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                                ->live()
+                                ->afterStateUpdated(function (\Filament\Schemas\Components\Utilities\Set $set, \Filament\Schemas\Components\Utilities\Get $get, $state) {
+                                    if ($state) {
+                                        $barang = \App\Models\Barang::find($state);
+                                        if ($barang) {
+                                            $set('harga_beli', $barang->harga_beli_terakhir);
+                                            // Trigger subtotal calculation
+                                            $set('subtotal', $barang->harga_beli_terakhir * (int)$get('qty'));
+                                            
+                                            // Recalculate totals
+                                            $details = $get('../../details');
+                                            $total = 0;
+                                            if (is_array($details)) {
+                                                foreach ($details as $item) {
+                                                    $total += (int) ($item['subtotal'] ?? 0);
+                                                }
+                                            }
+                                            $set('../../total_pembelian', $total);
+                                            $set('../../sisa_pembayaran', $total - (int)$get('../../sudah_dibayar'));
+                                        }
+                                    }
+                                }),
 
                             TextInput::make('qty')
                                 ->numeric()
-                                ->required(),
+                                ->required()
+                                ->default(1)
+                                ->live(debounce: 500)
+                                ->afterStateUpdated(function (\Filament\Schemas\Components\Utilities\Set $set, \Filament\Schemas\Components\Utilities\Get $get, $state) {
+                                    $set('subtotal', $state * (int)$get('harga_beli'));
+                                    $details = $get('../../details');
+                                    $total = 0;
+                                    if (is_array($details)) {
+                                        foreach ($details as $item) {
+                                            $total += (int) ($item['subtotal'] ?? 0);
+                                        }
+                                    }
+                                    $set('../../total_pembelian', $total);
+                                    $set('../../sisa_pembayaran', $total - (int)$get('../../sudah_dibayar'));
+                                }),
 
                             TextInput::make('harga_beli')
                                 ->numeric()
-                                ->required(),
+                                ->required()
+                                ->live(debounce: 500)
+                                ->afterStateUpdated(function (\Filament\Schemas\Components\Utilities\Set $set, \Filament\Schemas\Components\Utilities\Get $get, $state) {
+                                    $set('subtotal', $state * (int)$get('qty'));
+                                    $details = $get('../../details');
+                                    $total = 0;
+                                    if (is_array($details)) {
+                                        foreach ($details as $item) {
+                                            $total += (int) ($item['subtotal'] ?? 0);
+                                        }
+                                    }
+                                    $set('../../total_pembelian', $total);
+                                    $set('../../sisa_pembayaran', $total - (int)$get('../../sudah_dibayar'));
+                                }),
 
                             TextInput::make('subtotal')
                                 ->numeric()
-                                ->required(),
+                                ->required()
+                                ->readOnly()
+                                ->default(0),
 
                         ])
-                        ->columns(4),
+                        ->columns(1)
+                        ->live(debounce: 500)
+                        ->afterStateUpdated(function (\Filament\Schemas\Components\Utilities\Get $get, \Filament\Schemas\Components\Utilities\Set $set) {
+                            $total = 0;
+                            foreach ((array) $get('details') as $item) {
+                                $total += (int) ($item['subtotal'] ?? 0);
+                            }
+                            $set('total_pembelian', $total);
+                            $set('sisa_pembayaran', $total - (int)$get('sudah_dibayar'));
+                        }),
 
                     TextInput::make('total_pembelian')
                         ->numeric()
                         ->default(0)
+                        ->readOnly()
                         ->required(),
 
                 ]),

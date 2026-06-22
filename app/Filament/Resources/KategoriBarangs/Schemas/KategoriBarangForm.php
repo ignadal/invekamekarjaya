@@ -10,9 +10,13 @@ class KategoriBarangForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(1)
             ->components([
-                TextInput::make('nama_kategori')
-                    ->required(),
+                \Filament\Schemas\Components\Section::make('Detail Kategori')
+                    ->schema([
+                        TextInput::make('nama_kategori')
+                            ->required(),
+                    ]),
             ]);
     }
 }

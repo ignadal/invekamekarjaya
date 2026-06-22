@@ -16,9 +16,14 @@ use Filament\Tables\Table;
 
 class CicilanSupplierResource extends Resource
 {
-    protected static ?string $model = CicilanSupplier::class;
+    protected static ?string $model = \App\Models\CicilanSupplier::class;
+    protected static ?string $pluralModelLabel = 'Cicilan Supplier';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCurrencyDollar;
+    protected static string|\UnitEnum|null $navigationGroup = 'Transaksi';
+    protected static ?int $navigationSort = 2;
+    protected static ?string $navigationLabel = 'Cicilan Supplier';
+    protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $recordTitleAttribute = 'id';
 

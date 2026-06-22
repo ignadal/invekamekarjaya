@@ -47,4 +47,18 @@ class Penjualan extends Model
     {
         return $this->hasMany(CicilanBuyer::class);
     }
+
+    protected static function booted()
+    {
+        $updatePayroll = function ($penjualan) {
+            if ($penjualan->tanggal_beli) {
+                $bulan = \Carbon\Carbon::parse($penjualan->tanggal_beli)->month;
+                $tahun = \Carbon\Carbon::parse($penjualan->tanggal_beli)->year;
+                \App\Models\PayrollSales::updatePayroll($penjualan->sales_id, $bulan, $tahun);
+            }
+        };
+
+        static::saved($updatePayroll);
+        static::deleted($updatePayroll);
+    }
 }

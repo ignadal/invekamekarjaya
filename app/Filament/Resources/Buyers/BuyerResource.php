@@ -18,9 +18,13 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class BuyerResource extends Resource
 {
-    protected static ?string $model = Buyer::class;
+    protected static ?string $model = \App\Models\Buyer::class;
+    protected static ?string $pluralModelLabel = 'Buyer';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingStorefront;
+    protected static string|\UnitEnum|null $navigationGroup = 'Master Data';
+    protected static ?int $navigationSort = 4;
+    protected static ?string $navigationLabel = 'Buyer / Toko';
 
     protected static ?string $recordTitleAttribute = 'nama_toko';
 

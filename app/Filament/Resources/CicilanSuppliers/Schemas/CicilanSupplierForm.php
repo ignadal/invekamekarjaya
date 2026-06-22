@@ -13,28 +13,39 @@ class CicilanSupplierForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(1)
             ->components([
-                Select::make('pembelian_supplier_id')
-                    ->relationship('pembelianSupplier', 'id')
-                    ->getOptionLabelFromRecordUsing(
-                        fn ($record) =>
-                            $record->supplier->nama_supplier .
-                            ' - ' .
-                            number_format($record->total_pembelian, 0, ',', '.')
-                    )
-                    ->searchable()
-                    ->preload()
-                    ->required(),
+                \Filament\Schemas\Components\Section::make('Informasi Cicilan')
+                    ->schema([
+                        \Filament\Schemas\Components\Grid::make(1)
+                            ->schema([
+                                Select::make('pembelian_supplier_id')
+                                    ->relationship('pembelianSupplier', 'id')
+                                    ->getOptionLabelFromRecordUsing(
+                                        fn ($record) =>
+                                            $record->supplier->nama_supplier .
+                                            ' - ' .
+                                            number_format($record->total_pembelian, 0, ',', '.')
+                                    )
+                                    ->searchable()
+                                    ->preload()
+                                    ->required(),
+                            ]),
 
-                DatePicker::make('tanggal_bayar')
-                    ->required(),
+                        \Filament\Schemas\Components\Grid::make(1)
+                            ->schema([
+                                DatePicker::make('tanggal_bayar')
+                                    ->required(),
 
-                TextInput::make('nominal')
-                    ->numeric()
-                    ->required(),
+                                TextInput::make('nominal')
+                                    ->numeric()
+                                    ->required()
+                                    ->prefix('Rp'),
+                            ]),
 
-                Textarea::make('catatan')
-                    ->columnSpanFull(),
+                        Textarea::make('catatan')
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 }

@@ -46,7 +46,8 @@ class SalesTable
                 TrashedFilter::make(),
             ])
             ->recordActions([
-                EditAction::make(),
+                \Filament\Actions\ViewAction::make()->iconButton(),
+                EditAction::make()->iconButton(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

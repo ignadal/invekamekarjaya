@@ -18,9 +18,13 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class SupplierResource extends Resource
 {
-    protected static ?string $model = Supplier::class;
+    protected static ?string $model = \App\Models\Supplier::class;
+    protected static ?string $pluralModelLabel = 'Supplier';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTruck;
+    protected static string|\UnitEnum|null $navigationGroup = 'Master Data';
+    protected static ?int $navigationSort = 3;
+    protected static ?string $navigationLabel = 'Supplier';
 
     protected static ?string $recordTitleAttribute = 'nama_supplier';
 

@@ -16,9 +16,13 @@ use Filament\Tables\Table;
 
 class KategoriBarangResource extends Resource
 {
-    protected static ?string $model = KategoriBarang::class;
+    protected static ?string $model = \App\Models\KategoriBarang::class;
+    protected static ?string $pluralModelLabel = 'Kategori Barang';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
+    protected static string|\UnitEnum|null $navigationGroup = 'Master Data';
+    protected static ?int $navigationSort = 1;
+    protected static ?string $navigationLabel = 'Kategori Barang';
 
     protected static ?string $recordTitleAttribute = 'nama_kategori';
 

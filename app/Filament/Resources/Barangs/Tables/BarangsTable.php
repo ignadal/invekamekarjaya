@@ -46,9 +46,7 @@ class BarangsTable
                 TextColumn::make('stok_minimum')
                     ->label('Min. Stok'),
 
-                TextColumn::make('harga_beli_terakhir')
-                    ->label('Modal Terakhir')
-                    ->money('IDR'),
+
 
                 TextColumn::make('ukuran')
                     ->badge(),
@@ -64,7 +62,8 @@ class BarangsTable
                 TrashedFilter::make(),
             ])
             ->recordActions([
-                EditAction::make(),
+                \Filament\Actions\ViewAction::make()->iconButton()->tooltip('Detail Barang'),
+                \Filament\Actions\EditAction::make()->iconButton()->tooltip('Edit'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

@@ -10,9 +10,13 @@ class KecamatanForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(1)
             ->components([
-                TextInput::make('nama_kecamatan')
-                    ->required(),
+                \Filament\Schemas\Components\Section::make('Detail Kecamatan')
+                    ->schema([
+                        TextInput::make('nama_kecamatan')
+                            ->required(),
+                    ]),
             ]);
     }
 }

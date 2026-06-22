@@ -42,4 +42,28 @@ class Barang extends Model
     {
         return $this->hasMany(PenjualanDetail::class);
     }
+
+    public function riwayatHargaJuals(): HasMany
+    {
+        return $this->hasMany(RiwayatHargaJual::class);
+    }
+
+    protected static function booted()
+    {
+        static::updated(function ($barang) {
+            if ($barang->isDirty('harga_jual')) {
+                $hargaLama = $barang->getOriginal('harga_jual');
+                $hargaBaru = $barang->harga_jual;
+                
+                // Avoid logging if the price didn't actually change
+                if ($hargaLama != $hargaBaru) {
+                    $barang->riwayatHargaJuals()->create([
+                        'harga_lama' => $hargaLama ?? 0,
+                        'harga_baru' => $hargaBaru,
+                        'tanggal_berubah' => today(),
+                    ]);
+                }
+            }
+        });
+    }
 }

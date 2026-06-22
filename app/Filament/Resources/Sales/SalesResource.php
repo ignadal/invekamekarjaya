@@ -18,9 +18,13 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class SalesResource extends Resource
 {
-    protected static ?string $model = Sales::class;
+    protected static ?string $model = \App\Models\Sales::class;
+    protected static ?string $pluralModelLabel = 'Sales';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
+    protected static string|\UnitEnum|null $navigationGroup = 'HR & Sales';
+    protected static ?int $navigationSort = 1;
+    protected static ?string $navigationLabel = 'Sales';
 
     protected static ?string $recordTitleAttribute = 'nama_sales';
 

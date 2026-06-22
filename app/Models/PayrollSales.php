@@ -18,11 +18,44 @@ class PayrollSales extends Model
         'uang_makan',
         'uang_bensin',
         'total_gaji',
+        'status_pembayaran',
         'catatan',
     ];
 
     public function sales(): BelongsTo
     {
         return $this->belongsTo(Sales::class);
+    }
+
+    public static function updatePayroll($salesId, $bulan, $tahun)
+    {
+        $totalPenjualan = \App\Models\Penjualan::where('sales_id', $salesId)
+            ->whereMonth('tanggal_beli', $bulan)
+            ->whereYear('tanggal_beli', $tahun)
+            ->where('status_persetujuan', 'disetujui')
+            ->sum('total_penjualan');
+            
+        $bonusPersen = 0;
+        if ($totalPenjualan >= 100000000) {
+            $bonusPersen = 1;
+        } elseif ($totalPenjualan >= 75000000) {
+            $bonusPersen = 0.5;
+        }
+        
+        $bonusNominal = ($totalPenjualan * $bonusPersen) / 100;
+        
+        $payroll = self::where('sales_id', $salesId)
+            ->where('bulan', $bulan)
+            ->where('tahun', $tahun)
+            ->first();
+            
+        if ($payroll) {
+            $payroll->update([
+                'total_penjualan' => $totalPenjualan,
+                'bonus_persen' => $bonusPersen,
+                'bonus_nominal' => $bonusNominal,
+                'total_gaji' => $payroll->gaji_pokok + $bonusNominal + $payroll->uang_makan + $payroll->uang_bensin,
+            ]);
+        }
     }
 }
