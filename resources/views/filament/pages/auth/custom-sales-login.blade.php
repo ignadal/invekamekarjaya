@@ -51,70 +51,62 @@
         max-width: 100% !important;
     }
 
-    /* Theme Toggle Switch */
-    .theme-switch {
+    /* Theme Switcher */
+    .theme-switcher {
         position: absolute;
         top: 2rem;
         right: 2rem;
-        width: 76px;
-        height: 38px;
-        background-color: #f1f5f9; /* Light gray pill */
-        border-radius: 9999px;
-        cursor: pointer;
         display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 8px;
+        background-color: #f1f5f9;
+        border-radius: 0.75rem;
+        padding: 0.25rem;
         box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         z-index: 50;
-        border: none;
-        transition: background-color 0.3s ease;
+        gap: 0.25rem;
     }
     
-    [data-theme="dark"] .theme-switch {
-        background-color: #1f2937; /* Darker pill in dark mode */
+    [data-theme="dark"] .theme-switcher {
+        background-color: #1f2937;
         box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
     }
 
-    .theme-switch-thumb {
-        position: absolute;
-        top: 4px;
-        left: 4px;
-        width: 30px;
-        height: 30px;
+    .theme-btn {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.5rem;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        color: #9ca3af;
+        transition: all 0.2s ease;
+    }
+
+    .theme-btn:hover {
+        color: #6b7280;
+    }
+
+    [data-theme="dark"] .theme-btn:hover {
+        color: #d1d5db;
+    }
+
+    .theme-btn.active {
         background-color: #ffffff;
-        border-radius: 50%;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
-        z-index: 1;
+        color: var(--theme-red);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
 
-    [data-theme="dark"] .theme-switch-thumb {
-        transform: translateX(38px);
-        background-color: #374151; /* Match dark theme */
+    [data-theme="dark"] .theme-btn.active {
+        background-color: #374151;
+        color: var(--theme-red);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     }
 
-    .theme-switch svg {
-        width: 18px;
-        height: 18px;
-        z-index: 2;
-        transition: color 0.3s ease;
-    }
-
-    /* Sun Icon Colors */
-    .theme-switch .sun-icon {
-        color: var(--theme-red); /* Active red color */
-    }
-    [data-theme="dark"] .theme-switch .sun-icon {
-        color: #6b7280; /* Inactive gray */
-    }
-
-    /* Moon Icon Colors */
-    .theme-switch .moon-icon {
-        color: #9ca3af; /* Inactive gray */
-    }
-    [data-theme="dark"] .theme-switch .moon-icon {
-        color: var(--theme-red); /* Active red color */
+    .theme-btn svg {
+        width: 20px;
+        height: 20px;
     }
     
     /* Neon Border Wrapper */
@@ -450,11 +442,17 @@
 
 <div class="custom-login-wrapper" id="login-wrapper" data-theme="dark">
     
-    <button id="theme-toggle" class="theme-switch" aria-label="Toggle Theme">
-        <div class="theme-switch-thumb"></div>
-        <svg class="sun-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.25a.75.75 0 0 1 .75.75v2.25a.75.75 0 0 1-1.5 0V3a.75.75 0 0 1 .75-.75ZM7.5 12a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM18.894 6.166a.75.75 0 0 0-1.06-1.06l-1.591 1.59a.75.75 0 1 0 1.06 1.061l1.591-1.59ZM21.75 12a.75.75 0 0 1-.75.75h-2.25a.75.75 0 0 1 0-1.5H21a.75.75 0 0 1 .75.75ZM17.834 18.894a.75.75 0 0 0 1.06-1.06l-1.59-1.591a.75.75 0 1 0-1.061 1.06l1.59 1.591ZM12 18a.75.75 0 0 1 .75.75V21a.75.75 0 0 1-1.5 0v-2.25A.75.75 0 0 1 12 18ZM7.758 17.303a.75.75 0 0 0-1.061-1.06l-1.591 1.59a.75.75 0 0 0 1.06 1.061l1.591-1.59ZM6 12a.75.75 0 0 1-.75.75H3a.75.75 0 0 1 0-1.5h2.25A.75.75 0 0 1 6 12ZM6.697 7.757a.75.75 0 0 0 1.06-1.06l-1.59-1.591a.75.75 0 0 0-1.061 1.06l1.59 1.591Z" /></svg>
-        <svg class="moon-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
-    </button>
+    <div class="theme-switcher">
+        <button class="theme-btn" data-theme-value="light" aria-label="Light mode">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.25a.75.75 0 0 1 .75.75v2.25a.75.75 0 0 1-1.5 0V3a.75.75 0 0 1 .75-.75ZM7.5 12a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM18.894 6.166a.75.75 0 0 0-1.06-1.06l-1.591 1.59a.75.75 0 1 0 1.06 1.061l1.591-1.59ZM21.75 12a.75.75 0 0 1-.75.75h-2.25a.75.75 0 0 1 0-1.5H21a.75.75 0 0 1 .75.75ZM17.834 18.894a.75.75 0 0 0 1.06-1.06l-1.59-1.591a.75.75 0 1 0-1.061 1.06l1.59 1.591ZM12 18a.75.75 0 0 1 .75.75V21a.75.75 0 0 1-1.5 0v-2.25A.75.75 0 0 1 12 18ZM7.758 17.303a.75.75 0 0 0-1.061-1.06l-1.591 1.59a.75.75 0 0 0 1.06 1.061l1.591-1.59ZM6 12a.75.75 0 0 1-.75.75H3a.75.75 0 0 1 0-1.5h2.25A.75.75 0 0 1 6 12ZM6.697 7.757a.75.75 0 0 0 1.06-1.06l-1.59-1.591a.75.75 0 0 0-1.061 1.06l1.59 1.591Z" /></svg>
+        </button>
+        <button class="theme-btn" data-theme-value="dark" aria-label="Dark mode">
+            <svg fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+        </button>
+        <button class="theme-btn" data-theme-value="system" aria-label="System mode">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M2.25 5.25a3 3 0 013-3h13.5a3 3 0 013 3V15a3 3 0 01-3 3h-3v.257c0 .597.237 1.17.659 1.591l.621.622a.75.75 0 01-.53 1.28h-9a.75.75 0 01-.53-1.28l.621-.622a2.25 2.25 0 00.659-1.59V18h-3a3 3 0 01-3-3V5.25zm1.5 0v7.5a1.5 1.5 0 001.5 1.5h13.5a1.5 1.5 0 001.5-1.5v-7.5a1.5 1.5 0 00-1.5-1.5H5.25a1.5 1.5 0 00-1.5 1.5z" clip-rule="evenodd" /></svg>
+        </button>
+    </div>
 
     <!-- Background Animated Neon Chart -->
     <div class="bg-chart-container">
@@ -552,21 +550,61 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const themeToggle = document.getElementById('theme-toggle');
         const wrapper = document.getElementById('login-wrapper');
+        const themeBtns = document.querySelectorAll('.theme-btn');
         const dynamicLogo = document.getElementById('dynamic-logo');
 
-        themeToggle.addEventListener('click', () => {
-            const isDark = wrapper.getAttribute('data-theme') === 'dark';
-            
-            if (isDark) {
-                // Switch to Light
-                wrapper.removeAttribute('data-theme');
-                if (dynamicLogo) dynamicLogo.src = "{{ asset('images/logo_red.png') }}";
-            } else {
-                // Switch to Dark
+        // Check local storage for theme
+        let currentTheme = localStorage.getItem('theme') || 'system';
+
+        function applyTheme(theme) {
+            let isDarkMode = true; // Default
+
+            if (theme === 'light') {
+                isDarkMode = false;
+            } else if (theme === 'dark') {
+                isDarkMode = true;
+            } else if (theme === 'system') {
+                isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            }
+
+            // Apply theme
+            if (isDarkMode) {
                 wrapper.setAttribute('data-theme', 'dark');
+                document.documentElement.classList.add('dark');
                 if (dynamicLogo) dynamicLogo.src = "{{ asset('images/logo_no_wm.png') }}";
+            } else {
+                wrapper.removeAttribute('data-theme');
+                document.documentElement.classList.remove('dark');
+                if (dynamicLogo) dynamicLogo.src = "{{ asset('images/logo_red.png') }}";
+            }
+
+            // Update button states
+            themeBtns.forEach(btn => {
+                if (btn.getAttribute('data-theme-value') === theme) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        // Initialize theme
+        applyTheme(currentTheme);
+
+        // Handle button clicks
+        themeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const selectedTheme = btn.getAttribute('data-theme-value');
+                localStorage.setItem('theme', selectedTheme);
+                applyTheme(selectedTheme);
+            });
+        });
+
+        // Listen for system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+            if (localStorage.getItem('theme') === 'system' || !localStorage.getItem('theme')) {
+                applyTheme('system');
             }
         });
     });
