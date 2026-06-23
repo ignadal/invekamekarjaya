@@ -170,8 +170,7 @@
         .login-card {
             flex-direction: row;
             min-height: 550px;
-            /* Sharp diagonal split */
-            background: linear-gradient(110deg, var(--bg-card) 55%, var(--theme-red-dark) 55.1%, var(--theme-red) 100%);
+            background: var(--bg-card); /* Match theme */
         }
     }
 
@@ -262,6 +261,46 @@
         box-shadow: 0 6px 20px var(--theme-red-glow);
     }
 
+    /* Divider */
+    .neon-divider {
+        display: none;
+    }
+    
+    @media (min-width: 768px) {
+        .neon-divider {
+            display: block;
+            position: absolute;
+            left: 58%;
+            top: -20%;
+            height: 140%;
+            width: 2px;
+            background: rgba(239, 68, 68, 0.15); /* Faint red track */
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.1);
+            transform: rotate(20deg);
+            z-index: 2;
+            overflow: hidden;
+            border-radius: 0;
+            margin: 0;
+        }
+        
+        .neon-divider-glow {
+            position: absolute;
+            top: -50%;
+            left: -1px;
+            width: 4px;
+            height: 50%;
+            background: var(--theme-red);
+            box-shadow: 0 0 20px 4px var(--theme-red), 0 0 40px 8px var(--theme-red);
+            animation: scanline 3s linear infinite alternate;
+            border-radius: 4px;
+        }
+    }
+    
+    @keyframes scanline {
+        0% { top: -20%; }
+        100% { top: 80%; }
+    }
+
     /* Right Side: Welcome Text */
     .card-right {
         width: 100%;
@@ -271,14 +310,13 @@
         justify-content: center;
         align-items: center;
         text-align: center;
-        background: linear-gradient(135deg, var(--theme-red-dark), var(--theme-red));
-        color: white;
+        background: transparent;
+        color: var(--text-primary);
     }
     @media (min-width: 768px) {
         .card-right {
             width: 45%;
             padding: 4rem 3rem;
-            background: transparent; /* Rely on wrapper gradient */
             align-items: center;
             text-align: center;
         }
@@ -299,11 +337,13 @@
         margin-bottom: 1rem;
         text-transform: uppercase;
         letter-spacing: 0.05em;
+        color: var(--theme-red);
+        text-shadow: 0 0 15px var(--theme-red-glow), 0 0 30px var(--theme-red-glow);
     }
 
     .welcome-text {
         font-size: 1rem;
-        color: rgba(255, 255, 255, 0.9);
+        color: var(--text-secondary);
         line-height: 1.5;
         max-width: 300px;
     }
@@ -475,7 +515,7 @@
             
             <!-- Left Side: Form -->
             <div class="card-left">
-                <h2 class="login-title">Login Admin</h2>
+                <h2 class="login-title">Login Sales</h2>
 
                 <div class="form-container">
                     <form wire:submit="authenticate">
@@ -494,6 +534,11 @@
                 </div>
             </div>
 
+            <!-- Divider -->
+            <div class="neon-divider">
+                <div class="neon-divider-glow"></div>
+            </div>
+
             <!-- Right Side: Graphic/Text -->
             <div class="card-right">
                 <img id="dynamic-logo" src="{{ asset('images/logo_no_wm.png') }}" alt="INVEKA" class="brand-logo">
@@ -509,6 +554,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         const themeToggle = document.getElementById('theme-toggle');
         const wrapper = document.getElementById('login-wrapper');
+        const dynamicLogo = document.getElementById('dynamic-logo');
 
         themeToggle.addEventListener('click', () => {
             const isDark = wrapper.getAttribute('data-theme') === 'dark';
@@ -516,9 +562,11 @@
             if (isDark) {
                 // Switch to Light
                 wrapper.removeAttribute('data-theme');
+                if (dynamicLogo) dynamicLogo.src = "{{ asset('images/logo_red.png') }}";
             } else {
                 // Switch to Dark
                 wrapper.setAttribute('data-theme', 'dark');
+                if (dynamicLogo) dynamicLogo.src = "{{ asset('images/logo_no_wm.png') }}";
             }
         });
     });
