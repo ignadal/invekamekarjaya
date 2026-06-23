@@ -24,6 +24,12 @@ class PenjualanObserver
                 $barang = $detail->barang;
                 if ($barang) {
                     $barang->decrement('stok', $detail->qty);
+                    $namaToko = $penjualan->buyer->nama_toko ?? '-';
+                    $barang->riwayatStoks()->create([
+                        'tipe' => 'kurang',
+                        'jumlah' => $detail->qty,
+                        'keterangan' => 'Penjualan ke ' . $namaToko,
+                    ]);
                 }
             }
         }

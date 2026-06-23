@@ -37,21 +37,39 @@ class DashboardStatsOverview extends StatsOverviewWidget
         $bulan = $this->bulan;
         $tahun = $this->tahun;
 
-        $omset = Penjualan::where('status_persetujuan', 'disetujui')
+        $omsetLunas = Penjualan::where('status_persetujuan', 'disetujui')
+            ->where('metode', 'lunas')
             ->when($tahun, fn($q) => $q->whereYear('tanggal_beli', $tahun))
             ->when($bulan, fn($q) => $q->whereMonth('tanggal_beli', $bulan))
             ->sum('total_penjualan');
+            
+        $omsetCicil = Penjualan::where('status_persetujuan', 'disetujui')
+            ->where('metode', 'cicil')
+            ->when($tahun, fn($q) => $q->whereYear('tanggal_beli', $tahun))
+            ->when($bulan, fn($q) => $q->whereMonth('tanggal_beli', $bulan))
+            ->sum('sudah_dibayar');
+            
+        $omset = $omsetLunas + $omsetCicil;
 
         $piutang = Penjualan::where('status_persetujuan', 'disetujui')
             ->when($tahun, fn($q) => $q->whereYear('tanggal_beli', $tahun))
             ->when($bulan, fn($q) => $q->whereMonth('tanggal_beli', $bulan))
             ->sum('sisa_pembayaran');
 
-        $pengeluaranSupplier = PembelianSupplier::when($tahun, fn($q) => $q->whereYear('created_at', $tahun))
+        $pengeluaranSupplierLunas = PembelianSupplier::where('metode', 'lunas')
+            ->when($tahun, fn($q) => $q->whereYear('created_at', $tahun))
             ->when($bulan, fn($q) => $q->whereMonth('created_at', $bulan))
             ->sum('total_pembelian');
+            
+        $pengeluaranSupplierNyicil = PembelianSupplier::where('metode', 'nyicil')
+            ->when($tahun, fn($q) => $q->whereYear('created_at', $tahun))
+            ->when($bulan, fn($q) => $q->whereMonth('created_at', $bulan))
+            ->sum('sudah_dibayar');
+            
+        $pengeluaranSupplier = $pengeluaranSupplierLunas + $pengeluaranSupplierNyicil;
 
-        $pengeluaranGaji = PayrollSales::when($tahun, fn($q) => $q->where('tahun', $tahun))
+        $pengeluaranGaji = PayrollSales::where('status_pembayaran', 'sudah_digaji')
+            ->when($tahun, fn($q) => $q->where('tahun', $tahun))
             ->when($bulan, fn($q) => $q->where('bulan', $bulan))
             ->sum('total_gaji');
 
@@ -77,35 +95,85 @@ class DashboardStatsOverview extends StatsOverviewWidget
         $periodeDesc = ($bulan || $tahun) ? trim(($bulan ? $namaBulan : '') . ' ' . ($tahun ? $namaTahun : '')) : 'Semua Waktu';
 
         return [
-            Stat::make('Total Penghasilan Bersih', new \Illuminate\Support\HtmlString('<span class="whitespace-normal break-words break-all">Rp ' . Number::format($penghasilanBersih, locale: 'id') . '</span>'))
+            Stat::make('Total Penghasilan Bersih', $this->animatedStat($penghasilanBersih, 'Rp '))
                 ->description($periodeDesc)
                 ->descriptionIcon('heroicon-m-arrow-trending-up')
                 ->color($penghasilanBersih >= 0 ? 'success' : 'danger'),
-            Stat::make('Total Omset', new \Illuminate\Support\HtmlString('<span class="whitespace-normal break-words break-all">Rp ' . Number::format($omset, locale: 'id') . '</span>'))
+            Stat::make('Total Omset', $this->animatedStat($omset, 'Rp '))
                 ->description($periodeDesc)
                 ->descriptionIcon('heroicon-m-banknotes'),
-            Stat::make('Total Piutang', new \Illuminate\Support\HtmlString('<span class="whitespace-normal break-words break-all">Rp ' . Number::format($piutang, locale: 'id') . '</span>'))
+            Stat::make('Total Piutang', $this->animatedStat($piutang, 'Rp '))
                 ->description($periodeDesc)
                 ->descriptionIcon('heroicon-m-credit-card')
                 ->color($piutang > 0 ? 'warning' : 'success'),
-            Stat::make('Total Pengeluaran', new \Illuminate\Support\HtmlString('<span class="whitespace-normal break-words break-all">Rp ' . Number::format($totalPengeluaran, locale: 'id') . '</span>'))
+            Stat::make('Total Pengeluaran', $this->animatedStat($totalPengeluaran, 'Rp '))
                 ->description($periodeDesc)
                 ->descriptionIcon('heroicon-m-arrow-trending-down'),
-            Stat::make('Barang Terjual', Number::format($barangTerjual, locale: 'id') . ' pcs')
+            Stat::make('Barang Terjual', $this->animatedStat($barangTerjual, '', ' stok'))
                 ->description($periodeDesc)
                 ->descriptionIcon('heroicon-m-shopping-cart')
                 ->color('primary'),
-            Stat::make('Total Barang', $totalBarang)
+            Stat::make('Total Barang', $this->animatedStat($totalBarang))
                 ->description('Semua jenis')
                 ->descriptionIcon('heroicon-m-cube'),
-            Stat::make('Barang Hampir Habis', $barangHampirHabis)
+            Stat::make('Barang Hampir Habis', $this->animatedStat($barangHampirHabis))
                 ->color($barangHampirHabis > 0 ? 'danger' : 'success')
                 ->description($barangHampirHabis > 0 ? 'Perlu restok!' : 'Stok aman')
                 ->descriptionIcon($barangHampirHabis > 0 ? 'heroicon-m-exclamation-triangle' : 'heroicon-m-check-circle'),
-            Stat::make('Nota Pending Approval', $notaPending)
+            Stat::make('Nota Pending Approval', $this->animatedStat($notaPending))
                 ->color($notaPending > 0 ? 'warning' : 'success')
                 ->description($periodeDesc)
                 ->descriptionIcon('heroicon-m-clock'),
         ];
+    }
+
+    private function animatedStat(int|float $value, string $prefix = '', string $suffix = '')
+    {
+        $prefixHtml = $prefix ? "<span class=\"text-xl font-normal text-gray-500\">{$prefix}</span><br>" : '';
+        
+        return new \Illuminate\Support\HtmlString(<<<HTML
+{$prefixHtml}<span 
+    x-data="{
+        current: 0,
+        target: {$value},
+        init() {
+            this.animateTo(this.target);
+            let observer = new MutationObserver((mutations) => {
+                mutations.forEach((m) => {
+                    if (m.type === 'attributes' && m.attributeName === 'data-target') {
+                        let newTarget = parseFloat(this.\$el.getAttribute('data-target'));
+                        if(newTarget !== this.target) {
+                            this.target = newTarget;
+                            this.animateTo(this.target);
+                        }
+                    }
+                });
+            });
+            observer.observe(this.\$el, { attributes: true });
+        },
+        animateTo(end) {
+            let start = this.current;
+            let duration = 1500;
+            let startTime = performance.now();
+            let animate = (currentTime) => {
+                let elapsed = currentTime - startTime;
+                let progress = Math.min(elapsed / duration, 1);
+                let easeProgress = 1 - Math.pow(1 - progress, 3);
+                this.current = start + (end - start) * easeProgress;
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    this.current = end;
+                }
+            };
+            requestAnimationFrame(animate);
+        }
+    }"
+    data-target="{$value}"
+    x-text="new Intl.NumberFormat('id-ID').format(Math.round(current)) + '{$suffix}'"
+    class="tabular-nums tracking-tight whitespace-nowrap"
+></span>
+HTML
+        );
     }
 }

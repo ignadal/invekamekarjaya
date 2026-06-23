@@ -16,6 +16,7 @@ class BuyersTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->stackedOnMobile()
             ->columns([
                 TextColumn::make('kecamatan.nama_kecamatan')
                     ->searchable(),
@@ -41,9 +42,10 @@ class BuyersTable
             ->filters([
                 TrashedFilter::make(),
             ])
+            ->actionsColumnLabel('Aksi')
             ->recordActions([
-                \Filament\Actions\ViewAction::make()->iconButton(),
-                EditAction::make()->iconButton(),
+                \Filament\Actions\ViewAction::make()->label('View')->button()->outlined()->color('danger'),
+                EditAction::make()->iconButton()->label(''),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

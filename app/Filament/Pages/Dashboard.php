@@ -14,6 +14,7 @@ class Dashboard extends BaseDashboard
             \App\Filament\Widgets\LabaChart::class,
             \App\Filament\Widgets\PengeluaranChart::class,
             \App\Filament\Widgets\PenjualanChart::class,
+            \App\Filament\Widgets\TopSalesWidget::class,
         ];
     }
 

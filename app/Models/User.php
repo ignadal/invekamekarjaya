@@ -9,7 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class User extends Authenticatable implements \Filament\Models\Contracts\HasAvatar
 {
     /** @use HasFactory<UserFactory> */
      use HasRoles, HasFactory, Notifiable;
@@ -25,7 +25,13 @@ class User extends Authenticatable
         'no_hp',
         'password',
         'role',
+        'avatar_url',
     ];
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->avatar_url ? asset('storage/' . $this->avatar_url) : null;
+    }
 
     /**
      * The attributes that should be hidden for serialization.

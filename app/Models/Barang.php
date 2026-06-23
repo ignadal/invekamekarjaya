@@ -43,6 +43,11 @@ class Barang extends Model
         return $this->hasMany(PenjualanDetail::class);
     }
 
+    public function riwayatStoks(): HasMany
+    {
+        return $this->hasMany(RiwayatStok::class);
+    }
+
     public function riwayatHargaJuals(): HasMany
     {
         return $this->hasMany(RiwayatHargaJual::class);

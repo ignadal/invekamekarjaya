@@ -19,4 +19,11 @@ class ListPenjualans extends ListRecords
                 ->tooltip('Tambah Data'),
         ];
     }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            \App\Filament\Resources\Penjualans\Widgets\PenjualanStatsOverview::class,
+        ];
+    }
 }

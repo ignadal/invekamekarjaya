@@ -19,4 +19,11 @@ class ListPembelianSuppliers extends ListRecords
                 ->tooltip('Tambah Pembelian Supplier'),
         ];
     }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            \App\Filament\Resources\PembelianSuppliers\Widgets\PembelianSupplierStatsOverview::class,
+        ];
+    }
 }

@@ -51,6 +51,7 @@ class SalesResource extends Resource
             'index' => ListSales::route('/'),
             'create' => CreateSales::route('/create'),
             'edit' => EditSales::route('/{record}/edit'),
+            'performa' => Pages\PerformaSales::route('/{record}/performa'),
         ];
     }
 

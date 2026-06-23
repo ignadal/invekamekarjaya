@@ -41,6 +41,13 @@ class PayrollSalesResource extends Resource
         ];
     }
 
+    public static function getWidgets(): array
+    {
+        return [
+            \App\Filament\Resources\PayrollSales\Widgets\PayrollSalesStatsOverview::class,
+        ];
+    }
+
     public static function getPages(): array
     {
         return [

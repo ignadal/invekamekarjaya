@@ -6,61 +6,86 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Table;
+use Illuminate\Support\HtmlString;
 
 class PayrollSalesTable
 {
     public static function configure(Table $table): Table
     {
         return $table
+            ->contentGrid([
+                'md' => 2,
+                'xl' => 3,
+            ])
+            ->defaultSort('tahun', 'desc')
             ->columns([
-                TextColumn::make('sales.nama_sales')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('bulan')
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
-                        '1' => 'Januari',
-                        '2' => 'Februari',
-                        '3' => 'Maret',
-                        '4' => 'April',
-                        '5' => 'Mei',
-                        '6' => 'Juni',
-                        '7' => 'Juli',
-                        '8' => 'Agustus',
-                        '9' => 'September',
-                        '10' => 'Oktober',
-                        '11' => 'November',
-                        '12' => 'Desember',
-                        default => $state,
-                    })
-                    ->sortable(),
-                TextColumn::make('tahun')
-                    ->sortable(),
-                TextColumn::make('total_gaji')
-                    ->money('IDR')
-                    ->sortable(),
-                TextColumn::make('status_pembayaran')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'sudah_digaji' => 'success',
-                        'belum' => 'danger',
-                        default => 'gray',
-                    })
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'sudah_digaji' => 'Sudah Digaji',
-                        'belum' => 'Belum',
-                        default => $state,
-                    }),
+                Stack::make([
+                    TextColumn::make('sales.nama_sales')
+                        ->weight('bold')
+                        ->size('lg')
+                        ->icon('heroicon-m-user-circle')
+                        ->iconColor('danger')
+                        ->searchable(),
+                    
+                    TextColumn::make('periode')
+                        ->getStateUsing(function ($record) {
+                            $bulanArr = [
+                                '1' => 'Januari', '2' => 'Februari', '3' => 'Maret',
+                                '4' => 'April', '5' => 'Mei', '6' => 'Juni',
+                                '7' => 'Juli', '8' => 'Agustus', '9' => 'September',
+                                '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
+                            ];
+                            $bulanStr = $bulanArr[$record->bulan] ?? $record->bulan;
+                            return "Periode: {$bulanStr} {$record->tahun}";
+                        })
+                        ->color('gray')
+                        ->size('sm'),
+
+                    TextColumn::make('status_pembayaran')
+                        ->badge()
+                        ->color(fn ($state) => $state === 'sudah_digaji' ? 'success' : 'danger')
+                        ->formatStateUsing(fn ($state) => $state === 'sudah_digaji' ? 'Lunas' : 'Belum Dibayar'),
+
+                    TextColumn::make('total_gaji')
+                        ->money('IDR')
+                        ->weight('bold')
+                        ->size('xl')
+                        ->color('danger')
+                        ->description(fn ($record) => 'Total Gaji Pokok & Tunjangan', position: 'above'),
+
+                    TextColumn::make('gaji_pokok')
+                        ->money('IDR')
+                        ->label('Gaji Pokok & Bonus')
+                        ->getStateUsing(fn ($record) => $record->gaji_pokok + $record->bonus_nominal)
+                        ->color('gray')
+                        ->size('sm')
+                        ->icon('heroicon-o-banknotes'),
+
+                    TextColumn::make('tunjangan')
+                        ->money('IDR')
+                        ->label('Tunjangan Bensin & Makan')
+                        ->getStateUsing(fn ($record) => $record->uang_bensin + $record->uang_makan)
+                        ->color('gray')
+                        ->size('sm')
+                        ->icon('heroicon-o-truck'),
+                ])->space(3)
             ])
             ->filters([
                 //
             ])
             ->recordActions([
                 Action::make('tambah_tunjangan')
-                    ->label('Tambah Bensin & Makan')
-                    ->icon('heroicon-o-plus-circle')
-                    ->color('warning')
+                    ->label('Tunjangan')
+                    ->icon('heroicon-o-plus')
+                    ->color('danger')
+                    ->button()
+                    ->modalSubmitActionLabel('Kirim')
+                    ->extraAttributes(['style' => 'flex: 1 1 30%; justify-content: center;'])
                     ->form([
                         \Filament\Forms\Components\TextInput::make('uang_makan')
                             ->numeric()
@@ -82,13 +107,18 @@ class PayrollSalesTable
                             'total_gaji' => $totalGaji,
                         ]);
                     }),
-                \Filament\Actions\ViewAction::make()->iconButton(),
-                EditAction::make()->iconButton(),
+
                 Action::make('bayar')
-                    ->label('Bayar Gaji')
+                    ->label('Bayar')
                     ->icon('heroicon-o-check-circle')
-                    ->color('success')
+                    ->color('danger')
+                    ->button()
+                    ->extraAttributes(['style' => 'flex: 1 1 30%; justify-content: center;'])
                     ->requiresConfirmation()
+                    ->modalHeading('Konfirmasi Pembayaran Gaji')
+                    ->modalDescription('Apakah Anda yakin ingin menandai gaji ini sebagai Lunas?')
+                    ->modalSubmitActionLabel('Ya')
+                    ->modalCancelActionLabel('Cancel')
                     ->action(function ($record) {
                         $record->update(['status_pembayaran' => 'sudah_digaji']);
                     })
@@ -99,11 +129,15 @@ class PayrollSalesTable
                         $tanggalGajian = \Carbon\Carbon::create($record->tahun, $record->bulan, 28)->startOfDay();
                         return now()->greaterThanOrEqualTo($tanggalGajian);
                     }),
-            ])
-            ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                    
+                ActionGroup::make([
+                    EditAction::make()->color('gray'),
+                ])->icon('heroicon-m-ellipsis-vertical')
             ]);
+            // ->bulkActions([
+            //     BulkActionGroup::make([
+            //         DeleteBulkAction::make(),
+            //     ]),
+            // ]);
     }
 }

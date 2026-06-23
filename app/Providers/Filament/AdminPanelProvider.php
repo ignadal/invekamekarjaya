@@ -11,6 +11,7 @@ use App\Filament\Widgets\DashboardStatsOverview;
 use App\Filament\Widgets\LabaChart;
 use App\Filament\Widgets\PengeluaranChart;
 use App\Filament\Widgets\PenjualanChart;
+use App\Filament\Widgets\TopSalesWidget;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -27,7 +28,9 @@ class AdminPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->brandname('Mekar Jaya')
+            // ->brandname('Mekar Jaya')
+            ->brandLogo(asset('images/woi.png'))
+            ->brandLogoHeight('4rem')
             ->sidebarFullyCollapsibleOnDesktop()
             ->sidebarWidth('17rem')
             ->default()
@@ -39,42 +42,54 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => \Filament\Support\Colors\Color::Red,
             ])
             ->renderHook(
+                \Filament\View\PanelsRenderHook::BODY_START,
+                fn (): string => request()->path() === 'admin' 
+                    ? \Illuminate\Support\Facades\Blade::render('@livewire(\App\Livewire\JatuhTempoNotification::class)')
+                    : ''
+            )
+            ->renderHook(
                 \Filament\View\PanelsRenderHook::HEAD_START,
                 fn (): string => '<style>
                     /* Navbar Styling (White, No Border) */
                     html:not(.dark) .fi-topbar { border-bottom: none !important; box-shadow: none !important; background: white !important; }
 
-                    /* Topbar Left Corner Red (Always Red, Dynamic Width) */
+                    /* Topbar Left Corner Red (Dynamic Width) - Layout Applies to Both Modes */
                     @media (min-width: 1024px) {
-                        html:not(.dark) .fi-topbar { padding-left: 0 !important; }
+                        .fi-topbar { padding-left: 0 !important; }
                         
-                        /* Base styling for the Red Box */
-                        html:not(.dark) .fi-topbar-start {
-                            background-color: #b91c1c !important;
+                        /* Base layout for Topbar Start */
+                        .fi-topbar-start {
                             height: 4rem !important;
                             padding-left: 1.5rem !important;
                             padding-right: 1.5rem !important;
                             box-sizing: border-box;
                         }
-                        html:not(.dark) .fi-topbar-start button { color: white !important; }
-                        html:not(.dark) .fi-topbar-start button:hover { background-color: rgba(255,255,255,0.1) !important; }
-
-                        /* 1. When sidebar is OPEN */
-                        html:not(.dark):has(.fi-main-ctn-sidebar-open) .fi-topbar-start { width: var(--sidebar-width, 17rem) !important; }
-                        html:not(.dark):has(.fi-main-ctn-sidebar-open) .fi-topbar-start .fi-logo { color: white !important; margin-left: 0 !important; }
                         
-                        /* 2. When sidebar is COLLAPSED */
-                        html:not(.dark):not(:has(.fi-main-ctn-sidebar-open)) .fi-topbar-start { 
-                            background-color: transparent !important;
+                        /* Layout when sidebar is OPEN */
+                        body:has(.fi-main-ctn-sidebar-open) .fi-topbar-start { width: var(--sidebar-width, 17rem) !important; }
+                        body:has(.fi-main-ctn-sidebar-open) .fi-topbar-start .fi-logo { margin-left: 0 !important; }
+                        
+                        /* Layout when sidebar is COLLAPSED */
+                        body:not(:has(.fi-main-ctn-sidebar-open)) .fi-topbar-start { 
                             width: auto !important; 
                             padding-left: 1.5rem !important; 
                             padding-right: 1.5rem !important;
                         }
-                        html:not(.dark):not(:has(.fi-main-ctn-sidebar-open)) .fi-topbar-start button { color: #b91c1c !important; }
-                        html:not(.dark):not(:has(.fi-main-ctn-sidebar-open)) .fi-topbar-start button:hover { background-color: rgba(185,28,28,0.1) !important; }
                         body:not(:has(.fi-main-ctn-sidebar-open)) .fi-topbar-start .fi-logo { 
                             display: none !important;
                         }
+
+                        /* =======================================
+                           COLORS FOR LIGHT MODE (Red Box)
+                           ======================================= */
+                        html:not(.dark) .fi-topbar-start { background-color: #b91c1c !important; }
+                        html:not(.dark) .fi-topbar-start button { color: white !important; }
+                        html:not(.dark) .fi-topbar-start button:hover { background-color: rgba(255,255,255,0.1) !important; }
+                        html:not(.dark):has(.fi-main-ctn-sidebar-open) .fi-topbar-start .fi-logo { color: white !important; }
+                        
+                        html:not(.dark):not(:has(.fi-main-ctn-sidebar-open)) .fi-topbar-start { background-color: transparent !important; }
+                        html:not(.dark):not(:has(.fi-main-ctn-sidebar-open)) .fi-topbar-start button { color: #b91c1c !important; }
+                        html:not(.dark):not(:has(.fi-main-ctn-sidebar-open)) .fi-topbar-start button:hover { background-color: rgba(185,28,28,0.1) !important; }
                     }
 
                     /* Sidebar Background (Darker Red) */
@@ -155,7 +170,9 @@ class AdminPanelProvider extends PanelProvider
                     
                     /* Apply Red Gradient in Light Mode (Brighter Red) */
                     html:not(.dark) .red-gradient-filter { 
-                        background: linear-gradient(to right, #991b1b, #dc2626) !important; /* red-800 to red-600 */
+                        background: linear-gradient(to right, #991b1b, #dc2626, #b91c1c, #991b1b) !important; 
+                        background-size: 300% 300% !important;
+                        animation: gradient-animation 8s ease infinite !important;
                         border-radius: 0.75rem !important;
                         margin-bottom: 1.5rem !important;
                         border: none !important;
@@ -163,10 +180,17 @@ class AdminPanelProvider extends PanelProvider
                     
                     /* Apply VERY Dark Red Gradient in Dark Mode (Very Dark Red) */
                     html.dark .red-gradient-filter { 
-                        background: linear-gradient(to right, #450a0a, #7f1d1d) !important; /* red-950 to red-900 */
+                        background: linear-gradient(to right, #450a0a, #7f1d1d, #450a0a) !important; 
+                        background-size: 300% 300% !important;
+                        animation: gradient-animation 8s ease infinite !important;
                         border-radius: 0.75rem !important;
                         margin-bottom: 1.5rem !important;
                         border: none !important;
+                    }
+                    @keyframes gradient-animation {
+                        0% { background-position: 0% 50%; }
+                        50% { background-position: 100% 50%; }
+                        100% { background-position: 0% 50%; }
                     }
                     .red-gradient-filter .fi-section-header,
                     .red-gradient-filter header,
@@ -210,8 +234,6 @@ class AdminPanelProvider extends PanelProvider
                     html:not(.dark) .fi-ta-header-toolbar {
                         background-color: #dc2626 !important; /* Brighter Red */
                         border-bottom: none !important;
-                        border-top-left-radius: 0.75rem !important; /* Rounded corners */
-                        border-top-right-radius: 0.75rem !important;
                     }
                     /* Make action icon buttons in toolbar (like column toggle/filters) white */
                     html:not(.dark) .fi-ta-header-toolbar .fi-icon-btn,
@@ -239,11 +261,27 @@ class AdminPanelProvider extends PanelProvider
                         color: #dc2626 !important;
                     }
                     
+                    /* Table Header Background and Text Color - Light Mode Only */
+                    html:not(.dark) .fi-ta-header {
+                        background-color: #dc2626 !important;
+                    }
+                    html:not(.dark) .fi-ta-header-heading,
+                    html:not(.dark) .fi-ta-header-description {
+                        color: white !important;
+                    }
+                    
                     /* Table Checkboxes Border (Light Mode Only) */
                     html:not(.dark) .fi-checkbox-input {
                         border: 2px solid #dc2626 !important;
                     }
                     html:not(.dark) .fi-checkbox-input:checked {
+                        background-color: #dc2626 !important;
+                    }
+                    /* Radio Button Border (Light Mode Only) */
+                    html:not(.dark) .fi-radio-input {
+                        border-color: #dc2626 !important;
+                    }
+                    html:not(.dark) .fi-radio-input:checked {
                         background-color: #dc2626 !important;
                     }
                     
@@ -278,10 +316,118 @@ class AdminPanelProvider extends PanelProvider
                     .fi-wi-stats-overview-stat:nth-child(6) { border-bottom-color: #7f1d1d !important; }
                     .fi-wi-stats-overview-stat:nth-child(7) { border-bottom-color: #fca5a5 !important; }
                     .fi-wi-stats-overview-stat:nth-child(8) { border-bottom-color: #f59e0b !important; }
+
+                    /* Center actions in Barangs grid ONLY */
+                    .barangs-grid-card .fi-ta-record-actions,
+                    .barangs-grid-card .fi-ta-actions {
+                        justify-content: center !important;
+                    }
+
+                    /* Edge-to-edge images in Grid Cards */
+                    .custom-square-wrapper {
+                        margin: -1rem -1rem 1rem -1rem !important;
+                        width: calc(100% + 2rem) !important;
+                        max-width: none !important;
+                        display: flex !important;
+                        justify-content: center !important;
+                    }
+                    .custom-square-wrapper img {
+                        width: 100% !important;
+                        max-width: 100% !important;
+                        aspect-ratio: 1/1 !important;
+                        height: auto !important;
+                        object-fit: cover !important;
+                        border-radius: 0.75rem 0.75rem 0 0 !important;
+                    }
+
+                    .custom-rect-wrapper {
+                        margin: -1rem -1rem 1rem -1rem !important;
+                        width: calc(100% + 2rem) !important;
+                        max-width: none !important;
+                        display: flex !important;
+                        justify-content: center !important;
+                    }
+                    .custom-rect-wrapper img {
+                        width: 100% !important;
+                        max-width: 100% !important;
+                        height: 250px !important;
+                        object-fit: cover !important;
+                        border-radius: 0.75rem 0.75rem 0 0 !important;
+                    }
+
+                    /* Red borders on outermost container - Light Mode Only */
+                    html:not(.dark) .fi-ta-ctn {
+                        border: 2px solid #dc2626 !important;
+                        border-radius: 0.75rem !important;
+                        overflow: hidden !important;
+                        box-shadow: none !important;
+                    }
+                    /* Remove outer border if its a card grid layout */
+                    html:not(.dark) .fi-ta-ctn:has(.fi-ta-content-grid) {
+                        border: none !important;
+                    }
+                    html:not(.dark) .fi-ta-content-grid .fi-ta-record {
+                        border: 2px solid #dc2626 !important;
+                        border-radius: 0.75rem !important;
+                    }
+                    html:not(.dark) .fi-ta-table {
+                        border: none !important;
+                        border-radius: 0 !important;
+                        width: 100% !important;
+                    }
+                    html:not(.dark) .fi-ta-table td {
+                        border-bottom: 1px solid #fecaca !important;
+                    }
+                    /* Force grid images to stretch full width and crop */
+                    .fi-ta-content-grid .fi-ta-image {
+                        width: 100% !important;
+                        max-width: 100% !important;
+                        justify-content: center;
+                    }
+                    .fi-ta-content-grid .fi-ta-image img {
+                        width: 100% !important;
+                        max-width: 100% !important;
+                        object-fit: cover !important;
+                        height: 250px !important;
+                        border-radius: 0.75rem 0.75rem 0 0 !important;
+                    }
+
+                    /* =========================================
+                       SIDEBAR BADGES VISIBILITY FIX (MAX SPECIFICITY)
+                       ========================================= */
+                    html:not(.dark) body aside.fi-sidebar .fi-sidebar-item-active .fi-sidebar-item-badge,
+                    html:not(.dark) body aside.fi-sidebar .fi-sidebar-item-active .fi-sidebar-item-badge span,
+                    html:not(.dark) body aside.fi-sidebar .fi-sidebar-item-badge,
+                    html:not(.dark) body aside.fi-sidebar .fi-sidebar-item-badge span,
+                    html:not(.dark) body aside.fi-sidebar .fi-badge,
+                    html:not(.dark) body aside.fi-sidebar .fi-badge span {
+                        background-color: white !important;
+                        color: #b91c1c !important; /* Dark Red Text */
+                        font-weight: 900 !important;
+                        border: none !important;
+                    }
+
+                    /* Warning Badges */
+                    html:not(.dark) body aside.fi-sidebar .fi-sidebar-item-active [class*="warning"] .fi-sidebar-item-badge,
+                    html:not(.dark) body aside.fi-sidebar .fi-sidebar-item-active [class*="warning"] .fi-sidebar-item-badge span,
+                    html:not(.dark) body aside.fi-sidebar [class*="warning"] .fi-sidebar-item-badge,
+                    html:not(.dark) body aside.fi-sidebar [class*="warning"] .fi-sidebar-item-badge span,
+                    html:not(.dark) body aside.fi-sidebar .fi-badge[class*="warning"],
+                    html:not(.dark) body aside.fi-sidebar .fi-badge[class*="warning"] span {
+                        background-color: #fef08a !important;
+                        color: #b45309 !important;
+                        border: none !important;
+                    }
                 </style>'
             )
             ->plugins([
                 FilamentApexChartsPlugin::make(),
+            ])
+            ->userMenuItems([
+                'profile' => \Filament\Navigation\MenuItem::make()
+                    ->label('Profil Saya')
+                    ->url(fn (): string => \App\Filament\Pages\Profile::getUrl())
+                    ->icon('heroicon-m-user-circle'),
             ])
             ->sidebarCollapsibleOnDesktop()
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
@@ -295,6 +441,7 @@ class AdminPanelProvider extends PanelProvider
                 LabaChart::class,
                 PengeluaranChart::class,
                 PenjualanChart::class,
+                TopSalesWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

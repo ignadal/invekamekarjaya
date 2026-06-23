@@ -31,6 +31,7 @@ class PenjualanForm
                                 
                                 Select::make('buyer_id')
                                     ->relationship('buyer', 'nama_toko')
+                                    ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->nama_toko} - " . ($record->kecamatan->nama_kecamatan ?? ''))
                                     ->required()
                                     ->searchable()
                                     ->preload(),
@@ -82,7 +83,7 @@ class PenjualanForm
                                     ->numeric()
                                     ->required()
                                     ->default(0)
-                                    ->live(debounce: 500)
+                                    ->live(onBlur: true)
                                     ->visible(fn (Get $get) => $get('metode') === 'cicil')
                                     ->afterStateUpdated(function (Set $set, Get $get, $state) {
                                         $sudah = (int) $state;
@@ -107,6 +108,7 @@ class PenjualanForm
 
                         FileUpload::make('foto_nota')
                             ->image()
+                            ->disk('public')
                             ->directory('nota_penjualan')
                             ->columnSpanFull(),
                     ]),
@@ -131,12 +133,38 @@ class PenjualanForm
                                     ->required()
                                     ->searchable()
                                     ->live()
-                                    ->afterStateUpdated(function (Set $set, $state) {
+                                    ->afterStateUpdated(function (Set $set, Get $get, $state, ?string $statePath) {
                                         $barang = Barang::find($state);
                                         if ($barang) {
                                             $set('harga_jual', $barang->harga_jual);
                                             $set('qty', 1);
                                             $set('subtotal', $barang->harga_jual);
+                                            
+                                            $details = $get('../../details') ?? [];
+                                            $segments = explode('.', $statePath);
+                                            $key = $segments[count($segments) - 2] ?? null;
+                                            
+                                            $total = 0;
+                                            foreach ($details as $k => $item) {
+                                                if ($k === $key) {
+                                                    $total += $barang->harga_jual * 1;
+                                                } else {
+                                                    $q = isset($item['qty']) ? (int)$item['qty'] : 0;
+                                                    $h = isset($item['harga_jual']) ? (int)$item['harga_jual'] : 0;
+                                                    $total += ($q * $h);
+                                                }
+                                            }
+                                            $set('../../total_penjualan', $total);
+                                            
+                                            if ($get('../../metode') === 'lunas') {
+                                                $set('../../sudah_dibayar', $total);
+                                                $set('../../sisa_pembayaran', 0);
+                                                $set('../../status_bayar', 'lunas');
+                                            } else {
+                                                $sudah = (int)$get('../../sudah_dibayar');
+                                                $set('../../sisa_pembayaran', $total - $sudah);
+                                                $set('../../status_bayar', $sudah >= $total && $total > 0 ? 'lunas' : ($sudah > 0 ? 'sebagian' : 'belum_dibayar'));
+                                            }
                                         }
                                     }),
 
@@ -149,7 +177,7 @@ class PenjualanForm
                                         $barang = Barang::find($get('barang_id'));
                                         return $barang ? $barang->stok : 1;
                                     })
-                                    ->live(debounce: 500)
+                                    ->live(onBlur: true)
                                     ->afterStateUpdated(function (Set $set, Get $get, $state) {
                                         $barang = Barang::find($get('barang_id'));
                                         if ($barang && $state > $barang->stok) {
@@ -157,11 +185,15 @@ class PenjualanForm
                                             $set('qty', $state);
                                         }
                                         $set('subtotal', $state * (int)$get('harga_jual'));
+                                        
                                         $details = $get('../../details');
                                         $total = 0;
                                         if (is_array($details)) {
                                             foreach ($details as $item) {
-                                                $total += (int) ($item['subtotal'] ?? 0);
+                                                // Calculate manually from qty and harga_jual to ensure latest state is used
+                                                $q = isset($item['qty']) ? (int)$item['qty'] : 0;
+                                                $h = isset($item['harga_jual']) ? (int)$item['harga_jual'] : 0;
+                                                $total += ($q * $h);
                                             }
                                         }
                                         $set('../../total_penjualan', $total);
@@ -180,14 +212,17 @@ class PenjualanForm
                                 TextInput::make('harga_jual')
                                     ->numeric()
                                     ->required()
-                                    ->live(debounce: 500)
+                                    ->live(onBlur: true)
                                     ->afterStateUpdated(function (Set $set, Get $get, $state) {
                                         $set('subtotal', $state * (int)$get('qty'));
+                                        
                                         $details = $get('../../details');
                                         $total = 0;
                                         if (is_array($details)) {
                                             foreach ($details as $item) {
-                                                $total += (int) ($item['subtotal'] ?? 0);
+                                                $q = isset($item['qty']) ? (int)$item['qty'] : 0;
+                                                $h = isset($item['harga_jual']) ? (int)$item['harga_jual'] : 0;
+                                                $total += ($q * $h);
                                             }
                                         }
                                         $set('../../total_penjualan', $total);

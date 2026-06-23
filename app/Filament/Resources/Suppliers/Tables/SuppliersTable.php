@@ -16,14 +16,15 @@ class SuppliersTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->stackedOnMobile()
             ->columns([
                 TextColumn::make('nama_supplier')
+                    ->searchable(),
+                TextColumn::make('no_hp_supplier')
                     ->searchable(),
                 TextColumn::make('nama_agent')
                     ->searchable(),
                 TextColumn::make('jabatan_agent')
-                    ->searchable(),
-                TextColumn::make('no_hp_supplier')
                     ->searchable(),
                 TextColumn::make('no_hp_agent')
                     ->searchable(),
@@ -43,9 +44,10 @@ class SuppliersTable
             ->filters([
                 TrashedFilter::make(),
             ])
+            ->actionsColumnLabel('Aksi')
             ->recordActions([
-                \Filament\Actions\ViewAction::make()->iconButton(),
-                EditAction::make()->iconButton(),
+                \Filament\Actions\ViewAction::make()->label('View')->button()->outlined()->color('danger'),
+                EditAction::make()->iconButton()->label(''),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

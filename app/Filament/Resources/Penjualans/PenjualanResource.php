@@ -24,6 +24,29 @@ class PenjualanResource extends Resource
     protected static ?int $navigationSort = 3;
     protected static ?string $navigationLabel = 'Penjualan';
 
+    public static function getNavigationBadge(): ?string
+    {
+        $batasTempo = now()->addDays(3)->endOfDay();
+        
+        $pending = \App\Models\Penjualan::where('status_persetujuan', 'pending')->count();
+        $piutang = \App\Models\Penjualan::where('metode', 'cicil')
+            ->whereIn('status_bayar', ['sebagian', 'belum_dibayar'])
+            ->where('status_persetujuan', 'disetujui')
+            ->whereNotNull('jatuh_tempo')
+            ->where('jatuh_tempo', '<=', $batasTempo)
+            ->count();
+            
+        $total = $pending + $piutang;
+        
+        return $total > 0 ? (string) $total : null;
+    }
+    
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        $pending = \App\Models\Penjualan::where('status_persetujuan', 'pending')->count();
+        return $pending > 0 ? 'warning' : 'danger';
+    }
+
     public static function form(Schema $schema): Schema
     {
         return PenjualanForm::configure($schema);
@@ -38,6 +61,13 @@ class PenjualanResource extends Resource
     {
         return [
             //
+        ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            \App\Filament\Resources\Penjualans\Widgets\PenjualanStatsOverview::class,
         ];
     }
 

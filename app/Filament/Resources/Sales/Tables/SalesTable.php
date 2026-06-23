@@ -16,6 +16,7 @@ class SalesTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->stackedOnMobile()
             ->columns([
                 TextColumn::make('user.name')
                     ->searchable(),
@@ -45,9 +46,16 @@ class SalesTable
             ->filters([
                 TrashedFilter::make(),
             ])
+            ->actionsColumnLabel('Aksi')
             ->recordActions([
-                \Filament\Actions\ViewAction::make()->iconButton(),
-                EditAction::make()->iconButton(),
+                \Filament\Actions\Action::make('performa')
+                    ->label('Performa')
+                    ->icon('heroicon-o-chart-bar')
+                    ->color('danger')
+                    ->button()
+                    ->url(fn ($record) => \App\Filament\Resources\Sales\SalesResource::getUrl('performa', ['record' => $record])),
+                \Filament\Actions\ViewAction::make()->label('View')->button()->outlined()->color('danger'),
+                EditAction::make()->iconButton()->label(''),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

@@ -14,6 +14,7 @@ class KunjunganSalesTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->StackedOnMobile()
             ->columns([
                 TextColumn::make('tanggal_kunjungan')
                     ->date()
@@ -25,6 +26,7 @@ class KunjunganSalesTable
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('hasil_kunjungan')
+                    ->formatStateUsing(fn (string $state): string => ucwords(str_replace('_', ' ', $state)))
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'order' => 'success',
@@ -36,11 +38,14 @@ class KunjunganSalesTable
             ->filters([
                 //
             ])
+            ->actionsColumnLabel('Aksi')
             ->recordActions([
                 \Filament\Actions\Action::make('lihat_foto')
                     ->label('Foto')
                     ->icon('heroicon-o-camera')
-                    ->iconButton()
+                    ->button()
+                    ->outlined()
+                    ->color('danger')
                     ->modalHeading('Foto & Catatan Kunjungan')
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Tutup')
@@ -51,7 +56,7 @@ class KunjunganSalesTable
                         \Filament\Infolists\Components\TextEntry::make('catatan')
                             ->label('Catatan/Deskripsi'),
                     ]),
-                EditAction::make()->iconButton(),
+                EditAction::make()->iconButton()->label(''),
             ])
             ->bulkActions([
                 BulkActionGroup::make([

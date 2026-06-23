@@ -19,4 +19,11 @@ class ListPayrollSales extends ListRecords
                 ->tooltip('Tambah Data'),
         ];
     }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            \App\Filament\Resources\PayrollSales\Widgets\PayrollSalesStatsOverview::class,
+        ];
+    }
 }

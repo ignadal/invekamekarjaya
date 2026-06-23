@@ -27,6 +27,23 @@ class PembelianSupplierResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'id';
 
+    public static function getNavigationBadge(): ?string
+    {
+        $batasTempo = now()->addDays(3)->endOfDay();
+        $count = \App\Models\PembelianSupplier::where('metode', 'nyicil')
+            ->whereIn('status', ['sebagian', 'belum_dibayar'])
+            ->whereNotNull('jatuh_tempo')
+            ->where('jatuh_tempo', '<=', $batasTempo)
+            ->count();
+            
+        return $count > 0 ? (string) $count : null;
+    }
+    
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return 'danger';
+    }
+
     public static function form(Schema $schema): Schema
     {
         return PembelianSupplierForm::configure($schema);
@@ -41,6 +58,13 @@ class PembelianSupplierResource extends Resource
     {
         return [
             DetailsRelationManager::class,
+        ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            \App\Filament\Resources\PembelianSuppliers\Widgets\PembelianSupplierStatsOverview::class,
         ];
     }
 

@@ -28,6 +28,17 @@ class BarangResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'nama_barang';
 
+    public static function getNavigationBadge(): ?string
+    {
+        $count = \App\Models\Barang::where('stok', '<=', 0)->count();
+        return $count > 0 ? (string) $count : null;
+    }
+    
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return 'danger';
+    }
+
     public static function form(Schema $schema): Schema
     {
         return BarangForm::configure($schema);
@@ -41,6 +52,7 @@ class BarangResource extends Resource
     public static function getRelations(): array
     {
         return [
+            RelationManagers\RiwayatStoksRelationManager::class,
             RelationManagers\RiwayatHargaJualsRelationManager::class,
             RelationManagers\PembelianDetailsRelationManager::class,
             RelationManagers\PenjualanDetailsRelationManager::class,
