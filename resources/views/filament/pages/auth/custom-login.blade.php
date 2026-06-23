@@ -210,6 +210,12 @@
     .form-container p {
         color: var(--text-primary) !important;
     }
+    
+    .form-container input,
+    .form-container input[type="password"],
+    .form-container .fi-input {
+        caret-color: var(--theme-red) !important;
+    }
     .form-container .fi-input-wrp {
         background-color: var(--bg-card) !important;
         box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
@@ -232,6 +238,7 @@
     .form-container input:-webkit-autofill:active {
         -webkit-box-shadow: 0 0 0 30px var(--bg-card) inset !important;
         -webkit-text-fill-color: var(--text-primary) !important;
+        caret-color: var(--theme-red) !important;
         transition: background-color 5000s ease-in-out 0s;
     }
 
@@ -320,10 +327,83 @@
         object-fit: contain;
     }
     
-    .footer-brand {
+    .form-container span.footer-brand {
         font-size: 0.9rem;
         font-weight: bold;
-        color: var(--theme-red);
+        color: var(--theme-red-dark) !important;
+    }
+
+    /* Background Neon Chart */
+    .bg-chart-container {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 80vh;
+        z-index: 0;
+        opacity: 0.8;
+        pointer-events: none;
+        overflow: hidden;
+        mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+        -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+    }
+
+    [data-theme="dark"] .bg-chart-container {
+        opacity: 1;
+    }
+
+    .bg-chart {
+        width: 100%;
+        height: 100%;
+    }
+
+    .chart-line {
+        stroke-dasharray: 2000;
+        stroke-dashoffset: 2000;
+    }
+    
+    .chart-line.main {
+        animation: drawLine 2.5s ease-in-out forwards infinite alternate;
+    }
+    
+    .chart-line.fast {
+        stroke-dasharray: 1000;
+        animation: drawLine 1.5s linear forwards infinite alternate;
+    }
+
+    .chart-area {
+        opacity: 0;
+        animation: fadeInArea 2.5s ease-in-out forwards infinite alternate;
+    }
+
+    .chart-node {
+        opacity: 0;
+        animation: pulseNode 1s ease-in-out forwards infinite alternate;
+    }
+    
+    .bar-anim {
+        transform-origin: bottom;
+        animation: scaleBar 2s ease-in-out forwards infinite alternate;
+    }
+
+    @keyframes drawLine {
+        0% { stroke-dashoffset: 2000; }
+        100% { stroke-dashoffset: 0; }
+    }
+
+    @keyframes fadeInArea {
+        0%, 30% { opacity: 0; }
+        100% { opacity: 1; }
+    }
+
+    @keyframes pulseNode {
+        0% { opacity: 0.2; transform: scale(0.5); }
+        100% { opacity: 1; transform: scale(1.5); }
+    }
+    
+    @keyframes scaleBar {
+        0% { transform: scaleY(0.3); opacity: 0.1; }
+        100% { transform: scaleY(1); opacity: 0.5; }
     }
 
 </style>
@@ -332,9 +412,63 @@
     
     <button id="theme-toggle" class="theme-switch" aria-label="Toggle Theme">
         <div class="theme-switch-thumb"></div>
-        <svg class="sun-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4.22 2.28a1 1 0 011.415 0l.708.708a1 1 0 01-1.414 1.414l-.708-.708a1 1 0 010-1.414zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zm-2.28 4.22a1 1 0 010 1.415l-.708.708a1 1 0 01-1.414-1.414l.708-.708a1 1 0 011.414 0zM10 16a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-4.22-2.28a1 1 0 01-1.415 0l-.708-.708a1 1 0 011.414-1.414l.708.708a1 1 0 010 1.414zM2 10a1 1 0 011-1h1a1 1 0 110 2H3a1 1 0 01-1-1zm2.28-4.22a1 1 0 010-1.415l.708-.708a1 1 0 011.414 1.414l-.708.708a1 1 0 01-1.414 0zM10 5a5 5 0 100 10 5 5 0 000-10z" clip-rule="evenodd"></path></svg>
+        <svg class="sun-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4.22 2.28a1 1 0 011.415 0l.708.708a1 1 0 01-1.414 1.414l-.708-.708a1 1 0 010-1.414zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zm-2.28 4.22a1 1 0 010 1.415l-.708.708a1 1 0 01-1.414-1.414l.708-.708a1 1 0 011.414 0zM10 16a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-4.22-2.28a1 1 0 01-1.415 0l-.708-.708a1 1 0 011.414-1.414l.708.708a1 1 0 010 1.414zM2 10a1 1 0 011-1h1a1 1 0 110 2H3a1 1 0 01-1-1zm2.28-4.22a1 1 0 010-1.415l-.708-.708a1 1 0 011.414 1.414l-.708.708a1 1 0 01-1.414 0zM10 5a5 5 0 100 10 5 5 0 000-10z" clip-rule="evenodd"></path></svg>
         <svg class="moon-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
     </button>
+
+    <!-- Background Animated Neon Chart -->
+    <div class="bg-chart-container">
+        <svg class="bg-chart" viewBox="0 0 1000 400" preserveAspectRatio="none">
+            <defs>
+                <linearGradient id="chartGradient1" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="var(--theme-red)" stop-opacity="0.4" />
+                    <stop offset="100%" stop-color="var(--theme-red)" stop-opacity="0" />
+                </linearGradient>
+                <filter id="neonGlowHeavy" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="12" result="blur" />
+                    <feMerge>
+                        <feMergeNode in="blur" />
+                        <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                </filter>
+            </defs>
+            
+            <!-- Grid lines -->
+            <g class="chart-grid" stroke="var(--text-secondary)" stroke-opacity="0.25" stroke-width="1.5">
+                <line x1="0" y1="50" x2="1000" y2="50" />
+                <line x1="0" y1="150" x2="1000" y2="150" />
+                <line x1="0" y1="250" x2="1000" y2="250" />
+                <line x1="0" y1="350" x2="1000" y2="350" />
+            </g>
+
+            <!-- Floating Bars (Bar Chart) -->
+            <g class="chart-bars" fill="var(--theme-red)" filter="url(#neonGlowHeavy)">
+                <rect x="50" y="200" width="30" height="200" class="bar-anim" style="animation-delay: 0.1s" />
+                <rect x="250" y="120" width="30" height="280" class="bar-anim" style="animation-delay: 0.4s" />
+                <rect x="450" y="80" width="30" height="320" class="bar-anim" style="animation-delay: 0.2s" />
+                <rect x="650" y="160" width="30" height="240" class="bar-anim" style="animation-delay: 0.7s" />
+                <rect x="850" y="60" width="30" height="340" class="bar-anim" style="animation-delay: 0.5s" />
+            </g>
+
+            <!-- Background Line (Fast curve) -->
+            <path class="chart-line fast" d="M0,300 Q100,200 200,320 T400,250 T600,100 T800,280 T1000,150" fill="none" stroke="#ff6b6b" stroke-width="2" filter="url(#neonGlowHeavy)" opacity="0.6" />
+
+            <!-- Area under Main Line -->
+            <path class="chart-area" d="M0,400 L0,250 L150,180 L300,260 L500,120 L700,160 L850,50 L1000,90 L1000,400 Z" fill="url(#chartGradient1)" />
+
+            <!-- Main Glowing Line -->
+            <path class="chart-line main" d="M0,250 L150,180 L300,260 L500,120 L700,160 L850,50 L1000,90" fill="none" stroke="var(--theme-red)" stroke-width="6" filter="url(#neonGlowHeavy)" />
+            
+            <!-- Nodes on Main Line -->
+            <g fill="white" filter="url(#neonGlowHeavy)">
+                <circle cx="150" cy="180" r="8" class="chart-node" style="animation-delay: 0.2s; transform-origin: 150px 180px;" />
+                <circle cx="300" cy="260" r="8" class="chart-node" style="animation-delay: 0.4s; transform-origin: 300px 260px;" />
+                <circle cx="500" cy="120" r="8" class="chart-node" style="animation-delay: 0.6s; transform-origin: 500px 120px;" />
+                <circle cx="700" cy="160" r="8" class="chart-node" style="animation-delay: 0.8s; transform-origin: 700px 160px;" />
+                <circle cx="850" cy="50" r="8" class="chart-node" style="animation-delay: 1.0s; transform-origin: 850px 50px;" />
+            </g>
+        </svg>
+    </div>
 
     <div class="neon-wrapper">
         <div class="login-card">
