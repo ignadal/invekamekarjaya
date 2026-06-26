@@ -25,47 +25,62 @@ class SalesStatsOverview extends Widget
         $startOfLastMonth = now()->subMonth()->startOfMonth();
         $endOfLastMonth = now()->subMonth()->endOfMonth();
 
-        // 1. Total Kunjungan
-        $kunjunganBulanIni = KunjunganSales::where('sales_id', $salesId)
-            ->whereBetween('tanggal_kunjungan', [$startOfMonth, $endOfMonth])
-            ->count();
-        $kunjunganBulanLalu = KunjunganSales::where('sales_id', $salesId)
-            ->whereBetween('tanggal_kunjungan', [$startOfLastMonth, $endOfLastMonth])
-            ->count();
-        $kunjunganGrowth = $kunjunganBulanLalu > 0 ? (($kunjunganBulanIni - $kunjunganBulanLalu) / $kunjunganBulanLalu) * 100 : ($kunjunganBulanIni > 0 ? 100 : 0);
+        $kunjunganBulanIni = 0;
+        $kunjunganBulanLalu = 0;
+        $kunjunganGrowth = 0;
+        $tagihanBulanIni = 0;
+        $tagihanBulanLalu = 0;
+        $tagihanGrowth = 0;
+        $pembayaranBulanIni = 0;
+        $pembayaranBulanLalu = 0;
+        $pembayaranGrowth = 0;
+        $komisiBulanIni = 0;
+        $komisiBulanLalu = 0;
+        $komisiGrowth = 0;
 
-        // 2. Total Tagihan
-        $tagihanBulanIni = Penjualan::where('sales_id', $salesId)
-            ->whereBetween('tanggal_beli', [$startOfMonth, $endOfMonth])
-            ->sum('total_penjualan');
-        $tagihanBulanLalu = Penjualan::where('sales_id', $salesId)
-            ->whereBetween('tanggal_beli', [$startOfLastMonth, $endOfLastMonth])
-            ->sum('total_penjualan');
-        $tagihanGrowth = $tagihanBulanLalu > 0 ? (($tagihanBulanIni - $tagihanBulanLalu) / $tagihanBulanLalu) * 100 : ($tagihanBulanIni > 0 ? 100 : 0);
+        if ($salesId) {
+            // 1. Total Kunjungan
+            $kunjunganBulanIni = KunjunganSales::where('sales_id', $salesId)
+                ->whereBetween('tanggal_kunjungan', [$startOfMonth, $endOfMonth])
+                ->count();
+            $kunjunganBulanLalu = KunjunganSales::where('sales_id', $salesId)
+                ->whereBetween('tanggal_kunjungan', [$startOfLastMonth, $endOfLastMonth])
+                ->count();
+            $kunjunganGrowth = $kunjunganBulanLalu > 0 ? (($kunjunganBulanIni - $kunjunganBulanLalu) / $kunjunganBulanLalu) * 100 : ($kunjunganBulanIni > 0 ? 100 : 0);
 
-        // 3. Total Pembayaran
-        $pembayaranBulanIni = CicilanBuyer::whereHas('penjualan', function($q) use ($salesId) {
-                $q->where('sales_id', $salesId);
-            })
-            ->whereBetween('tanggal_bayar', [$startOfMonth, $endOfMonth])
-            ->sum('nominal');
-        $pembayaranBulanLalu = CicilanBuyer::whereHas('penjualan', function($q) use ($salesId) {
-                $q->where('sales_id', $salesId);
-            })
-            ->whereBetween('tanggal_bayar', [$startOfLastMonth, $endOfLastMonth])
-            ->sum('nominal');
-        $pembayaranGrowth = $pembayaranBulanLalu > 0 ? (($pembayaranBulanIni - $pembayaranBulanLalu) / $pembayaranBulanLalu) * 100 : ($pembayaranBulanIni > 0 ? 100 : 0);
+            // 2. Total Tagihan
+            $tagihanBulanIni = Penjualan::where('sales_id', $salesId)
+                ->whereBetween('tanggal_beli', [$startOfMonth, $endOfMonth])
+                ->sum('total_penjualan');
+            $tagihanBulanLalu = Penjualan::where('sales_id', $salesId)
+                ->whereBetween('tanggal_beli', [$startOfLastMonth, $endOfLastMonth])
+                ->sum('total_penjualan');
+            $tagihanGrowth = $tagihanBulanLalu > 0 ? (($tagihanBulanIni - $tagihanBulanLalu) / $tagihanBulanLalu) * 100 : ($tagihanBulanIni > 0 ? 100 : 0);
 
-        // 4. Komisi
-        $komisiBulanIni = PayrollSales::where('sales_id', $salesId)
-            ->where('bulan', now()->month)
-            ->where('tahun', now()->year)
-            ->sum('bonus_nominal');
-        $komisiBulanLalu = PayrollSales::where('sales_id', $salesId)
-            ->where('bulan', now()->subMonth()->month)
-            ->where('tahun', now()->subMonth()->year)
-            ->sum('bonus_nominal');
-        $komisiGrowth = $komisiBulanLalu > 0 ? (($komisiBulanIni - $komisiBulanLalu) / $komisiBulanLalu) * 100 : ($komisiBulanIni > 0 ? 100 : 0);
+            // 3. Total Pembayaran
+            $pembayaranBulanIni = CicilanBuyer::whereHas('penjualan', function($q) use ($salesId) {
+                    $q->where('sales_id', $salesId);
+                })
+                ->whereBetween('tanggal_bayar', [$startOfMonth, $endOfMonth])
+                ->sum('nominal');
+            $pembayaranBulanLalu = CicilanBuyer::whereHas('penjualan', function($q) use ($salesId) {
+                    $q->where('sales_id', $salesId);
+                })
+                ->whereBetween('tanggal_bayar', [$startOfLastMonth, $endOfLastMonth])
+                ->sum('nominal');
+            $pembayaranGrowth = $pembayaranBulanLalu > 0 ? (($pembayaranBulanIni - $pembayaranBulanLalu) / $pembayaranBulanLalu) * 100 : ($pembayaranBulanIni > 0 ? 100 : 0);
+
+            // 4. Komisi
+            $komisiBulanIni = PayrollSales::where('sales_id', $salesId)
+                ->where('bulan', now()->month)
+                ->where('tahun', now()->year)
+                ->sum('bonus_nominal');
+            $komisiBulanLalu = PayrollSales::where('sales_id', $salesId)
+                ->where('bulan', now()->subMonth()->month)
+                ->where('tahun', now()->subMonth()->year)
+                ->sum('bonus_nominal');
+            $komisiGrowth = $komisiBulanLalu > 0 ? (($komisiBulanIni - $komisiBulanLalu) / $komisiBulanLalu) * 100 : ($komisiBulanIni > 0 ? 100 : 0);
+        }
 
         return [
             [

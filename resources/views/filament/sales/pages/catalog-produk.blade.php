@@ -1,5 +1,4 @@
 <x-filament-panels::page>
-    @vite('resources/css/app.css')
     
     <div class="space-y-12 pb-10" x-data="{ activeTab: 'all' }">
         
