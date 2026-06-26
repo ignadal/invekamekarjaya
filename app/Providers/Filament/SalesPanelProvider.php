@@ -43,6 +43,27 @@ class SalesPanelProvider extends PanelProvider
                         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important; 
                     }
 
+                    /* Center Navbar Links - topbar uses flex */
+                    html:not(.dark) .fi-topbar {
+                        display: flex !important;
+                        align-items: center !important;
+                    }
+                    html:not(.dark) .fi-topbar .fi-topbar-start {
+                        flex-shrink: 0 !important;
+                    }
+                    html:not(.dark) .fi-topbar .fi-topbar-nav-groups {
+                        flex: 1 !important;
+                        display: flex !important;
+                        justify-content: center !important;
+                        gap: 0.25rem !important;
+                        list-style: none !important;
+                        margin: 0 !important;
+                        padding: 0 !important;
+                    }
+                    html:not(.dark) .fi-topbar .fi-topbar-end {
+                        flex-shrink: 0 !important;
+                    }
+
                     /* Navbar Text & Icons */
                     html:not(.dark) .fi-topbar span,
                     html:not(.dark) .fi-topbar svg,
@@ -55,7 +76,7 @@ class SalesPanelProvider extends PanelProvider
                     html:not(.dark) .fi-topbar .fi-dropdown-panel span,
                     html:not(.dark) .fi-topbar .fi-dropdown-panel svg,
                     html:not(.dark) .fi-topbar .fi-dropdown-panel a {
-                        color: #1f2937 !important; /* gray-800 */
+                        color: #1f2937 !important;
                     }
                     
                     html:not(.dark) .fi-topbar .fi-dropdown-panel {
@@ -64,24 +85,18 @@ class SalesPanelProvider extends PanelProvider
 
                     html:not(.dark) .fi-topbar .fi-dropdown-panel a:hover,
                     html:not(.dark) .fi-topbar .fi-dropdown-panel button:hover {
-                        background-color: #f3f4f6 !important; /* gray-100 */
+                        background-color: #f3f4f6 !important;
                     }
 
                     /* Top Navigation Items (Active & Hover) */
+                    html:not(.dark) .fi-topbar .fi-topbar-item.fi-active .fi-topbar-item-btn,
                     html:not(.dark) .fi-topbar .fi-active > a,
-                    html:not(.dark) .fi-topbar .fi-active > button,
-                    html:not(.dark) .fi-topbar .fi-tabs-item-active > a,
-                    html:not(.dark) .fi-topbar .fi-tabs-item-active > button,
-                    html:not(.dark) .fi-topbar a.bg-gray-50,
-                    html:not(.dark) .fi-topbar a.bg-white,
-                    html:not(.dark) .fi-topbar button.bg-gray-50,
-                    html:not(.dark) .fi-topbar button.bg-white { 
+                    html:not(.dark) .fi-topbar .fi-active > button { 
                         background-color: rgba(255, 255, 255, 0.25) !important; 
                         border-radius: 0.5rem; 
                     }
                     
-                    html:not(.dark) .fi-topbar a:hover,
-                    html:not(.dark) .fi-topbar button:hover { 
+                    html:not(.dark) .fi-topbar .fi-topbar-item-btn:hover { 
                         background-color: rgba(255, 255, 255, 0.1) !important; 
                         border-radius: 0.5rem;
                     }

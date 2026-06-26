@@ -12,7 +12,7 @@ class SalesAktivitasTerakhir extends Widget
 {
     protected string $view = 'filament.sales.widgets.sales-aktivitas-terakhir';
     protected static ?int $sort = 4;
-    protected int | string | array $columnSpan = 'full';
+    protected int | string | array $columnSpan = 1;
 
     public function getActivitiesProperty()
     {

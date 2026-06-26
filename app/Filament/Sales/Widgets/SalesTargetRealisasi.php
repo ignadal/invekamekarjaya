@@ -10,7 +10,7 @@ class SalesTargetRealisasi extends Widget
 {
     protected string $view = 'filament.sales.widgets.sales-target-realisasi';
     protected static ?int $sort = 5;
-    protected int | string | array $columnSpan = 'full';
+    protected int | string | array $columnSpan = 2;
 
     public function getTargetRealisasiProperty()
     {

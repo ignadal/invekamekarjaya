@@ -2,41 +2,30 @@
 
 namespace App\Filament\Sales\Widgets;
 
-use Filament\Tables;
-use Filament\Tables\Table;
-use Filament\Widgets\TableWidget as BaseWidget;
+use Filament\Widgets\Widget;
 use App\Models\KunjunganSales;
 use App\Models\Sales;
 
-class SalesKunjunganTerbaru extends BaseWidget
+class SalesKunjunganTerbaru extends Widget
 {
-    protected static ?string $heading = 'Kunjungan Terbaru';
+    protected string $view = 'filament.sales.widgets.sales-kunjungan-terbaru';
     protected static ?int $sort = 3;
+    protected int | string | array $columnSpan = 1;
 
-    public function table(Table $table): Table
+    public function getKunjungansProperty()
     {
         $sales = Sales::where('user_id', auth()->id())->first();
         $salesId = $sales ? $sales->id : null;
 
-        return $table
-            ->query(
-                KunjunganSales::query()
-                    ->where('sales_id', $salesId)
-                    ->latest('tanggal_kunjungan')
-                    ->latest('created_at')
-                    ->limit(5)
-            )
-            ->columns([
-                Tables\Columns\TextColumn::make('buyer.nama_toko')
-                    ->label('Toko')
-                    ->description(fn (KunjunganSales $record): string => $record->tanggal_kunjungan ? $record->tanggal_kunjungan->translatedFormat('d F Y') : '')
-                    ->icon('heroicon-o-building-storefront'),
-                Tables\Columns\TextColumn::make('buyer.kecamatan.nama_kecamatan')
-                    ->label('Lokasi')
-                    ->badge()
-                    ->color('info')
-                    ->alignEnd(),
-            ])
-            ->paginated(false);
+        if (!$salesId) {
+            return collect();
+        }
+
+        return KunjunganSales::with(['buyer', 'buyer.kecamatan'])
+            ->where('sales_id', $salesId)
+            ->latest('tanggal_kunjungan')
+            ->latest('created_at')
+            ->limit(5)
+            ->get();
     }
 }
