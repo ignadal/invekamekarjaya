@@ -62,11 +62,11 @@
             border-radius: 1rem;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03);
             border: 1px solid rgba(229, 231, 235, 0.5);
-            padding: 1rem;
+            padding: 0.75rem;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            gap: 0.75rem;
+            gap: 0.5rem;
             transition: transform 0.2s;
         }
         @media (min-width: 768px) {
@@ -98,12 +98,17 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 3.5rem;
-            height: 3.5rem;
+            width: 2.5rem;
+            height: 2.5rem;
             border-radius: 50%;
             flex-shrink: 0;
         }
-        .ts-stat-icon { width: 1.75rem; height: 1.75rem; }
+        .ts-stat-icon { width: 1.25rem; height: 1.25rem; }
+        
+        @media (min-width: 768px) {
+            .ts-stat-icon-wrapper { width: 3.5rem; height: 3.5rem; }
+            .ts-stat-icon { width: 1.75rem; height: 1.75rem; }
+        }
         
         .ts-icon-red { background-color: #fff1f2; color: #e11d48; }
         .ts-icon-green { background-color: #f0fdf4; color: #16a34a; }
@@ -115,13 +120,19 @@
         html.dark .ts-icon-blue { background-color: rgba(37, 99, 235, 0.1); border: 1px solid rgba(37, 99, 235, 0.2); }
         html.dark .ts-icon-yellow { background-color: rgba(217, 119, 6, 0.1); border: 1px solid rgba(217, 119, 6, 0.2); }
         
-        .ts-stat-title { font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem; }
+        .ts-stat-title { font-size: 0.7rem; font-weight: 600; color: #6b7280; margin-bottom: 0.125rem; }
+        @media (min-width: 768px) { .ts-stat-title { font-size: 0.75rem; margin-bottom: 0.25rem; } }
         html.dark .ts-stat-title { color: #a1a1aa; }
-        .ts-stat-value { font-size: 1.5rem; font-weight: 800; color: #111827; margin-bottom: 0.5rem; }
+        
+        .ts-stat-value { font-size: 1.125rem; font-weight: 800; color: #111827; margin-bottom: 0.25rem; white-space: nowrap; letter-spacing: -0.025em; }
+        @media (min-width: 768px) { .ts-stat-value { font-size: 1.5rem; margin-bottom: 0.5rem; letter-spacing: normal; } }
         html.dark .ts-stat-value { color: white; }
         
-        .ts-stat-meta { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: #9ca3af; }
-        .ts-stat-badge { display: inline-flex; align-items: center; padding: 0.125rem 0.375rem; border-radius: 9999px; font-weight: 700; font-size: 0.7rem;}
+        .ts-stat-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem; font-size: 0.65rem; color: #9ca3af; }
+        @media (min-width: 768px) { .ts-stat-meta { font-size: 0.75rem; gap: 0.5rem; } }
+        
+        .ts-stat-badge { display: inline-flex; align-items: center; padding: 0.125rem 0.375rem; border-radius: 9999px; font-weight: 700; font-size: 0.65rem;}
+        @media (min-width: 768px) { .ts-stat-badge { font-size: 0.7rem; } }
         .ts-badge-success { background-color: #dcfce7; color: #16a34a; }
         .ts-badge-danger { background-color: #fee2e2; color: #dc2626; }
         
@@ -257,24 +268,29 @@
         .ts-per-page-icon { position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); width: 1rem; height: 1rem; color: #9ca3af; pointer-events: none; }
 
         /* Mobile Layout Utilities */
-        .ts-mobile-list-container { display: flex; flex-direction: column; gap: 0.75rem; padding: 1rem; }
+        .ts-mobile-list-container { display: flex; flex-direction: column; gap: 0.75rem; padding: 0.75rem; }
         .ts-mobile-card {
             position: relative;
             background: white;
             border-radius: 0.5rem;
             border: 1px solid #e5e7eb;
-            display: flex;
-            padding: 1rem 1rem 1rem 3.5rem;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 95px;
+            padding: 0.75rem;
             align-items: center;
-            justify-content: space-between;
+            gap: 0.5rem;
         }
         html.dark .ts-mobile-card { background: #18181b; border-color: #27272a; }
         
-        .ts-mobile-card .row-status-border { top: 1rem; bottom: 1rem; }
-        .ts-mobile-card .ts-cal-block { position: absolute; left: 1rem; top: 1rem; width: 3rem; height: 3rem; }
+        .ts-mobile-card .row-status-border { top: 1rem; bottom: 1rem; left: 0; }
         
-        .ts-mobile-card-col-left { display: flex; flex-direction: column; gap: 0.25rem; }
-        .ts-mobile-card-col-right { display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem; }
+        .ts-mobile-card-group-left { display: flex; align-items: center; gap: 0.75rem; width: 100%; min-width: 0; margin-left: 0.25rem; }
+        .ts-mobile-card .ts-cal-block { flex-shrink: 0; width: 3rem; height: 3rem; }
+        
+        .ts-mobile-card-col-left { display: flex; flex-direction: column; gap: 0.25rem; width: calc(100% - 3.75rem); min-width: 0; }
+        
+        .ts-mobile-card-col-right { display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem; min-width: 0; max-width: 95px; }
+        .ts-mobile-card-col-right .ts-text-strong { text-align: right; line-height: 1.2; word-break: break-word; }
         
         @media (max-width: 1023px) {
             .ts-desktop-table { display: none !important; }
@@ -611,33 +627,35 @@
                                 @endphp
                                 <div class="ts-mobile-card">
                                     <div class="row-status-border {{ $borderClass }}"></div>
-                                    <div class="ts-cal-block">
-                                        <span class="ts-cal-day">{{ \Carbon\Carbon::parse($record->tanggal_beli)->format('d') }}</span>
-                                        <span class="ts-cal-month">{{ \Carbon\Carbon::parse($record->tanggal_beli)->format('M') }}</span>
-                                    </div>
-                                    <div class="ts-mobile-card-col-left">
-                                        <div class="ts-text-strong" style="font-size:0.875rem; font-weight:700;">
-                                            {{ \Carbon\Carbon::parse($record->tanggal_beli)->format('d M Y') }}
+                                    <div class="ts-mobile-card-group-left">
+                                        <div class="ts-cal-block">
+                                            <span class="ts-cal-day">{{ \Carbon\Carbon::parse($record->tanggal_beli)->format('d') }}</span>
+                                            <span class="ts-cal-month">{{ \Carbon\Carbon::parse($record->tanggal_beli)->format('M') }}</span>
                                         </div>
-                                        <div style="font-size:0.75rem; color:#6b7280;">
-                                            {{ \Carbon\Carbon::parse($record->created_at)->format('H:i') }} WIB
-                                        </div>
-                                        <div style="display:flex; align-items:center; gap: 0.5rem; margin-top: 0.25rem;">
-                                            <div class="ts-text-muted-strong" style="display:flex; align-items:center; gap: 0.25rem; font-weight: 600; font-size: 0.875rem;">
-                                                <x-heroicon-o-building-storefront style="width:1rem; height:1rem; color:#9ca3af;" />
-                                                {{ $record->buyer->nama_toko ?? 'Unknown' }}
+                                        <div class="ts-mobile-card-col-left">
+                                            <div class="ts-text-strong" style="font-size:0.875rem; font-weight:700;">
+                                                {{ \Carbon\Carbon::parse($record->tanggal_beli)->format('d M Y') }}
                                             </div>
-                                            <span class="ts-dot-text text-{{ $metodeClass }}" style="padding: 0.125rem 0.375rem; font-size: 0.7rem;">
-                                                <span class="ts-dot dot-{{ $metodeClass }}"></span>
-                                                {{ ucfirst($record->metode) }}
-                                            </span>
+                                            <div style="font-size:0.75rem; color:#6b7280;">
+                                                {{ \Carbon\Carbon::parse($record->created_at)->format('H:i') }} WIB
+                                            </div>
+                                            <div style="display:flex; align-items:center; justify-content:space-between; gap: 0.5rem; margin-top: 0.25rem; width: 100%;">
+                                                <div class="ts-text-muted-strong" style="display:flex; align-items:center; gap: 0.25rem; font-weight: 600; font-size: 0.875rem; flex: 1; min-width: 0;">
+                                                    <x-heroicon-o-building-storefront style="width:1rem; height:1rem; color:#9ca3af; flex-shrink: 0;" />
+                                                    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $record->buyer->nama_toko ?? 'Unknown' }}</span>
+                                                </div>
+                                                <span class="ts-dot-text text-{{ $metodeClass }}" style="padding: 0.125rem 0.375rem; font-size: 0.7rem; flex-shrink: 0;">
+                                                    <span class="ts-dot dot-{{ $metodeClass }}"></span>
+                                                    {{ ucfirst($record->metode) }}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="ts-mobile-card-col-right">
                                         <span class="ts-text-strong" style="font-weight: 600; font-size: 0.875rem;">
                                             IDR {{ number_format($record->total_penjualan, 2, '.', ',') }}
                                         </span>
-                                        <button class="ts-action-btn" wire:click="viewOrder({{ $record->id }})" style="padding: 0.375rem;">
+                                        <button class="ts-action-btn" type="button" style="padding: 0.375rem;">
                                             <x-heroicon-o-ellipsis-horizontal style="width:1.25rem; height:1.25rem;" />
                                         </button>
                                     </div>
