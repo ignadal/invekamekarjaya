@@ -15,4 +15,9 @@ class ListTokoLangganan extends ListRecords
             // No create action for sales, just view
         ];
     }
+
+    public function getBreadcrumbs(): array
+    {
+        return [];
+    }
 }
