@@ -139,16 +139,33 @@ class Transaksi extends Page
         if ($this->filterTanggal) {
             $tableQuery->whereDate('tanggal_beli', $this->filterTanggal);
         }
-        
-        $records = (clone $tableQuery)->latest('tanggal_beli')->paginate($this->perPage);
-
-        // Stats Query (Exactly matches the filtered table)
+        // Stats Query (Exactly matches the filtered table BEFORE tab modifications)
         $currentCount = (clone $tableQuery)->count();
         $currentPendapatan = (clone $tableQuery)->sum('total_penjualan');
         $avgOrder = $currentCount > 0 ? $currentPendapatan / $currentCount : 0;
         
         $lunasCount = (clone $tableQuery)->where('status_bayar', 'lunas')->count();
         $konversi = $currentCount > 0 ? ($lunasCount / $currentCount) * 100 : 0;
+
+        // Apply Tab Filters to the list records
+        $listQuery = clone $tableQuery;
+        if ($this->activeTab === 'penagihan') {
+            $listQuery->where('metode', 'cicil')->where('status_persetujuan', 'disetujui');
+        }
+
+        $records = $listQuery->latest('tanggal_beli')->paginate($this->perPage);
+        $konversi = $currentCount > 0 ? ($lunasCount / $currentCount) * 100 : 0;
+
+        $penagihanCount = 0;
+        $penagihanTotalTagihan = 0;
+        $penagihanTotalDibayar = 0;
+        
+        if ($this->activeTab === 'penagihan') {
+            $penagihanCount = (clone $listQuery)->count();
+            $penagihanTotalTagihan = (clone $listQuery)->sum('total_penjualan');
+            $penagihanTotalDibayar = (clone $listQuery)->sum('sudah_dibayar');
+        }
+        $penagihanSisa = max(0, $penagihanTotalTagihan - $penagihanTotalDibayar);
 
         // Last Period Query for Growth calculation
         $lastQuery = clone $baseQuery;
@@ -175,6 +192,10 @@ class Transaksi extends Page
                 'avg_order' => $avgOrder,
                 'konversi' => round($konversi, 1),
                 'lunas_count' => $lunasCount,
+                'penagihan_count' => $penagihanCount,
+                'penagihan_total_tagihan' => $penagihanTotalTagihan,
+                'penagihan_total_dibayar' => $penagihanTotalDibayar,
+                'penagihan_sisa' => $penagihanSisa,
             ],
             'tokos' => $tokos,
             'records' => $records,

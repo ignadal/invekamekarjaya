@@ -282,6 +282,15 @@
         }
         html.dark .ts-mobile-card { background: #18181b; border-color: #27272a; }
         
+        .billing-progress-card { background-color: #f9fafb; border: 1px solid #f3f4f6; }
+        html.dark .billing-progress-card { background-color: rgba(24, 24, 27, 0.5); border-color: #27272a; }
+        
+        .billing-divider { border-top: 1px dashed #d1d5db; }
+        html.dark .billing-divider { border-color: #3f3f46; }
+        
+        .info-block { background: #fffcfc; border-color: #fef2f2; }
+        html.dark .info-block { background: rgba(127, 29, 29, 0.1); border-color: rgba(127, 29, 29, 0.2); }
+        
         .ts-mobile-card .row-status-border { top: 1rem; bottom: 1rem; left: 0; }
         
         .ts-mobile-card-group-left { display: flex; align-items: center; gap: 0.75rem; width: 100%; min-width: 0; margin-left: 0.25rem; }
@@ -697,12 +706,293 @@
                 </div>
 
         @elseif ($activeTab === 'penagihan')
-            <div class="ts-sidebar" style="width: 100%;">
-                <h2 class="ts-content-title">Daftar Penagihan Berkala</h2>
-                <div style="text-align: center; padding: 3rem; color: #6b7280;">
-                    <x-heroicon-o-inbox style="width:3rem; height:3rem; margin: 0 auto 1rem auto; color: #9ca3af;" />
-                    <p style="margin: 0;">Modul penagihan berkala akan ditampilkan di sini.</p>
+            <!-- TOP FILTER BAR (PENAGIHAN) -->
+            <div class="ts-top-filter-bar" style="margin-bottom: 2rem;">
+                <div class="ts-filter-mobile-title" style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding-bottom: 0.5rem;">
+                    <div style="font-weight: 700; font-size: 0.875rem;" class="ts-text-strong">Filter</div>
+                    <x-heroicon-o-funnel style="width: 1.25rem; height: 1.25rem; color: #E30613;" />
                 </div>
+                <div class="ts-filter-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                    <div class="ts-filter-item">
+                        <label class="ts-filter-label"><x-heroicon-o-calendar class="ts-filter-icon" /> Tanggal</label>
+                        <input type="date" wire:model="filterTanggal" class="ts-filter-input" />
+                    </div>
+
+                    <div class="ts-filter-item">
+                        <label class="ts-filter-label"><x-heroicon-o-building-storefront class="ts-filter-icon" /> Toko</label>
+                        <select wire:model="filterToko" class="ts-filter-input">
+                            <option value="">Semua Toko</option>
+                            @foreach($tokos ?? [] as $toko)
+                                <option value="{{ $toko->id }}">{{ $toko->nama_toko }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="ts-filter-item">
+                        <label class="ts-filter-label"><x-heroicon-o-clipboard-document-check class="ts-filter-icon" /> Status</label>
+                        <select wire:model="filterStatus" class="ts-filter-input">
+                            <option value="">Semua Status</option>
+                            <option value="belum_lunas">Belum Lunas</option>
+                            <option value="lunas">Lunas</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="ts-filter-actions">
+                    <button type="button" wire:click="resetFilters" class="ts-filter-reset">
+                        Reset <x-heroicon-o-arrow-path style="width:1rem;height:1rem;" />
+                    </button>
+                    <button type="button" wire:click="applyFilters" class="ts-filter-submit">
+                        <x-heroicon-o-funnel style="width:1.25rem;height:1.25rem;" /> Terapkan Filter
+                    </button>
+                </div>
+            </div>
+
+            <!-- STATS CARDS (PENAGIHAN) -->
+            @php
+                $dibayarPct = $stats['penagihan_total_tagihan'] > 0 ? ($stats['penagihan_total_dibayar'] / $stats['penagihan_total_tagihan']) * 100 : 0;
+                $sisaPct = $stats['penagihan_total_tagihan'] > 0 ? ($stats['penagihan_sisa'] / $stats['penagihan_total_tagihan']) * 100 : 0;
+            @endphp
+            <div class="ts-stats-grid" style="margin-bottom: 2rem;">
+                <div class="ts-stat-card">
+                    <div class="ts-stat-icon-wrapper" style="background-color: #fee2e2;">
+                        <x-heroicon-o-document-text style="width:1.75rem; height:1.75rem; color: #ef4444;" />
+                    </div>
+                    <div class="ts-stat-content">
+                        <div class="ts-stat-title">Total Tagihan</div>
+                        <div class="ts-stat-value">{{ number_format($stats['penagihan_count'], 0, '.', ',') }}</div>
+                        <div class="ts-stat-desc">Cicilan aktif</div>
+                    </div>
+                </div>
+                
+                <div class="ts-stat-card">
+                    <div class="ts-stat-icon-wrapper" style="background-color: #dcfce7;">
+                        <x-heroicon-o-wallet style="width:1.75rem; height:1.75rem; color: #10b981;" />
+                    </div>
+                    <div class="ts-stat-content">
+                        <div class="ts-stat-title">Total Tagihan</div>
+                        <div class="ts-stat-value">Rp {{ number_format($stats['penagihan_total_tagihan'], 0, '.', '.') }}</div>
+                        <div class="ts-stat-desc">Total keseluruhan</div>
+                    </div>
+                </div>
+                
+                <div class="ts-stat-card">
+                    <div class="ts-stat-icon-wrapper" style="background-color: #dbeafe;">
+                        <x-heroicon-o-banknotes style="width:1.75rem; height:1.75rem; color: #3b82f6;" />
+                    </div>
+                    <div class="ts-stat-content">
+                        <div class="ts-stat-title">Total Dibayar</div>
+                        <div class="ts-stat-value">Rp {{ number_format($stats['penagihan_total_dibayar'], 0, '.', '.') }}</div>
+                        <div class="ts-stat-desc">{{ round($dibayarPct, 1) }}% dari total tagihan</div>
+                    </div>
+                </div>
+                
+                <div class="ts-stat-card">
+                    <div class="ts-stat-icon-wrapper" style="background-color: #fef3c7;">
+                        <x-heroicon-o-clock style="width:1.75rem; height:1.75rem; color: #f59e0b;" />
+                    </div>
+                    <div class="ts-stat-content">
+                        <div class="ts-stat-title">Sisa Tagihan</div>
+                        <div class="ts-stat-value">Rp {{ number_format($stats['penagihan_sisa'], 0, '.', '.') }}</div>
+                        <div class="ts-stat-desc">{{ round($sisaPct, 1) }}% belum lunas</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ts-main-content">
+                <div class="ts-table-header">
+                    <h2 class="ts-content-title" style="margin: 0; white-space: nowrap;">Daftar Penagihan Berkala</h2>
+                    <div class="ts-header-right-actions">
+                        <div class="ts-search-container">
+                            <x-heroicon-o-magnifying-glass class="ts-search-icon" />
+                            <input type="text" wire:model.live.debounce.500ms="search" class="ts-search-input" placeholder="Cari order, toko..." />
+                        </div>
+                        <button class="ts-action-btn ts-action-btn-mobile">
+                            <x-heroicon-o-adjustments-horizontal style="width: 1.25rem; height: 1.25rem;" />
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="ts-table-container">
+                    <!-- Desktop Table -->
+                    <table class="ts-desktop-table ts-table" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Tanggal Transaksi</th>
+                                <th>Toko / Pelanggan</th>
+                                <th>Total Tagihan</th>
+                                <th>Progres Pembayaran</th>
+                                <th style="text-align: right;">Sisa Tagihan</th>
+                                <th style="text-align: center;">Status</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($records as $record)
+                                @php
+                                    $progress = $record->total_penjualan > 0 ? ($record->sudah_dibayar / $record->total_penjualan) * 100 : 0;
+                                    $progress = min(100, max(0, $progress));
+                                    $sisa = $record->total_penjualan - $record->sudah_dibayar;
+                                    $sisa = max(0, $sisa);
+                                    $isLunas = $sisa <= 0;
+                                    $borderClass = $isLunas ? 'border-disetujui' : 'border-pending';
+                                @endphp
+                                <tr>
+                                    <td>
+                                        <div class="row-status-border {{ $borderClass }}"></div>
+                                        <div style="display:flex; align-items:center; gap: 0.75rem;">
+                                            <div class="ts-cal-block">
+                                                <span class="ts-cal-day">{{ \Carbon\Carbon::parse($record->tanggal_beli)->format('d') }}</span>
+                                                <span class="ts-cal-month">{{ strtoupper(\Carbon\Carbon::parse($record->tanggal_beli)->format('M')) }}</span>
+                                            </div>
+                                            <div>
+                                                <div class="ts-text-strong" style="font-size:0.875rem; font-weight:700;">
+                                                    {{ \Carbon\Carbon::parse($record->tanggal_beli)->format('d M Y') }}
+                                                </div>
+                                                <div style="font-size:0.75rem; color:#6b7280;">
+                                                    {{ \Carbon\Carbon::parse($record->created_at)->format('H:i') }} WIB
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div style="display:flex; align-items:center; gap: 0.5rem;">
+                                            <x-heroicon-o-building-storefront style="width:1.25rem; height:1.25rem; color:#9ca3af;" />
+                                            <div>
+                                                <div class="ts-text-strong" style="font-weight: 600; font-size: 0.875rem;">{{ $record->buyer->nama_toko ?? 'Unknown' }}</div>
+                                                <div style="font-size: 0.75rem; color: #9ca3af;">Store</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="ts-text-strong">IDR {{ number_format($record->total_penjualan, 2, '.', ',') }}</span>
+                                    </td>
+                                    <td style="width: 200px;">
+                                        <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                                            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 600;">
+                                                <span class="ts-text-strong" style="color: #6b7280;">IDR {{ number_format($record->sudah_dibayar, 0, '.', ',') }}</span>
+                                                <span style="color: #2563eb;">{{ number_format($progress, 1) }}%</span>
+                                            </div>
+                                            <div style="width: 100%; height: 0.375rem; background-color: #f3f4f6; border-radius: 9999px; overflow: hidden;">
+                                                <div style="height: 100%; background-color: {{ $isLunas ? '#10b981' : '#3b82f6' }}; width: {{ $progress }}%; transition: width 0.3s ease;"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td style="text-align: right;">
+                                        <span class="ts-text-strong" style="font-weight: 700; color: #ef4444;">IDR {{ number_format($sisa, 2, '.', ',') }}</span>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        @if($isLunas)
+                                            <span class="ts-stat-badge ts-badge-success">Lunas</span>
+                                        @else
+                                            <span class="ts-stat-badge" style="background-color: #fef9c3; color: #ca8a04;">Belum Lunas</span>
+                                        @endif
+                                    </td>
+                                    <td style="text-align: center; width: 40px;">
+                                        <button type="button" class="ts-action-btn" style="padding: 0.375rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; background: white;">
+                                            <x-heroicon-o-ellipsis-vertical style="width:1.25rem; height:1.25rem; color: #6b7280;" />
+                                        </button>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: 3rem; color: #6b7280;">
+                                        <x-heroicon-o-check-circle style="width:3rem; height:3rem; margin: 0 auto 1rem auto; color: #9ca3af;" />
+                                        Belum ada data penagihan cicilan.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                    
+                    <!-- Mobile View -->
+                    <div class="ts-mobile-list-container">
+                        @forelse($records as $record)
+                            @php
+                                $progress = $record->total_penjualan > 0 ? ($record->sudah_dibayar / $record->total_penjualan) * 100 : 0;
+                                $progress = min(100, max(0, $progress));
+                                $sisa = $record->total_penjualan - $record->sudah_dibayar;
+                                $sisa = max(0, $sisa);
+                                $isLunas = $sisa <= 0;
+                                $borderClass = $isLunas ? 'border-disetujui' : 'border-pending';
+                            @endphp
+                            <div class="ts-mobile-card" style="grid-template-columns: 1fr; gap: 0.75rem; padding: 1rem;">
+                                <div class="row-status-border {{ $borderClass }}"></div>
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                    <div>
+                                        <div class="ts-text-strong" style="font-size:0.875rem;">{{ \Carbon\Carbon::parse($record->tanggal_beli)->format('d M Y') }}</div>
+                                        <div class="ts-text-muted-strong" style="display:flex; align-items:center; gap: 0.25rem; font-weight: 600; font-size: 0.75rem; margin-top: 0.25rem;">
+                                            <x-heroicon-o-building-storefront style="width:1rem; height:1rem; color:#9ca3af;" />
+                                            {{ $record->buyer->nama_toko ?? 'Unknown' }}
+                                        </div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        @if($isLunas)
+                                            <span class="ts-stat-badge ts-badge-success">Lunas</span>
+                                        @else
+                                            <span class="ts-stat-badge" style="background-color: #fef9c3; color: #ca8a04;">Belum Lunas</span>
+                                        @endif
+                                    </div>
+                                </div>
+                                
+                                <div class="billing-progress-card" style="padding: 0.75rem; border-radius: 0.5rem;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                        <span style="font-size: 0.75rem; color: #6b7280;">Total Tagihan</span>
+                                        <span class="ts-text-strong" style="font-size: 0.75rem;">IDR {{ number_format($record->total_penjualan, 0, '.', ',') }}</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                        <span style="font-size: 0.75rem; color: #6b7280;">Sudah Dibayar</span>
+                                        <span style="font-size: 0.75rem; font-weight: 600; color: #10b981;">IDR {{ number_format($record->sudah_dibayar, 0, '.', ',') }}</span>
+                                    </div>
+                                    
+                                    <div style="width: 100%; height: 0.375rem; background-color: #e5e7eb; border-radius: 9999px; overflow: hidden; margin-bottom: 0.5rem;">
+                                        <div style="height: 100%; background-color: {{ $isLunas ? '#10b981' : '#3b82f6' }}; width: {{ $progress }}%; transition: width 0.3s ease;"></div>
+                                    </div>
+                                    
+                                    <div class="billing-divider" style="display: flex; justify-content: space-between; padding-top: 0.5rem;">
+                                        <span style="font-size: 0.75rem; font-weight: 600; color: #374151;">Sisa Tagihan</span>
+                                        <span style="font-size: 0.875rem; font-weight: 700; color: #ef4444;">IDR {{ number_format($sisa, 0, '.', ',') }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                            <div style="text-align: center; padding: 2rem; color: #6b7280;">Belum ada data penagihan cicilan.</div>
+                        @endforelse
+                    </div>
+
+                    <!-- Pagination -->
+                    @if($records->hasPages())
+                        <div class="ts-pagination-footer">
+                            <div class="ts-paginator-info">
+                                Menampilkan {{ $records->firstItem() ?? 0 }}–{{ $records->lastItem() ?? 0 }} dari {{ $records->total() }} data
+                            </div>
+                            
+                            <div class="ts-paginator-controls">
+                                <button wire:click="previousPage" @if($records->onFirstPage()) disabled @endif class="ts-page-btn ts-page-nav">
+                                    <x-heroicon-o-chevron-left style="width:1rem;height:1rem;"/>
+                                </button>
+                                
+                                <button class="ts-page-btn ts-page-active">
+                                    {{ $records->currentPage() }}
+                                </button>
+                                
+                                <button wire:click="nextPage" @if(!$records->hasMorePages()) disabled @endif class="ts-page-btn ts-page-nav">
+                                    <x-heroicon-o-chevron-right style="width:1rem;height:1rem;"/>
+                                </button>
+                                
+                                <div class="ts-per-page-wrapper">
+                                    <select wire:model.live="perPage" class="ts-per-page-select">
+                                        <option value="10">10 / halaman</option>
+                                        <option value="20">20 / halaman</option>
+                                        <option value="50">50 / halaman</option>
+                                    </select>
+                                    <x-heroicon-o-chevron-down class="ts-per-page-icon" />
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+                
             </div>
         @endif
     </div>
