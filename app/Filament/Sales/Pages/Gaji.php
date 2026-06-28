@@ -22,4 +22,22 @@ class Gaji extends Page
     {
         $this->activeTab = $tab;
     }
+
+    protected function getViewData(): array
+    {
+        $sales = \App\Models\Sales::where('user_id', auth()->id())->first();
+        
+        $payrollData = [];
+        if ($sales) {
+            // Get all payrolls for the sales person, ordered by newest
+            $payrollData = \App\Models\PayrollSales::where('sales_id', $sales->id)
+                ->orderBy('tahun', 'desc')
+                ->orderBy('bulan', 'desc')
+                ->get();
+        }
+
+        return [
+            'payrollData' => $payrollData
+        ];
+    }
 }

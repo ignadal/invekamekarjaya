@@ -149,30 +149,180 @@
         </div>
     </div>
 
+    <style>
+        .ts-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        .ts-table th, .ts-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        html.dark .ts-table th, html.dark .ts-table td {
+            border-color: #3f3f46;
+        }
+        .ts-table th {
+            font-weight: 600;
+            color: #374151;
+            background-color: #f9fafb;
+        }
+        html.dark .ts-table th {
+            color: #d1d5db;
+            background-color: #27272a;
+        }
+        .ts-table td {
+            color: #4b5563;
+        }
+        html.dark .ts-table td {
+            color: #a1a1aa;
+        }
+        .ts-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.125rem 0.625rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .ts-badge-success {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        html.dark .ts-badge-success {
+            background-color: #14532d;
+            color: #4ade80;
+        }
+        .ts-badge-warning {
+            background-color: #fef9c3;
+            color: #854d0e;
+        }
+        html.dark .ts-badge-warning {
+            background-color: #713f12;
+            color: #fde047;
+        }
+    </style>
+
     <div>
         @if ($activeTab === 'gaji_pokok')
             <div class="ts-content-card">
                 <h2 class="ts-content-title">Rincian Gaji Pokok</h2>
-                <div class="ts-empty-state">
-                    <x-heroicon-o-inbox class="ts-empty-icon" />
-                    <p style="margin: 0;">Informasi Gaji Pokok akan ditampilkan di sini.</p>
-                </div>
+                @if(isset($payrollData) && count($payrollData) > 0)
+                    <div style="overflow-x: auto;">
+                        <table class="ts-table">
+                            <thead>
+                                <tr>
+                                    <th>Periode</th>
+                                    <th>Gaji Pokok</th>
+                                    <th>Status Pembayaran</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($payrollData as $payroll)
+                                <tr>
+                                    <td>{{ DateTime::createFromFormat('!m', $payroll->bulan)->format('F') }} {{ $payroll->tahun }}</td>
+                                    <td>Rp {{ number_format($payroll->gaji_pokok, 0, ',', '.') }}</td>
+                                    <td>
+                                        @if($payroll->status_pembayaran === 'lunas')
+                                            <span class="ts-badge ts-badge-success">Lunas</span>
+                                        @else
+                                            <span class="ts-badge ts-badge-warning">Belum Lunas</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <div class="ts-empty-state">
+                        <x-heroicon-o-inbox class="ts-empty-icon" />
+                        <p style="margin: 0;">Informasi Gaji Pokok belum tersedia.</p>
+                    </div>
+                @endif
             </div>
         @elseif ($activeTab === 'makan_bensin')
             <div class="ts-content-card">
                 <h2 class="ts-content-title">Uang Makan & Bensin</h2>
-                <div class="ts-empty-state">
-                    <x-heroicon-o-inbox class="ts-empty-icon" />
-                    <p style="margin: 0;">Rincian Uang Makan/Bensin akan ditampilkan di sini.</p>
-                </div>
+                @if(isset($payrollData) && count($payrollData) > 0)
+                    <div style="overflow-x: auto;">
+                        <table class="ts-table">
+                            <thead>
+                                <tr>
+                                    <th>Periode</th>
+                                    <th>Uang Makan</th>
+                                    <th>Uang Bensin</th>
+                                    <th>Total</th>
+                                    <th>Status Pembayaran</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($payrollData as $payroll)
+                                <tr>
+                                    <td>{{ DateTime::createFromFormat('!m', $payroll->bulan)->format('F') }} {{ $payroll->tahun }}</td>
+                                    <td>Rp {{ number_format($payroll->uang_makan, 0, ',', '.') }}</td>
+                                    <td>Rp {{ number_format($payroll->uang_bensin, 0, ',', '.') }}</td>
+                                    <td>Rp {{ number_format($payroll->uang_makan + $payroll->uang_bensin, 0, ',', '.') }}</td>
+                                    <td>
+                                        @if($payroll->status_pembayaran === 'lunas')
+                                            <span class="ts-badge ts-badge-success">Lunas</span>
+                                        @else
+                                            <span class="ts-badge ts-badge-warning">Belum Lunas</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <div class="ts-empty-state">
+                        <x-heroicon-o-inbox class="ts-empty-icon" />
+                        <p style="margin: 0;">Rincian Uang Makan/Bensin belum tersedia.</p>
+                    </div>
+                @endif
             </div>
         @elseif ($activeTab === 'bonus_komisi')
             <div class="ts-content-card">
                 <h2 class="ts-content-title">Bonus & Komisi</h2>
-                <div class="ts-empty-state">
-                    <x-heroicon-o-inbox class="ts-empty-icon" />
-                    <p style="margin: 0;">Informasi Bonus, Komisi, dan insentif lainnya akan ditampilkan di sini.</p>
-                </div>
+                @if(isset($payrollData) && count($payrollData) > 0)
+                    <div style="overflow-x: auto;">
+                        <table class="ts-table">
+                            <thead>
+                                <tr>
+                                    <th>Periode</th>
+                                    <th>Total Penjualan</th>
+                                    <th>Persentase Bonus</th>
+                                    <th>Bonus Nominal</th>
+                                    <th>Status Pembayaran</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($payrollData as $payroll)
+                                <tr>
+                                    <td>{{ DateTime::createFromFormat('!m', $payroll->bulan)->format('F') }} {{ $payroll->tahun }}</td>
+                                    <td>Rp {{ number_format($payroll->total_penjualan, 0, ',', '.') }}</td>
+                                    <td>{{ $payroll->bonus_persen }}%</td>
+                                    <td>Rp {{ number_format($payroll->bonus_nominal, 0, ',', '.') }}</td>
+                                    <td>
+                                        @if($payroll->status_pembayaran === 'lunas')
+                                            <span class="ts-badge ts-badge-success">Lunas</span>
+                                        @else
+                                            <span class="ts-badge ts-badge-warning">Belum Lunas</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <div class="ts-empty-state">
+                        <x-heroicon-o-inbox class="ts-empty-icon" />
+                        <p style="margin: 0;">Informasi Bonus, Komisi, dan insentif lainnya belum tersedia.</p>
+                    </div>
+                @endif
             </div>
         @endif
     </div>

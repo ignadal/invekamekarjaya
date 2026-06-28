@@ -14,10 +14,18 @@ class Buyer extends Model
     protected $fillable = [
         'kecamatan_id',
         'nama_toko',
+        'foto_toko',
+        'jam_buka',
+        'jam_tutup',
+        'hari_operasional',
         'nama_owner',
         'no_hp',
         'alamat',
         'catatan',
+    ];
+
+    protected $casts = [
+        'foto_toko' => 'array',
     ];
 
     public function kecamatan(): BelongsTo

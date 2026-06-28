@@ -32,6 +32,8 @@ class TokoLanggananResource extends Resource
                     ->schema([
                         \Filament\Schemas\Components\Grid::make(1)
                             ->schema([
+                                \Filament\Schemas\Components\View::make('filament.sales.components.foto-toko-slider')
+                                    ->columnSpanFull(),
                                 Select::make('kecamatan_id')
                                     ->relationship('kecamatan', 'nama_kecamatan')
                                     ->label('Kecamatan')
@@ -45,6 +47,17 @@ class TokoLanggananResource extends Resource
                                 TextInput::make('no_hp')
                                     ->label('No. Handphone')
                                     ->disabled(),
+                                \Filament\Schemas\Components\Grid::make(2)
+                                    ->schema([
+                                        TextInput::make('jam_buka')
+                                            ->label('Jam Buka')
+                                            ->disabled()
+                                            ->prefixIcon('heroicon-o-clock'),
+                                        TextInput::make('jam_tutup')
+                                            ->label('Jam Tutup')
+                                            ->disabled()
+                                            ->prefixIcon('heroicon-o-clock'),
+                                    ]),
                             ]),
                     ]),
                 \Filament\Schemas\Components\Section::make('Detail Lokasi & Catatan')
@@ -65,9 +78,22 @@ class TokoLanggananResource extends Resource
     {
         return $table
             ->columns([
+                \Filament\Tables\Columns\ImageColumn::make('foto_toko')
+                    ->label('Foto')
+                    ->disk('public')
+                    ->height(70)
+                    ->width(90)
+                    ->stacked()
+                    ->limit(3)
+                    ->limitedRemainingText()
+                    ->defaultImageUrl(asset('images/default-toko.png'))
+                    ->extraImgAttributes([
+                        'style' => 'object-fit: cover; border-radius: 0.5rem;',
+                    ]),
                 TextColumn::make('nama_toko')
                     ->label('Nama Toko')
-                    ->searchable(),
+                    ->searchable()
+                    ->weight('bold'),
                 TextColumn::make('nama_owner')
                     ->label('Nama Owner')
                     ->searchable(),
@@ -78,6 +104,16 @@ class TokoLanggananResource extends Resource
                 TextColumn::make('no_hp')
                     ->label('No. Handphone')
                     ->searchable(),
+                TextColumn::make('jam_buka')
+                    ->label('Jam Operasional')
+                    ->formatStateUsing(function ($record) {
+                        $buka = $record->jam_buka ? \Carbon\Carbon::parse($record->jam_buka)->format('H:i') : '-';
+                        $tutup = $record->jam_tutup ? \Carbon\Carbon::parse($record->jam_tutup)->format('H:i') : '-';
+                        return $buka . ' – ' . $tutup;
+                    })
+                    ->icon('heroicon-o-clock')
+                    ->badge()
+                    ->color('success'),
             ])
             ->filters([
                 SelectFilter::make('kecamatan_id')
@@ -99,6 +135,7 @@ class TokoLanggananResource extends Resource
     {
         return [
             'index' => Pages\ListTokoLangganan::route('/'),
+            'view'  => Pages\ViewTokoLangganan::route('/{record}'),
         ];
     }
 }
