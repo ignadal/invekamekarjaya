@@ -29,11 +29,12 @@ class PayrollSales extends Model
 
     public static function updatePayroll($salesId, $bulan, $tahun)
     {
-        $totalPenjualan = \App\Models\Penjualan::where('sales_id', $salesId)
-            ->whereMonth('tanggal_beli', $bulan)
-            ->whereYear('tanggal_beli', $tahun)
-            ->where('status_persetujuan', 'disetujui')
-            ->sum('total_penjualan');
+        $totalPenjualan = \App\Models\CicilanBuyer::whereHas('penjualan', function ($query) use ($salesId) {
+                $query->where('sales_id', $salesId);
+            })
+            ->whereMonth('tanggal_bayar', $bulan)
+            ->whereYear('tanggal_bayar', $tahun)
+            ->sum('nominal');
             
         $bonusPersen = 0;
         if ($totalPenjualan >= 100000000) {

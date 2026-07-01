@@ -205,6 +205,15 @@
     </style>
 
     <div>
+        @if(auth()->user()->name === 'superadmin')
+            <div style="padding: 1rem; background-color: #e0f2fe; border: 1px solid #7dd3fc; color: #0369a1; border-radius: 0.5rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                <x-heroicon-o-information-circle style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;" />
+                <div>
+                    <strong>Mode Testing:</strong> Anda login sebagai Admin ({{ auth()->user()->name }}). Halaman ini saat ini menampilkan data gaji milik <strong>{{ $sales ? $sales->nama_sales : 'Sales' }}</strong> sebagai simulasi.
+                </div>
+            </div>
+        @endif
+
         @if ($activeTab === 'gaji_pokok')
             <div class="ts-content-card">
                 <h2 class="ts-content-title">Rincian Gaji Pokok</h2>
@@ -224,10 +233,10 @@
                                     <td>{{ DateTime::createFromFormat('!m', $payroll->bulan)->format('F') }} {{ $payroll->tahun }}</td>
                                     <td>Rp {{ number_format($payroll->gaji_pokok, 0, ',', '.') }}</td>
                                     <td>
-                                        @if($payroll->status_pembayaran === 'lunas')
-                                            <span class="ts-badge ts-badge-success">Lunas</span>
+                                        @if($payroll->status_pembayaran === 'sudah_digaji')
+                                            <span class="ts-badge ts-badge-success">Sudah Digaji</span>
                                         @else
-                                            <span class="ts-badge ts-badge-warning">Belum Lunas</span>
+                                            <span class="ts-badge ts-badge-warning">Belum Digaji</span>
                                         @endif
                                     </td>
                                 </tr>
@@ -265,10 +274,10 @@
                                     <td>Rp {{ number_format($payroll->uang_bensin, 0, ',', '.') }}</td>
                                     <td>Rp {{ number_format($payroll->uang_makan + $payroll->uang_bensin, 0, ',', '.') }}</td>
                                     <td>
-                                        @if($payroll->status_pembayaran === 'lunas')
-                                            <span class="ts-badge ts-badge-success">Lunas</span>
+                                        @if($payroll->status_pembayaran === 'sudah_digaji')
+                                            <span class="ts-badge ts-badge-success">Sudah Digaji</span>
                                         @else
-                                            <span class="ts-badge ts-badge-warning">Belum Lunas</span>
+                                            <span class="ts-badge ts-badge-warning">Belum Digaji</span>
                                         @endif
                                     </td>
                                 </tr>
@@ -292,7 +301,7 @@
                             <thead>
                                 <tr>
                                     <th>Periode</th>
-                                    <th>Total Penjualan</th>
+                                    <th>Total Penagihan</th>
                                     <th>Persentase Bonus</th>
                                     <th>Bonus Nominal</th>
                                     <th>Status Pembayaran</th>
@@ -306,10 +315,10 @@
                                     <td>{{ $payroll->bonus_persen }}%</td>
                                     <td>Rp {{ number_format($payroll->bonus_nominal, 0, ',', '.') }}</td>
                                     <td>
-                                        @if($payroll->status_pembayaran === 'lunas')
-                                            <span class="ts-badge ts-badge-success">Lunas</span>
+                                        @if($payroll->status_pembayaran === 'sudah_digaji')
+                                            <span class="ts-badge ts-badge-success">Sudah Digaji</span>
                                         @else
-                                            <span class="ts-badge ts-badge-warning">Belum Lunas</span>
+                                            <span class="ts-badge ts-badge-warning">Belum Digaji</span>
                                         @endif
                                     </td>
                                 </tr>

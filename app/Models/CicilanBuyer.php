@@ -22,4 +22,18 @@ class CicilanBuyer extends Model
     {
         return $this->belongsTo(Penjualan::class);
     }
+
+    protected static function booted()
+    {
+        $updatePayroll = function ($cicilan) {
+            if ($cicilan->tanggal_bayar && $cicilan->penjualan) {
+                $bulan = \Carbon\Carbon::parse($cicilan->tanggal_bayar)->month;
+                $tahun = \Carbon\Carbon::parse($cicilan->tanggal_bayar)->year;
+                \App\Models\PayrollSales::updatePayroll($cicilan->penjualan->sales_id, $bulan, $tahun);
+            }
+        };
+
+        static::saved($updatePayroll);
+        static::deleted($updatePayroll);
+    }
 }

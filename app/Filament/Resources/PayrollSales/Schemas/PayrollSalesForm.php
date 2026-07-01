@@ -20,11 +20,12 @@ class PayrollSalesForm
             $tahun = $get('tahun');
 
             if ($salesId && $bulan && $tahun) {
-                $totalPenjualan = Penjualan::where('sales_id', $salesId)
-                    ->whereMonth('tanggal_beli', $bulan)
-                    ->whereYear('tanggal_beli', $tahun)
-                    ->where('status_persetujuan', 'disetujui')
-                    ->sum('total_penjualan');
+                $totalPenjualan = \App\Models\CicilanBuyer::whereHas('penjualan', function ($query) use ($salesId) {
+                        $query->where('sales_id', $salesId);
+                    })
+                    ->whereMonth('tanggal_bayar', $bulan)
+                    ->whereYear('tanggal_bayar', $tahun)
+                    ->sum('nominal');
                 
                 $set('total_penjualan', $totalPenjualan);
 
@@ -123,25 +124,30 @@ class PayrollSalesForm
                                     ->numeric()
                                     ->readOnly()
                                     ->default(0)
-                                    ->prefix('Rp'),
+                                    ->prefix('Rp')
+                                    ->dehydrated(),
 
                                 TextInput::make('total_penjualan')
+                                    ->label('Total Penagihan')
                                     ->numeric()
                                     ->readOnly()
                                     ->default(0)
-                                    ->prefix('Rp'),
+                                    ->prefix('Rp')
+                                    ->dehydrated(),
 
                                 TextInput::make('bonus_persen')
                                     ->numeric()
                                     ->readOnly()
                                     ->default(0)
-                                    ->suffix('%'),
+                                    ->suffix('%')
+                                    ->dehydrated(),
 
                                 TextInput::make('bonus_nominal')
                                     ->numeric()
                                     ->readOnly()
                                     ->default(0)
-                                    ->prefix('Rp'),
+                                    ->prefix('Rp')
+                                    ->dehydrated(),
 
                                 TextInput::make('uang_makan')
                                     ->numeric()
@@ -168,6 +174,7 @@ class PayrollSalesForm
                                     ->readOnly()
                                     ->default(0)
                                     ->prefix('Rp')
+                                    ->dehydrated()
                                     ->extraInputAttributes(['style' => 'font-weight: bold; font-size: 1.25rem;']),
                             ]),
                     ]),

@@ -27,6 +27,11 @@ class Gaji extends Page
     {
         $sales = \App\Models\Sales::where('user_id', auth()->id())->first();
         
+        // Fallback khusus untuk superadmin yang sedang melakukan testing
+        if (!$sales && auth()->user()->name === 'superadmin') {
+            $sales = \App\Models\Sales::first();
+        }
+
         $payrollData = [];
         if ($sales) {
             // Get all payrolls for the sales person, ordered by newest
@@ -37,6 +42,7 @@ class Gaji extends Page
         }
 
         return [
+            'sales' => $sales,
             'payrollData' => $payrollData
         ];
     }
