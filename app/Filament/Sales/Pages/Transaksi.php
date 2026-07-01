@@ -86,9 +86,20 @@ class Transaksi extends Page
                 ->form(function(Schema $schema) {
                     return \App\Filament\Resources\Penjualans\Schemas\PenjualanForm::configure($schema);
                 })
+                ->before(function (\Filament\Actions\CreateAction $action) {
+                    $sales = Sales::where('user_id', auth()->id())->first() ?? Sales::first();
+                    if (! $sales) {
+                        Notification::make()
+                            ->danger()
+                            ->title('Data Sales Kosong')
+                            ->body('Belum ada data Sales di sistem. Harap buat data Sales terlebih dahulu.')
+                            ->send();
+                        $action->halt();
+                    }
+                })
                 ->mutateFormDataUsing(function (array $data): array {
-                    $sales = Sales::where('user_id', auth()->id())->first();
-                    $data['sales_id'] = $sales ? $sales->id : null;
+                    $sales = Sales::where('user_id', auth()->id())->first() ?? Sales::first();
+                    $data['sales_id'] = $sales->id;
                     $data['status_persetujuan'] = 'pending';
                     return $data;
                 })
@@ -159,7 +170,8 @@ class Transaksi extends Page
 
     protected function getViewData(): array
     {
-        $salesId = Sales::where('user_id', auth()->id())->first()?->id ?? -1;
+        $sales = Sales::where('user_id', auth()->id())->first() ?? Sales::first();
+        $salesId = $sales?->id ?? -1;
         
         $baseQuery = Penjualan::query()->where('sales_id', $salesId);
         
