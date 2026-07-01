@@ -107,13 +107,54 @@ class Transaksi extends Page
                             'penjualan_id' => $record->id,
                             'nominal' => $record->sudah_dibayar,
                             'tanggal_bayar' => $record->tanggal_beli,
-                            'keterangan' => 'Pembayaran Awal (' . $record->metode . ')',
-                            'status_persetujuan' => 'pending',
+                            'catatan' => 'Pembayaran Awal (' . $record->metode . ')',
                         ]);
                     }
                 })
                 ->successNotificationTitle('Orderan berhasil dibuat!')
         ];
+    }
+
+    public function detailAction(): Action
+    {
+        return Action::make('detail')
+            ->label('Riwayat')
+            ->icon('heroicon-o-clock')
+            ->color('info')
+            ->button()
+            ->size('sm')
+            ->modalHeading('Histori Pembayaran Cicilan')
+            ->modalSubmitAction(false)
+            ->modalCancelActionLabel('Tutup')
+            ->modalContent(function (array $arguments) {
+                $penjualan = Penjualan::find($arguments['penjualan_id'] ?? null);
+                $cicilans = $penjualan ? $penjualan->cicilans()->orderBy('tanggal_bayar', 'desc')->orderBy('created_at', 'desc')->get() : collect();
+                
+                return view('filament.sales.components.histori-cicilan', [
+                    'cicilans' => $cicilans,
+                    'penjualan' => $penjualan,
+                ]);
+            });
+    }
+
+    public function viewPenjualanAction(): Action
+    {
+        return Action::make('viewPenjualan')
+            ->label('Detail')
+            ->icon('heroicon-o-eye')
+            ->color('primary')
+            ->button()
+            ->size('sm')
+            ->modalHeading('Detail Orderan')
+            ->modalSubmitAction(false)
+            ->modalCancelActionLabel('Tutup')
+            ->modalContent(function (array $arguments) {
+                $penjualan = Penjualan::with(['buyer', 'details.barang'])->find($arguments['penjualan_id'] ?? null);
+                
+                return view('filament.sales.components.detail-penjualan', [
+                    'penjualan' => $penjualan,
+                ]);
+            });
     }
 
     protected function getViewData(): array

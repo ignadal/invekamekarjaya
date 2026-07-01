@@ -2,7 +2,27 @@
 @php
     $toko = $this->toko;
     $kecamatanList = $this->kecamatanList;
+    $activeTab = $this->activeTab;
 @endphp
+
+<div style="margin-bottom: 2rem;">
+    <div class="tb-tab-container">
+        <button 
+            wire:click="setTab('kunjungan_hari_ini')"
+            class="tb-tab-btn {{ $activeTab === 'kunjungan_hari_ini' ? 'tb-tab-btn-active' : 'tb-tab-btn-inactive' }}"
+        >
+            <x-heroicon-o-calendar-days style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" />
+            Laporan Kunjungan
+        </button>
+        <button 
+            wire:click="setTab('semua')"
+            class="tb-tab-btn {{ $activeTab === 'semua' ? 'tb-tab-btn-active' : 'tb-tab-btn-inactive' }}"
+        >
+            <x-heroicon-o-building-storefront style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" />
+            Semua Toko
+        </button>
+    </div>
+</div>
 
 <div class="catalog-wrapper">
     <div class="catalog-layout">
@@ -13,6 +33,15 @@
                 <span>Filter</span>
             </h2>
             
+            @if($activeTab === 'kunjungan_hari_ini')
+            <div class="filter-section" style="margin-bottom: 1.5rem;">
+                <h3 class="filter-heading">Tanggal Kunjungan</h3>
+                <div class="search-category" style="margin-bottom: 1rem;">
+                    <input type="date" wire:model.live="filterTanggal" class="search-input" style="padding-right: 1rem; cursor: pointer; color: #4b5563;">
+                </div>
+            </div>
+            @endif
+
             <div class="filter-section">
                 <h3 class="filter-heading">Kecamatan</h3>
                 <div class="search-category" style="margin-bottom: 1rem;">
@@ -25,6 +54,7 @@
                 </div>
             </div>
             
+            @if($activeTab === 'semua')
             <div class="filter-section" style="margin-top: 1.5rem;">
                 <h3 class="filter-heading">Status Toko</h3>
                 <div class="status-toggles">
@@ -33,12 +63,138 @@
                     <button wire:click="$set('statusFilter', 'tutup')" class="status-btn {{ $statusFilter === 'tutup' ? 'active' : '' }}">Tutup</button>
                 </div>
             </div>
+            @endif
+
+            @if($activeTab === 'kunjungan_hari_ini')
+            <div class="filter-section" style="margin-top: 1.5rem;">
+                <h3 class="filter-heading">Hasil Kunjungan</h3>
+                <div class="status-toggles" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <button wire:click="$set('filterHasilKunjungan', 'semua')" class="status-btn {{ $filterHasilKunjungan === 'semua' ? 'active' : '' }}" style="{{ $filterHasilKunjungan === 'semua' ? 'background-color: #f3f4f6; color: #111827; border: 1px solid #d1d5db;' : 'background-color: transparent; border: 1px solid #e5e7eb; color: #6b7280;' }}">Semua</button>
+                    <button wire:click="$set('filterHasilKunjungan', 'sukses')" class="status-btn {{ $filterHasilKunjungan === 'sukses' ? 'active' : '' }}" style="{{ $filterHasilKunjungan === 'sukses' ? 'background-color: #10b981; color: white; border-color: #10b981;' : 'background-color: transparent; border: 1px solid #e5e7eb; color: #10b981;' }}">Sukses (Order)</button>
+                    <button wire:click="$set('filterHasilKunjungan', 'gagal')" class="status-btn {{ $filterHasilKunjungan === 'gagal' ? 'active' : '' }}" style="{{ $filterHasilKunjungan === 'gagal' ? 'background-color: #ef4444; color: white; border-color: #ef4444;' : 'background-color: transparent; border: 1px solid #e5e7eb; color: #ef4444;' }}">Gagal / Ditunda</button>
+                </div>
+            </div>
+            @endif
             
         </aside>
 
         {{-- Main Content --}}
         <div class="catalog-main">
-            <div class="products-section">
+            @if($activeTab === 'kunjungan_hari_ini')
+                {{-- Laporan Kunjungan UI --}}
+                <div class="products-section">
+                    <div class="products-header">
+                        <h2 class="section-title">
+                            <x-heroicon-o-clipboard-document-list class="title-icon" style="width: 1.5rem; height: 1.5rem; color: #dc2626;" />
+                            <span>Riwayat Laporan Kunjungan</span>
+                        </h2>
+                        
+                        <div class="products-controls" style="margin-right: 1.5rem;">
+                            <div class="search-product" style="min-width: 350px;">
+                                <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari toko, owner, kecamatan..." class="search-input">
+                                <x-heroicon-o-magnifying-glass class="search-icon" style="width: 1.25rem; height: 1.25rem;" />
+                            </div>
+                        </div>
+                    </div>
+
+                    @if($toko->count() > 0)
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        @foreach($toko as $kunjungan)
+                        <div style="padding: 1.5rem; border-radius: 1rem; border: 1px solid #e5e7eb; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; gap: 1.5rem; flex-direction: column; @media (min-width: 768px) { flex-direction: row; }">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                                    <span style="font-weight: 700; font-size: 1.125rem; color: #111827;">{{ $kunjungan->buyer->nama_toko ?? '-' }}</span>
+                                    @if(strtolower($kunjungan->hasil_kunjungan) == 'sukses')
+                                        <span style="background: #dcfce7; color: #16a34a; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">Sukses</span>
+                                    @else
+                                        <span style="background: #fef2f2; color: #dc2626; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">Gagal / Ditunda</span>
+                                    @endif
+                                </div>
+                                <div style="color: #6b7280; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                                    <x-heroicon-o-clock style="width: 1rem; height: 1rem;" />
+                                    {{ \Carbon\Carbon::parse($kunjungan->created_at)->format('H:i') }} WIB
+                                    <span style="margin: 0 0.25rem;">&bull;</span>
+                                    <x-heroicon-o-map-pin style="width: 1rem; height: 1rem;" />
+                                    {{ $kunjungan->buyer->kecamatan->nama_kecamatan ?? '-' }}
+                                </div>
+                                
+                                @if($kunjungan->catatan)
+                                <div style="background: #f9fafb; padding: 1rem; border-radius: 0.75rem; border: 1px solid #f3f4f6;">
+                                    <div style="font-size: 0.75rem; font-weight: 700; color: #6b7280; margin-bottom: 0.25rem;">Catatan Kunjungan</div>
+                                    <div style="font-size: 0.875rem; color: #374151;">{{ $kunjungan->catatan }}</div>
+                                </div>
+                                @endif
+                            </div>
+                            
+                            @if($kunjungan->foto)
+                            <div style="width: 100%; max-width: 200px; border-radius: 0.75rem; overflow: hidden; border: 1px solid #e5e7eb; flex-shrink: 0; background-color: #f3f4f6; display: flex; align-items: center; justify-content: center;">
+                                <img src="{{ asset('storage/' . $kunjungan->foto) }}" alt="Foto Kunjungan" style="width: 100%; height: 150px; object-fit: cover;">
+                            </div>
+                            @endif
+                        </div>
+                        @endforeach
+                    </div>
+                    
+                    {{-- Pagination --}}
+                    <div class="pagination-container" style="margin-top: 2rem;">
+                        <span class="pagination-info">
+                            Menampilkan {{ $toko->firstItem() }}-{{ $toko->lastItem() }} dari {{ $toko->total() }} laporan
+                        </span>
+                        
+                        <div class="pagination-controls">
+                            @if($toko->onFirstPage())
+                                <span class="page-btn" style="opacity: 0.5; cursor: not-allowed;"><x-heroicon-o-chevron-left style="width: 1rem; height: 1rem;" /></span>
+                            @else
+                                <button wire:click="previousPage" class="page-btn"><x-heroicon-o-chevron-left style="width: 1rem; height: 1rem;" /></button>
+                            @endif
+                            
+                            @foreach($toko->getUrlRange(max(1, $toko->currentPage()-2), min($toko->lastPage(), $toko->currentPage()+2)) as $page => $url)
+                                @if($page == $toko->currentPage())
+                                    <button class="page-num-btn active">{{ $page }}</button>
+                                @else
+                                    <button wire:click="gotoPage({{ $page }})" class="page-num-btn">{{ $page }}</button>
+                                @endif
+                            @endforeach
+                            
+                            @if($toko->hasMorePages())
+                                <button wire:click="nextPage" class="page-btn"><x-heroicon-o-chevron-right style="width: 1rem; height: 1rem;" /></button>
+                            @else
+                                <span class="page-btn" style="opacity: 0.5; cursor: not-allowed;"><x-heroicon-o-chevron-right style="width: 1rem; height: 1rem;" /></span>
+                            @endif
+                        </div>
+                        
+                        <div class="per-page-dropdown">
+                            <select wire:model.live="perPage" class="per-page-select">
+                                <option value="8">8 / halaman</option>
+                                <option value="12">12 / halaman</option>
+                                <option value="16">16 / halaman</option>
+                                <option value="24">24 / halaman</option>
+                            </select>
+                        </div>
+                    </div>
+                    @else
+                    <div class="empty-state" style="padding: 4rem 2rem; display: flex; flex-direction: column; align-items: center; text-align: center;">
+                        <x-heroicon-o-clipboard-document-check style="width: 4rem; height: 4rem; color: #d1d5db; margin-bottom: 1rem;" />
+                        <h3 style="font-size: 1.125rem; font-weight: 700; color: #111827; margin: 0 0 0.5rem 0;">Belum ada riwayat kunjungan</h3>
+                        <p style="color: #6b7280; font-size: 0.875rem; margin: 0 0 1rem 0;">
+                            @if($search || $filterKecamatan)
+                                Tidak ada hasil yang sesuai dengan kriteria filter Anda.
+                            @else
+                                Belum ada laporan kunjungan toko yang tercatat.
+                            @endif
+                        </p>
+                        @if($search || $filterKecamatan)
+                        <button wire:click="$set('search', ''); $set('filterKecamatan', '')" style="background: none; border: none; color: #dc2626; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                            <x-heroicon-o-x-circle style="width: 1.25rem; height: 1.25rem;" />
+                            Reset filter
+                        </button>
+                        @endif
+                    </div>
+                    @endif
+                </div>
+            @else
+                {{-- Default Product Section (Semua Toko) --}}
+                <div class="products-section">
                 <div class="products-header">
                     <h2 class="section-title">
                         <x-heroicon-o-building-storefront class="title-icon" style="width: 1.5rem; height: 1.5rem; color: #dc2626;" />
@@ -223,11 +379,57 @@
                 </div>
                 @endif
             </div>
+            @endif
         </div>
     </div>
 </div>
 
 <style>
+    /* Tabs */
+    .tb-tab-container {
+        display: inline-flex;
+        background-color: #ffffff;
+        border-radius: 9999px;
+        padding: 0.375rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(229, 231, 235, 0.5);
+        overflow-x: auto;
+        max-width: 100%;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    .tb-tab-container::-webkit-scrollbar {
+        display: none;
+    }
+    .tb-tab-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.625rem 1.5rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        white-space: nowrap;
+        transition: all 0.2s ease-in-out;
+        border: none;
+        cursor: pointer;
+        outline: none;
+    }
+    .tb-tab-btn-active {
+        background-color: #dc2626;
+        color: white;
+        box-shadow: 0 4px 10px rgba(220, 38, 38, 0.3);
+    }
+    .tb-tab-btn-inactive {
+        background-color: transparent;
+        color: #6b7280;
+    }
+    .tb-tab-btn-inactive:hover {
+        background-color: #f9fafb;
+        color: #111827;
+    }
+
     .catalog-wrapper {
         display: flex;
         flex-direction: column;
@@ -692,4 +894,5 @@
         background-size: 1.5em 1.5em;
     }
 </style>
+    <x-filament-actions::modals />
 </x-filament-panels::page>

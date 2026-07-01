@@ -610,9 +610,7 @@
                                             </span>
                                         </td>
                                         <td style="text-align: center;">
-                                            <button type="button" class="ts-action-btn">
-                                                <x-heroicon-o-ellipsis-horizontal style="width:1.25rem;height:1.25rem;" />
-                                            </button>
+                                            {{ ($this->viewPenjualanAction)(['penjualan_id' => $record->id]) }}
                                         </td>
                                     </tr>
                                 @empty
@@ -664,9 +662,9 @@
                                         <span class="ts-text-strong" style="font-weight: 600; font-size: 0.875rem;">
                                             IDR {{ number_format($record->total_penjualan, 2, '.', ',') }}
                                         </span>
-                                        <button class="ts-action-btn" type="button" style="padding: 0.375rem;">
-                                            <x-heroicon-o-ellipsis-horizontal style="width:1.25rem; height:1.25rem;" />
-                                        </button>
+                                        <div style="margin-top: 0.25rem;">
+                                            {{ ($this->viewPenjualanAction)(['penjualan_id' => $record->id]) }}
+                                        </div>
                                     </div>
                                 </div>
                             @empty
@@ -888,10 +886,10 @@
                                             <span class="ts-stat-badge" style="background-color: #fef9c3; color: #ca8a04;">Belum Lunas</span>
                                         @endif
                                     </td>
-                                    <td style="text-align: center; width: 40px;">
-                                        <button type="button" class="ts-action-btn" style="padding: 0.375rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; background: white;">
-                                            <x-heroicon-o-ellipsis-vertical style="width:1.25rem; height:1.25rem; color: #6b7280;" />
-                                        </button>
+                                    <td style="text-align: right; min-width: 200px;">
+                                        <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+                                            {{ ($this->detailAction)(['penjualan_id' => $record->id]) }}
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
@@ -949,9 +947,14 @@
                                         <div style="height: 100%; background-color: {{ $isLunas ? '#10b981' : '#3b82f6' }}; width: {{ $progress }}%; transition: width 0.3s ease;"></div>
                                     </div>
                                     
-                                    <div class="billing-divider" style="display: flex; justify-content: space-between; padding-top: 0.5rem;">
-                                        <span style="font-size: 0.75rem; font-weight: 600; color: #374151;">Sisa Tagihan</span>
-                                        <span style="font-size: 0.875rem; font-weight: 700; color: #ef4444;">IDR {{ number_format($sisa, 0, '.', ',') }}</span>
+                                    <div class="billing-divider" style="display: flex; justify-content: space-between; align-items: center; padding-top: 0.5rem;">
+                                        <div>
+                                            <span style="display: block; font-size: 0.75rem; font-weight: 600; color: #374151;">Sisa Tagihan</span>
+                                            <span style="display: block; font-size: 0.875rem; font-weight: 700; color: #ef4444;">IDR {{ number_format($sisa, 0, '.', ',') }}</span>
+                                        </div>
+                                        <div style="display: flex; gap: 0.5rem;">
+                                            {{ ($this->detailAction)(['penjualan_id' => $record->id]) }}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
