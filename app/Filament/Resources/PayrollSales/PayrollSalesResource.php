@@ -17,12 +17,13 @@ use Filament\Tables\Table;
 class PayrollSalesResource extends Resource
 {
     protected static ?string $model = \App\Models\PayrollSales::class;
-    protected static ?string $pluralModelLabel = 'Payroll Sales';
+    protected static ?string $modelLabel = 'Gaji Sales';
+    protected static ?string $pluralModelLabel = 'Gaji Sales';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBanknotes;
     protected static string|\UnitEnum|null $navigationGroup = 'HR & Sales';
     protected static ?int $navigationSort = 3;
-    protected static ?string $navigationLabel = 'Payroll Sales';
+    protected static ?string $navigationLabel = 'Gaji Sales';
 
     public static function form(Schema $schema): Schema
     {
