@@ -17,6 +17,9 @@ class UsersTable
             ->columns([
                 TextColumn::make('name')
                     ->searchable(),
+                TextColumn::make('username')
+                    ->placeholder('-')
+                    ->searchable(),
                 TextColumn::make('email')
                     ->label('Email')
                     ->placeholder('-')

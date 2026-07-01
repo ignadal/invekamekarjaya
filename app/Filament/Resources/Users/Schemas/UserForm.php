@@ -21,6 +21,16 @@ class UserForm
                                 TextInput::make('name')
                                     ->required(),
 
+                                TextInput::make('username')
+                                    ->unique(ignoreRecord: true)
+                                    ->nullable()
+                                    ->extraInputAttributes([
+                                        'autocomplete' => 'off', 
+                                        'data-lpignore' => 'true', 
+                                        'readonly' => 'readonly', 
+                                        'onfocus' => "this.removeAttribute('readonly');"
+                                    ]),
+
                                 TextInput::make('email')
                                     ->email(),
 

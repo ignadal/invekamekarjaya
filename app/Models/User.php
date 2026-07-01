@@ -21,6 +21,7 @@ class User extends Authenticatable implements \Filament\Models\Contracts\HasAvat
      */
     protected $fillable = [
         'name',
+        'username',
         'email',
         'no_hp',
         'password',
