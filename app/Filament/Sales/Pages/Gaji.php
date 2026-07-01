@@ -17,6 +17,14 @@ class Gaji extends Page
     protected static ?int $navigationSort = 4;
 
     public $activeTab = 'gaji_pokok';
+    public $filterBulan = '';
+    public $filterTahun = '';
+
+    public function mount()
+    {
+        $this->filterBulan = (string) now()->month;
+        $this->filterTahun = (string) now()->year;
+    }
 
     public function setTab($tab)
     {
@@ -33,17 +41,33 @@ class Gaji extends Page
         }
 
         $payrollData = [];
+        $tahunList = [];
         if ($sales) {
-            // Get all payrolls for the sales person, ordered by newest
-            $payrollData = \App\Models\PayrollSales::where('sales_id', $sales->id)
+            $payrollQuery = \App\Models\PayrollSales::where('sales_id', $sales->id);
+            
+            $tahunList = \App\Models\PayrollSales::where('sales_id', $sales->id)
+                ->select('tahun')
+                ->distinct()
                 ->orderBy('tahun', 'desc')
+                ->pluck('tahun')
+                ->toArray();
+                
+            if ($this->filterBulan) {
+                $payrollQuery->where('bulan', $this->filterBulan);
+            }
+            if ($this->filterTahun) {
+                $payrollQuery->where('tahun', $this->filterTahun);
+            }
+            
+            $payrollData = $payrollQuery->orderBy('tahun', 'desc')
                 ->orderBy('bulan', 'desc')
                 ->get();
         }
 
         return [
             'sales' => $sales,
-            'payrollData' => $payrollData
+            'payrollData' => $payrollData,
+            'tahunList' => $tahunList ?: [now()->year]
         ];
     }
 }

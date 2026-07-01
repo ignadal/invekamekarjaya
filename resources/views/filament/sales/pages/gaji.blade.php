@@ -116,9 +116,48 @@
             margin-bottom: 1.5rem;
             width: 100%;
         }
+        .ts-summary-box {
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+        }
+        html.dark .ts-summary-box {
+            background-color: #27272a;
+            border-color: #3f3f46;
+        }
+        .ts-summary-box span {
+            font-size: 0.75rem;
+            color: #6b7280;
+            display: block;
+        }
+        html.dark .ts-summary-box span {
+            color: #a1a1aa;
+        }
+        .ts-summary-box strong {
+            font-size: 1.125rem;
+            color: #111827;
+        }
+        html.dark .ts-summary-box strong {
+            color: white;
+        }
+        .ts-filter-select {
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb;
+            padding: 0.5rem 2rem 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            background-color: white;
+            color: #374151;
+            cursor: pointer;
+            outline: none;
+        }
+        html.dark .ts-filter-select {
+            background-color: #18181b;
+            border-color: #3f3f46;
+            color: #d1d5db;
+        }
     </style>
 
-    <div class="ts-flex-row">
+    <div class="ts-flex-row" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; width: 100%;">
         <div class="ts-tab-container">
             <!-- Gaji Pokok Tab -->
             <button 
@@ -146,6 +185,32 @@
                 <x-heroicon-o-star class="ts-icon" />
                 Bonus & Komisi
             </button>
+        </div>
+
+        <!-- Filter Bulan & Tahun -->
+        <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+            <select wire:model.live="filterBulan" class="ts-filter-select">
+                <option value="">Semua Bulan</option>
+                <option value="1">Januari</option>
+                <option value="2">Februari</option>
+                <option value="3">Maret</option>
+                <option value="4">April</option>
+                <option value="5">Mei</option>
+                <option value="6">Juni</option>
+                <option value="7">Juli</option>
+                <option value="8">Agustus</option>
+                <option value="9">September</option>
+                <option value="10">Oktober</option>
+                <option value="11">November</option>
+                <option value="12">Desember</option>
+            </select>
+            
+            <select wire:model.live="filterTahun" class="ts-filter-select">
+                <option value="">Semua Tahun</option>
+                @foreach($tahunList ?? [] as $thn)
+                    <option value="{{ $thn }}">{{ $thn }}</option>
+                @endforeach
+            </select>
         </div>
     </div>
 
@@ -261,79 +326,113 @@
                 @endif
             </div>
         @elseif ($activeTab === 'makan_bensin')
-            <div class="ts-content-card">
-                <h2 class="ts-content-title">Uang Makan & Bensin</h2>
-                @if(isset($payrollData) && count($payrollData) > 0)
-                    <div style="overflow-x: auto;">
-                        <table class="ts-table">
-                            <thead>
-                                <tr>
-                                    <th>Periode</th>
-                                    <th>Hari Kerja</th>
-                                    <th>Uang Makan</th>
-                                    <th>Uang Bensin</th>
-                                    <th>Total</th>
-                                    <th>Status Pembayaran</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($payrollData as $payroll)
-                                <tr>
-                                    <td>{{ DateTime::createFromFormat('!m', $payroll->bulan)->format('F') }} {{ $payroll->tahun }}</td>
-                                    <td>
-                                        <div style="font-weight: 600;">{{ $payroll->hari_kerja ?? 0 }} Hari</div>
-                                        @if(!empty($payroll->tanggal_kehadiran) && is_array($payroll->tanggal_kehadiran))
-                                            <div class="ts-cal-grid">
-                                                @foreach($payroll->tanggal_kehadiran as $item)
-                                                    @php
-                                                        $day = '';
-                                                        $month = '';
-                                                        if (is_array($item) && isset($item['tanggal'])) {
-                                                            $date = \Carbon\Carbon::parse($item['tanggal']);
-                                                            $day = $date->format('d');
-                                                            $month = $date->format('M');
-                                                        } else {
-                                                            // For old numeric data, just show the day number
-                                                            $day = str_pad($item, 2, '0', STR_PAD_LEFT);
-                                                            $month = DateTime::createFromFormat('!m', $payroll->bulan)->format('M');
+            @if(isset($payrollData) && count($payrollData) > 0)
+                @foreach($payrollData as $payroll)
+                    <div class="ts-content-card" style="margin-bottom: 2rem;">
+                        <h2 class="ts-content-title" style="border-bottom: 1px solid #e5e7eb; padding-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem;">
+                            <span>Periode: {{ DateTime::createFromFormat('!m', $payroll->bulan)->format('F') }} {{ $payroll->tahun }}</span>
+                            @if($payroll->status_pembayaran === 'sudah_digaji')
+                                <span class="ts-badge ts-badge-success">Sudah Digaji</span>
+                            @else
+                                <span class="ts-badge ts-badge-warning">Belum Digaji</span>
+                            @endif
+                        </h2>
+                        
+                        <!-- Ringkasan Tunjangan -->
+                        <div class="ts-summary-box" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; padding: 1rem; border-radius: 0.5rem;">
+                            <div>
+                                <span>Total Hari Kerja</span>
+                                <strong>{{ $payroll->hari_kerja ?? 0 }} Hari</strong>
+                            </div>
+                            <div>
+                                <span>Total Uang Makan</span>
+                                <strong>Rp {{ number_format($payroll->uang_makan, 0, ',', '.') }}</strong>
+                            </div>
+                            <div>
+                                <span>Total Uang Bensin</span>
+                                <strong>Rp {{ number_format($payroll->uang_bensin, 0, ',', '.') }}</strong>
+                            </div>
+                            <div>
+                                <span>Total Tunjangan</span>
+                                <strong style="color: #E30613;">Rp {{ number_format($payroll->uang_makan + $payroll->uang_bensin, 0, ',', '.') }}</strong>
+                            </div>
+                        </div>
+
+                        <!-- Rincian Harian -->
+                        <div>
+                            <h3 style="font-size: 0.875rem; font-weight: 700; color: #374151; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <x-heroicon-o-calendar style="width: 1.125rem; height: 1.125rem; color: #6b7280;" />
+                                Rincian Tunjangan Harian (Berdasarkan Tanggal)
+                            </h3>
+                            
+                            @php
+                                $tanggalList = $payroll->tanggal_kehadiran ?? [];
+                                usort($tanggalList, function($a, $b) {
+                                    $dateA = is_array($a) ? ($a['tanggal'] ?? '') : (is_string($a) && strlen($a) > 2 ? $a : sprintf('%02d', $a));
+                                    $dateB = is_array($b) ? ($b['tanggal'] ?? '') : (is_string($b) && strlen($b) > 2 ? $b : sprintf('%02d', $b));
+                                    return strcmp($dateA, $dateB);
+                                });
+                            @endphp
+
+                            @if(!empty($tanggalList))
+                                <div style="overflow-x: auto; border: 1px solid #e5e7eb; border-radius: 0.5rem;">
+                                    <table class="ts-table" style="margin-top: 0;">
+                                        <thead>
+                                            <tr>
+                                                <th>Tanggal</th>
+                                                <th>Uang Makan</th>
+                                                <th>Uang Bensin</th>
+                                                <th>Total Harian</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($tanggalList as $item)
+                                                @php
+                                                    $tanggalStr = '-';
+                                                    $makanHarian = $payroll->uang_makan_harian ?? 0;
+                                                    $bensinHarian = $payroll->uang_bensin_harian ?? 0;
+                                                    
+                                                    if (is_array($item)) {
+                                                        if (isset($item['tanggal'])) {
+                                                            $tanggalStr = \Carbon\Carbon::parse($item['tanggal'])->translatedFormat('d F Y');
                                                         }
-                                                    @endphp
-                                                    <div class="ts-cal-block" title="Tanggal Kehadiran">
-                                                        <span class="ts-cal-day">{{ $day }}</span>
-                                                        <span class="ts-cal-month">{{ $month }}</span>
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        Rp {{ number_format($payroll->uang_makan, 0, ',', '.') }}<br>
-                                        <small style="color: #6b7280;">(Rp {{ number_format($payroll->uang_makan_harian ?? 0, 0, ',', '.') }}/hari)</small>
-                                    </td>
-                                    <td>
-                                        Rp {{ number_format($payroll->uang_bensin, 0, ',', '.') }}<br>
-                                        <small style="color: #6b7280;">(Rp {{ number_format($payroll->uang_bensin_harian ?? 0, 0, ',', '.') }}/hari)</small>
-                                    </td>
-                                    <td>Rp {{ number_format($payroll->uang_makan + $payroll->uang_bensin, 0, ',', '.') }}</td>
-                                    <td>
-                                        @if($payroll->status_pembayaran === 'sudah_digaji')
-                                            <span class="ts-badge ts-badge-success">Sudah Digaji</span>
-                                        @else
-                                            <span class="ts-badge ts-badge-warning">Belum Digaji</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                                        $makanHarian = $item['uang_makan'] ?? $payroll->uang_makan_harian ?? 0;
+                                                        $bensinHarian = $item['uang_bensin'] ?? $payroll->uang_bensin_harian ?? 0;
+                                                    } elseif (is_string($item) && strlen($item) > 2) {
+                                                        $tanggalStr = \Carbon\Carbon::parse($item)->translatedFormat('d F Y');
+                                                    } else {
+                                                        $dayStr = str_pad($item, 2, '0', STR_PAD_LEFT);
+                                                        $monthStr = DateTime::createFromFormat('!m', $payroll->bulan)->format('M');
+                                                        $tanggalStr = $dayStr . ' ' . $monthStr . ' ' . $payroll->tahun;
+                                                    }
+                                                @endphp
+                                                <tr>
+                                                    <td style="font-weight: 600;">{{ $tanggalStr }}</td>
+                                                    <td>Rp {{ number_format($makanHarian, 0, ',', '.') }}</td>
+                                                    <td>Rp {{ number_format($bensinHarian, 0, ',', '.') }}</td>
+                                                    <td style="font-weight: 600; color: #111827;">Rp {{ number_format($makanHarian + $bensinHarian, 0, ',', '.') }}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            @else
+                                <div style="padding: 1.5rem; text-align: center; border: 1px dashed #e5e7eb; border-radius: 0.5rem; color: #9ca3af;">
+                                    Belum ada tanggal kehadiran/tunjangan yang diinput untuk periode ini.
+                                </div>
+                            @endif
+                        </div>
                     </div>
-                @else
+                @endforeach
+            @else
+                <div class="ts-content-card">
+                    <h2 class="ts-content-title">Uang Makan & Bensin</h2>
                     <div class="ts-empty-state">
                         <x-heroicon-o-inbox class="ts-empty-icon" />
                         <p style="margin: 0;">Rincian Uang Makan/Bensin belum tersedia.</p>
                     </div>
-                @endif
-            </div>
+                </div>
+            @endif
         @elseif ($activeTab === 'bonus_komisi')
             <div class="ts-content-card">
                 <h2 class="ts-content-title">Bonus & Komisi</h2>

@@ -26,4 +26,5 @@ class ListPayrollSales extends ListRecords
             \App\Filament\Resources\PayrollSales\Widgets\PayrollSalesStatsOverview::class,
         ];
     }
+
 }
