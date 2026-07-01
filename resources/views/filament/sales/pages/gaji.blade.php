@@ -202,6 +202,15 @@
             background-color: #713f12;
             color: #fde047;
         }
+        
+        /* Calendar Block */
+        .ts-cal-block { width: 3rem; height: 3rem; background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; flex-shrink: 0;}
+        html.dark .ts-cal-block { background-color: #09090b; border-color: #27272a; }
+        .ts-cal-day { font-size: 1.125rem; font-weight: 800; color: #111827; }
+        html.dark .ts-cal-day { color: white; }
+        .ts-cal-month { font-size: 0.65rem; font-weight: 700; color: #6b7280; text-transform: uppercase; }
+        
+        .ts-cal-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
     </style>
 
     <div>
@@ -260,6 +269,7 @@
                             <thead>
                                 <tr>
                                     <th>Periode</th>
+                                    <th>Hari Kerja</th>
                                     <th>Uang Makan</th>
                                     <th>Uang Bensin</th>
                                     <th>Total</th>
@@ -270,8 +280,40 @@
                                 @foreach($payrollData as $payroll)
                                 <tr>
                                     <td>{{ DateTime::createFromFormat('!m', $payroll->bulan)->format('F') }} {{ $payroll->tahun }}</td>
-                                    <td>Rp {{ number_format($payroll->uang_makan, 0, ',', '.') }}</td>
-                                    <td>Rp {{ number_format($payroll->uang_bensin, 0, ',', '.') }}</td>
+                                    <td>
+                                        <div style="font-weight: 600;">{{ $payroll->hari_kerja ?? 0 }} Hari</div>
+                                        @if(!empty($payroll->tanggal_kehadiran) && is_array($payroll->tanggal_kehadiran))
+                                            <div class="ts-cal-grid">
+                                                @foreach($payroll->tanggal_kehadiran as $item)
+                                                    @php
+                                                        $day = '';
+                                                        $month = '';
+                                                        if (is_array($item) && isset($item['tanggal'])) {
+                                                            $date = \Carbon\Carbon::parse($item['tanggal']);
+                                                            $day = $date->format('d');
+                                                            $month = $date->format('M');
+                                                        } else {
+                                                            // For old numeric data, just show the day number
+                                                            $day = str_pad($item, 2, '0', STR_PAD_LEFT);
+                                                            $month = DateTime::createFromFormat('!m', $payroll->bulan)->format('M');
+                                                        }
+                                                    @endphp
+                                                    <div class="ts-cal-block" title="Tanggal Kehadiran">
+                                                        <span class="ts-cal-day">{{ $day }}</span>
+                                                        <span class="ts-cal-month">{{ $month }}</span>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        Rp {{ number_format($payroll->uang_makan, 0, ',', '.') }}<br>
+                                        <small style="color: #6b7280;">(Rp {{ number_format($payroll->uang_makan_harian ?? 0, 0, ',', '.') }}/hari)</small>
+                                    </td>
+                                    <td>
+                                        Rp {{ number_format($payroll->uang_bensin, 0, ',', '.') }}<br>
+                                        <small style="color: #6b7280;">(Rp {{ number_format($payroll->uang_bensin_harian ?? 0, 0, ',', '.') }}/hari)</small>
+                                    </td>
                                     <td>Rp {{ number_format($payroll->uang_makan + $payroll->uang_bensin, 0, ',', '.') }}</td>
                                     <td>
                                         @if($payroll->status_pembayaran === 'sudah_digaji')

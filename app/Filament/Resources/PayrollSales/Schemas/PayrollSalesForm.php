@@ -45,8 +45,16 @@ class PayrollSalesForm
                 $set('gaji_pokok', $gajiPokok);
             }
 
-            $uangMakan = (float) $get('uang_makan');
-            $uangBensin = (float) $get('uang_bensin');
+            $hariKerja = (int) $get('hari_kerja');
+            $uangMakanHarian = (float) $get('uang_makan_harian');
+            $uangBensinHarian = (float) $get('uang_bensin_harian');
+            
+            $uangMakan = $hariKerja * $uangMakanHarian;
+            $uangBensin = $hariKerja * $uangBensinHarian;
+            
+            $set('uang_makan', $uangMakan);
+            $set('uang_bensin', $uangBensin);
+
             $gajiPokok = (float) $get('gaji_pokok');
             $bonusNominal = (float) $get('bonus_nominal');
 
@@ -67,14 +75,16 @@ class PayrollSalesForm
                                         $tahun = $get('tahun') ?? now()->year;
                                         
                                         $query->where(function ($q) use ($bulan, $tahun, $record) {
-                                            $q->whereDoesntHave('payrollSales', function ($q2) use ($bulan, $tahun) {
-                                                $q2->where('bulan', $bulan)
-                                                  ->where('tahun', $tahun);
-                                            });
+                                            // Disabled temporarily to show all sales
+                                            // $q->whereDoesntHave('payrollSales', function ($q2) use ($bulan, $tahun) {
+                                            //     $q2->where('bulan', $bulan)
+                                            //       ->where('tahun', $tahun);
+                                            // });
                                             if ($record) {
                                                 $q->orWhere('id', $record->sales_id);
                                             }
                                         });
+
                                     })
                                     ->unique(modifyRuleUsing: function (\Illuminate\Validation\Rules\Unique $rule, $get) {
                                         return $rule
@@ -149,19 +159,58 @@ class PayrollSalesForm
                                     ->prefix('Rp')
                                     ->dehydrated(),
 
-                                TextInput::make('uang_makan')
+                                \Filament\Forms\Components\Repeater::make('tanggal_kehadiran')
+                                    ->label('Tanggal Kehadiran')
+                                    ->schema([
+                                        \Filament\Forms\Components\DatePicker::make('tanggal')
+                                            ->label('Tanggal')
+                                            ->required(),
+                                    ])
+                                    ->addActionLabel('Tambah Tanggal')
+                                    ->live(onBlur: true)
+                                    ->afterStateUpdated(function (Get $get, Set $set) use ($calculateGaji) {
+                                        $tanggal = $get('tanggal_kehadiran') ?? [];
+                                        $set('hari_kerja', count($tanggal));
+                                        $calculateGaji($get, $set);
+                                    })
+                                    ->grid(3),
+
+                                TextInput::make('hari_kerja')
+                                    ->numeric()
+                                    ->default(0)
+                                    ->readOnly()
+                                    ->suffix('Hari')
+                                    ->dehydrated(),
+
+                                TextInput::make('uang_makan_harian')
                                     ->numeric()
                                     ->default(0)
                                     ->reactive()
                                     ->afterStateUpdated($calculateGaji)
                                     ->prefix('Rp'),
 
-                                TextInput::make('uang_bensin')
+                                TextInput::make('uang_bensin_harian')
                                     ->numeric()
                                     ->default(0)
                                     ->reactive()
                                     ->afterStateUpdated($calculateGaji)
                                     ->prefix('Rp'),
+
+                                TextInput::make('uang_makan')
+                                    ->label('Total Uang Makan')
+                                    ->numeric()
+                                    ->readOnly()
+                                    ->default(0)
+                                    ->prefix('Rp')
+                                    ->dehydrated(),
+
+                                TextInput::make('uang_bensin')
+                                    ->label('Total Uang Bensin')
+                                    ->numeric()
+                                    ->readOnly()
+                                    ->default(0)
+                                    ->prefix('Rp')
+                                    ->dehydrated(),
                             ]),
                     ]),
 

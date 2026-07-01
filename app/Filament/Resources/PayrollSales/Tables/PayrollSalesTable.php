@@ -87,21 +87,39 @@ class PayrollSalesTable
                     ->modalSubmitActionLabel('Kirim')
                     ->extraAttributes(['style' => 'flex: 1 1 30%; justify-content: center;'])
                     ->form([
-                        \Filament\Forms\Components\TextInput::make('uang_makan')
+                        \Filament\Forms\Components\Repeater::make('tanggal_kehadiran')
+                            ->label('Tanggal Kehadiran')
+                            ->schema([
+                                \Filament\Forms\Components\DatePicker::make('tanggal')
+                                    ->label('Tanggal')
+                                    ->required(),
+                            ])
+                            ->default(fn ($record) => $record->tanggal_kehadiran ?? [])
+                            ->addActionLabel('Tambah Tanggal'),
+                        \Filament\Forms\Components\TextInput::make('uang_makan_harian')
                             ->numeric()
-                            ->default(fn ($record) => $record->uang_makan)
+                            ->default(fn ($record) => $record->uang_makan_harian ?? 0)
                             ->required(),
-                        \Filament\Forms\Components\TextInput::make('uang_bensin')
+                        \Filament\Forms\Components\TextInput::make('uang_bensin_harian')
                             ->numeric()
-                            ->default(fn ($record) => $record->uang_bensin)
+                            ->default(fn ($record) => $record->uang_bensin_harian ?? 0)
                             ->required(),
                     ])
                     ->action(function ($record, array $data) {
-                        $uangMakan = $data['uang_makan'];
-                        $uangBensin = $data['uang_bensin'];
+                        $tanggalKehadiran = $data['tanggal_kehadiran'] ?? [];
+                        $hariKerja = count($tanggalKehadiran);
+                        $uangMakanHarian = $data['uang_makan_harian'];
+                        $uangBensinHarian = $data['uang_bensin_harian'];
+                        
+                        $uangMakan = $hariKerja * $uangMakanHarian;
+                        $uangBensin = $hariKerja * $uangBensinHarian;
                         $totalGaji = $record->gaji_pokok + $record->bonus_nominal + $uangMakan + $uangBensin;
                         
                         $record->update([
+                            'tanggal_kehadiran' => $tanggalKehadiran,
+                            'hari_kerja' => $hariKerja,
+                            'uang_makan_harian' => $uangMakanHarian,
+                            'uang_bensin_harian' => $uangBensinHarian,
                             'uang_makan' => $uangMakan,
                             'uang_bensin' => $uangBensin,
                             'total_gaji' => $totalGaji,

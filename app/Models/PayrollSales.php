@@ -17,9 +17,17 @@ class PayrollSales extends Model
         'gaji_pokok',
         'uang_makan',
         'uang_bensin',
+        'hari_kerja',
+        'tanggal_kehadiran',
+        'uang_makan_harian',
+        'uang_bensin_harian',
         'total_gaji',
         'status_pembayaran',
         'catatan',
+    ];
+
+    protected $casts = [
+        'tanggal_kehadiran' => 'array',
     ];
 
     public function sales(): BelongsTo
@@ -51,11 +59,16 @@ class PayrollSales extends Model
             ->first();
             
         if ($payroll) {
+            $totalMakan = $payroll->hari_kerja * $payroll->uang_makan_harian;
+            $totalBensin = $payroll->hari_kerja * $payroll->uang_bensin_harian;
+            
             $payroll->update([
                 'total_penjualan' => $totalPenjualan,
                 'bonus_persen' => $bonusPersen,
                 'bonus_nominal' => $bonusNominal,
-                'total_gaji' => $payroll->gaji_pokok + $bonusNominal + $payroll->uang_makan + $payroll->uang_bensin,
+                'uang_makan' => $totalMakan,
+                'uang_bensin' => $totalBensin,
+                'total_gaji' => $payroll->gaji_pokok + $bonusNominal + $totalMakan + $totalBensin,
             ]);
         }
     }
