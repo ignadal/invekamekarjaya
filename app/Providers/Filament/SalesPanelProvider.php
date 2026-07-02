@@ -36,25 +36,16 @@ class SalesPanelProvider extends PanelProvider
             ->renderHook(
                 \Filament\View\PanelsRenderHook::HEAD_START,
                 fn (): string => '<style>
-                    /* === GLOBAL ANIMATED BACKGROUND === */
+                     /* === GLOBAL SOLID BACKGROUND === */
                     .sales-global-bg {
                         position: fixed;
                         top: 0; left: 0; right: 0; bottom: 0;
-                        background: linear-gradient(120deg, #ffffff, #ffe0e8, #ffffff, #ffb3c6, #ffffff, #ffe0e8);
-                        background-size: 300% 300%;
-                        animation: salesGradientBG 20s ease-in-out infinite;
+                        background-color: #ffffff !important;
                         z-index: -1;
                         pointer-events: none;
                     }
                     html.dark .sales-global-bg {
-                        background-image: linear-gradient(120deg, #09090b, #1f0b0e, #09090b, #300d14, #09090b, #1f0b0e);
-                    }
-                    @keyframes salesGradientBG {
-                        0% { background-position: 0% 0%; }
-                        25% { background-position: 100% 50%; }
-                        50% { background-position: 100% 100%; }
-                        75% { background-position: 0% 50%; }
-                        100% { background-position: 0% 0%; }
+                        background-color: #09090b !important;
                     }
                     /* Force transparent background on containers so the fixed bg is visible */
                     body, .fi-layout, .fi-main {
@@ -100,22 +91,143 @@ class SalesPanelProvider extends PanelProvider
                         display: flex !important;
                         align-items: center !important;
                         height: 4rem !important;
+                        margin-left: 0 !important;
+                        padding-left: 0 !important;
+                    }
+                    /* Remove default margins/padding that space the logo from the hidden sidebar toggle button */
+                    .fi-topbar .fi-logo {
+                        margin-left: 0 !important;
+                        margin-inline-start: 0 !important;
+                        padding-left: 0 !important;
                     }
 
-                    /* Nav links - absolute center so it NEVER shifts */
-                    .fi-topbar .fi-topbar-nav-groups {
-                        position: absolute !important;
-                        left: 50% !important;
-                        top: 50% !important;
-                        transform: translate(-50%, -50%) !important;
-                        display: flex !important;
-                        align-items: center !important;
-                        gap: 0.125rem !important;
-                        list-style: none !important;
-                        margin: 0 !important;
-                        padding: 0 !important;
-                        z-index: 1 !important;
-                        white-space: nowrap !important;
+                    /* === NAVBAR RESPONSIVE CONFIGURATION === */
+                    @media (min-width: 1024px) {
+                        /* Desktop layout: Nav links absolutely centered in header */
+                        .fi-topbar .fi-topbar-nav-groups {
+                            position: absolute !important;
+                            left: 50% !important;
+                            top: 50% !important;
+                            transform: translate(-50%, -50%) !important;
+                            display: flex !important;
+                            flex-wrap: nowrap !important;
+                            align-items: center !important;
+                            gap: 0.125rem !important;
+                            list-style: none !important;
+                            margin: 0 !important;
+                            padding: 0 !important;
+                            z-index: 1 !important;
+                            white-space: nowrap !important;
+                        }
+
+                        .fi-topbar .fi-topbar-item {
+                            margin: 0 !important;
+                            padding: 0 !important;
+                        }
+
+                        .fi-topbar .fi-topbar-item-btn {
+                            padding: 0.5rem 0.75rem !important;
+                            margin: 0 !important;
+                            border: none !important;
+                            outline: none !important;
+                            box-sizing: border-box !important;
+                            border-radius: 0.5rem !important;
+                            transition: background-color 0.15s ease !important;
+                        }
+
+                        .fi-topbar .fi-topbar-item-icon {
+                            width: 1.25rem !important;
+                            height: 1.25rem !important;
+                            flex-shrink: 0 !important;
+                        }
+                    }
+
+                    @media (max-width: 1023px) {
+                        /* Mobile layout: Bottom navigation bar */
+                        .fi-topbar .fi-topbar-nav-groups {
+                            position: fixed !important;
+                            bottom: 0 !important;
+                            left: 0 !important;
+                            right: 0 !important;
+                            top: auto !important;
+                            transform: none !important;
+                            width: 100% !important;
+                            height: 4.5rem !important;
+                            background-color: #b91c1c !important; /* same red */
+                            display: flex !important;
+                            flex-direction: row !important;
+                            justify-content: space-around !important;
+                            align-items: center !important;
+                            padding: 0 !important; /* Reset padding to prevent left/right offset */
+                            z-index: 99999 !important; /* Extremely high z-index to stay on top of all page content */
+                            pointer-events: auto !important; /* Ensure clicks always register */
+                            border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
+                            box-shadow: 0 -4px 10px rgba(0,0,0,0.1) !important;
+                            margin: 0 !important;
+                            list-style: none !important;
+                            white-space: nowrap !important;
+                        }
+
+                        /* Dark mode bottom navigation */
+                        html.dark .fi-topbar .fi-topbar-nav-groups {
+                            background-color: #18181b !important;
+                            border-top: 1px solid #3f3f46 !important;
+                            box-shadow: 0 -4px 10px rgba(0,0,0,0.3) !important;
+                        }
+
+                        /* Ensure items spread evenly and are centered */
+                        .fi-topbar .fi-topbar-item {
+                            flex: 1 1 0% !important;
+                            max-width: 20% !important;
+                            margin: 0 !important;
+                            padding: 0 0.25rem !important; /* Uniform side padding for symmetric gap between buttons */
+                            display: flex !important;
+                            justify-content: center !important;
+                            align-items: center !important;
+                        }
+
+                        /* Style mobile bottom bar item buttons to be vertical (icon on top of label) */
+                        .fi-topbar .fi-topbar-item-btn {
+                            display: flex !important;
+                            flex-direction: column !important;
+                            align-items: center !important;
+                            justify-content: center !important;
+                            gap: 0.1rem !important;
+                            padding: 0.35rem 0.1rem !important;
+                            width: 100% !important; /* Fill the padded column area */
+                            height: 4.2rem !important;
+                            border-radius: 0.75rem !important; /* Match modern card/tab corner radius */
+                            box-sizing: border-box !important;
+                            transition: background-color 0.15s ease !important;
+                            pointer-events: auto !important;
+                        }
+
+                        /* Set icon size for mobile */
+                        .fi-topbar .fi-topbar-item-icon {
+                            width: 1.4rem !important;
+                            height: 1.4rem !important;
+                            flex-shrink: 0 !important;
+                            margin: 0 !important;
+                        }
+
+                        /* Style mobile labels - force fixed height and allow wrapping to center-align perfectly */
+                        .fi-topbar .fi-topbar-item-btn span {
+                            font-size: 0.58rem !important;
+                            font-weight: 700 !important;
+                            text-align: center !important;
+                            white-space: normal !important; /* Allow wrapping to 2 lines */
+                            line-height: 1.15 !important;
+                            max-width: 100% !important;
+                            height: 1.4rem !important; /* Fixed height for up to 2 lines of text */
+                            display: block !important; /* Change from flex to block for reliable browser text centering */
+                            overflow: hidden !important;
+                            text-overflow: ellipsis !important;
+                        }
+
+                        /* Add padding to page container only when the topbar navbar exists */
+                        body:has(.fi-topbar) {
+                            padding-bottom: 4.5rem !important;
+                        }
                     }
 
                     /* User menu area - fixed on right */
@@ -129,25 +241,23 @@ class SalesPanelProvider extends PanelProvider
                         height: 4rem !important;
                     }
 
-                    /* Nav item buttons - fixed padding, no size change on active */
-                    .fi-topbar .fi-topbar-item {
-                        margin: 0 !important;
-                        padding: 0 !important;
+                    /* === PREMIUM CARD & SECTION CONTAINER STYLING === */
+                    html:not(.dark) .fi-card,
+                    html:not(.dark) .fi-section,
+                    html:not(.dark) .fi-ta-ctn,
+                    html:not(.dark) .fi-wi-stats-overview-stat {
+                        background-color: #ffffff !important;
+                        border: 1px solid rgba(185, 28, 28, 0.08) !important; /* soft red-tinted border to match branding */
+                        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.02) !important;
+                        border-radius: 0.75rem !important;
+                        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
                     }
-                    .fi-topbar .fi-topbar-item-btn {
-                        padding: 0.5rem 0.75rem !important;
-                        margin: 0 !important;
-                        border: none !important;
-                        outline: none !important;
-                        box-sizing: border-box !important;
-                        border-radius: 0.5rem !important;
-                        transition: background-color 0.15s ease !important;
+                    html:not(.dark) .fi-card:hover,
+                    html:not(.dark) .fi-wi-stats-overview-stat:hover {
+                        transform: translateY(-2px) !important;
+                        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.06), 0 10px 10px -5px rgba(0, 0, 0, 0.03) !important;
                     }
-                    .fi-topbar .fi-topbar-item-icon {
-                        width: 1.25rem !important;
-                        height: 1.25rem !important;
-                        flex-shrink: 0 !important;
-                    }
+
 
                     /* === COLORS === */
                     html:not(.dark) .fi-topbar span,

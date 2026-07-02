@@ -5,7 +5,7 @@
         .ts-tab-container {
             display: inline-flex;
             background-color: #ffffff;
-            border-radius: 9999px;
+            border-radius: 0.75rem;
             padding: 0.375rem;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
             border: 1px solid rgba(229, 231, 235, 0.5);
@@ -20,7 +20,7 @@
             justify-content: center;
             gap: 0.5rem;
             padding: 0.625rem 1.5rem;
-            border-radius: 9999px;
+            border-radius: 0.5rem;
             font-size: 0.875rem;
             font-weight: 600;
             white-space: nowrap;
@@ -50,12 +50,21 @@
         /* Stats Widgets */
         .ts-stats-grid {
             display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-columns: repeat(1, minmax(0, 1fr));
             gap: 0.75rem;
             margin-bottom: 1.5rem;
         }
-        @media (min-width: 768px) {
-            .ts-stats-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.25rem; }
+        @media (min-width: 640px) {
+            .ts-stats-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 1rem;
+            }
+        }
+        @media (min-width: 1024px) {
+            .ts-stats-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 1.25rem;
+            }
         }
         .ts-stat-card {
             background-color: white;
@@ -64,17 +73,15 @@
             border: 1px solid rgba(229, 231, 235, 0.5);
             padding: 0.75rem;
             display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.5rem;
+            flex-direction: row;
+            align-items: center;
+            gap: 0.75rem;
             transition: transform 0.2s;
         }
         @media (min-width: 768px) {
             .ts-stat-card {
-                padding: 1.5rem;
-                flex-direction: row;
-                align-items: center;
-                gap: 1.25rem;
+                padding: 1.25rem;
+                gap: 1rem;
             }
         }
         .ts-stats-grid > div:nth-child(1) { border-top: 2px solid rgba(225, 29, 72, 0.5); }
@@ -151,7 +158,8 @@
         @media (min-width: 1024px) { .ts-top-filter-bar { flex-direction: row; align-items: flex-end; justify-content: space-between; } }
         html.dark .ts-top-filter-bar { background-color: #18181b; border-color: #27272a; }
         
-        .ts-filter-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; flex: 1; }
+        .ts-filter-grid { display: grid; grid-template-columns: repeat(1, 1fr); gap: 0.75rem; flex: 1; }
+        @media (min-width: 640px) { .ts-filter-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; } }
         @media (min-width: 1024px) { .ts-filter-grid { grid-template-columns: repeat(4, 1fr); gap: 1rem; } }
         
         .ts-filter-item { display: flex; flex-direction: column; }
@@ -163,13 +171,14 @@
         html.dark .ts-filter-input { background-color: #09090b; border-color: #27272a; color: white; }
         .ts-filter-input:focus { border-color: #E30613; box-shadow: 0 0 0 1px #E30613; }
         
-        .ts-filter-actions { display: flex; align-items: center; gap: 1.25rem; margin-top: 1rem; }
-        @media (min-width: 1024px) { .ts-filter-actions { margin-top: 0; } }
+        .ts-filter-actions { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1rem; width: 100%; }
+        @media (min-width: 1024px) { .ts-filter-actions { width: auto; justify-content: flex-end; margin-top: 0; } }
         
         .ts-filter-reset { color: #E30613; font-size: 0.875rem; font-weight: 600; background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.375rem; transition: color 0.2s;}
         .ts-filter-reset:hover { color: #b91c1c; }
         
-        .ts-filter-submit { background-color: #E30613; color: white; padding: 0.625rem 1.25rem; border-radius: 0.5rem; font-weight: 600; font-size: 0.875rem; border: none; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 0.5rem; white-space: nowrap; }
+        .ts-filter-submit { background-color: #E30613; color: white; padding: 0.625rem 1.25rem; border-radius: 0.5rem; font-weight: 600; font-size: 0.875rem; border: none; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 0.5rem; white-space: nowrap; flex-grow: 1; }
+        @media (min-width: 1024px) { .ts-filter-submit { flex-grow: 0; } }
         .ts-filter-submit:hover { background-color: #c80511; box-shadow: 0 4px 12px rgba(227, 6, 19, 0.2); }
         
         /* Main Content Box */
@@ -710,7 +719,7 @@
                     <div style="font-weight: 700; font-size: 0.875rem;" class="ts-text-strong">Filter</div>
                     <x-heroicon-o-funnel style="width: 1.25rem; height: 1.25rem; color: #E30613;" />
                 </div>
-                <div class="ts-filter-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                <div class="ts-filter-grid">
                     <div class="ts-filter-item">
                         <label class="ts-filter-label"><x-heroicon-o-calendar class="ts-filter-icon" /> Tanggal</label>
                         <input type="date" wire:model="filterTanggal" class="ts-filter-input" />
