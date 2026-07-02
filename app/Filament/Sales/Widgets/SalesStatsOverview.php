@@ -8,6 +8,7 @@ use App\Models\KunjunganSales;
 use App\Models\Penjualan;
 use App\Models\CicilanBuyer;
 use App\Models\PayrollSales;
+use Illuminate\Support\Facades\DB;
 
 class SalesStatsOverview extends Widget
 {
@@ -25,39 +26,42 @@ class SalesStatsOverview extends Widget
         $startOfLastMonth = now()->subMonth()->startOfMonth();
         $endOfLastMonth = now()->subMonth()->endOfMonth();
 
-        $kunjunganBulanIni = 0;
-        $kunjunganBulanLalu = 0;
-        $kunjunganGrowth = 0;
-        $tagihanBulanIni = 0;
-        $tagihanBulanLalu = 0;
-        $tagihanGrowth = 0;
+        $penjualanBulanIni = 0;
+        $penjualanBulanLalu = 0;
+        $penjualanGrowth = 0;
+
+        $harusDitagihBulanIni = 0;
+        $harusDitagihBulanLalu = 0;
+        $harusDitagihGrowth = 0;
+
         $pembayaranBulanIni = 0;
         $pembayaranBulanLalu = 0;
         $pembayaranGrowth = 0;
-        $komisiBulanIni = 0;
-        $komisiBulanLalu = 0;
-        $komisiGrowth = 0;
+
+        $kunjunganBulanIni = 0;
+        $kunjunganBulanLalu = 0;
+        $kunjunganGrowth = 0;
 
         if ($salesId) {
-            // 1. Total Kunjungan
-            $kunjunganBulanIni = KunjunganSales::where('sales_id', $salesId)
-                ->whereBetween('tanggal_kunjungan', [$startOfMonth, $endOfMonth])
-                ->count();
-            $kunjunganBulanLalu = KunjunganSales::where('sales_id', $salesId)
-                ->whereBetween('tanggal_kunjungan', [$startOfLastMonth, $endOfLastMonth])
-                ->count();
-            $kunjunganGrowth = $kunjunganBulanLalu > 0 ? (($kunjunganBulanIni - $kunjunganBulanLalu) / $kunjunganBulanLalu) * 100 : ($kunjunganBulanIni > 0 ? 100 : 0);
-
-            // 2. Total Tagihan
-            $tagihanBulanIni = Penjualan::where('sales_id', $salesId)
+            // 1. Total Penjualan
+            $penjualanBulanIni = Penjualan::where('sales_id', $salesId)
                 ->whereBetween('tanggal_beli', [$startOfMonth, $endOfMonth])
                 ->sum('total_penjualan');
-            $tagihanBulanLalu = Penjualan::where('sales_id', $salesId)
+            $penjualanBulanLalu = Penjualan::where('sales_id', $salesId)
                 ->whereBetween('tanggal_beli', [$startOfLastMonth, $endOfLastMonth])
                 ->sum('total_penjualan');
-            $tagihanGrowth = $tagihanBulanLalu > 0 ? (($tagihanBulanIni - $tagihanBulanLalu) / $tagihanBulanLalu) * 100 : ($tagihanBulanIni > 0 ? 100 : 0);
+            $penjualanGrowth = $penjualanBulanLalu > 0 ? (($penjualanBulanIni - $penjualanBulanLalu) / $penjualanBulanLalu) * 100 : ($penjualanBulanIni > 0 ? 100 : 0);
 
-            // 3. Total Pembayaran
+            // 2. Total Harus Ditagih
+            $harusDitagihBulanIni = Penjualan::where('sales_id', $salesId)
+                ->whereBetween('tanggal_beli', [$startOfMonth, $endOfMonth])
+                ->sum(DB::raw('total_penjualan - sudah_dibayar'));
+            $harusDitagihBulanLalu = Penjualan::where('sales_id', $salesId)
+                ->whereBetween('tanggal_beli', [$startOfLastMonth, $endOfLastMonth])
+                ->sum(DB::raw('total_penjualan - sudah_dibayar'));
+            $harusDitagihGrowth = $harusDitagihBulanLalu > 0 ? (($harusDitagihBulanIni - $harusDitagihBulanLalu) / $harusDitagihBulanLalu) * 100 : ($harusDitagihBulanIni > 0 ? 100 : 0);
+
+            // 3. Total Pembayaran Penagihan
             $pembayaranBulanIni = CicilanBuyer::whereHas('penjualan', function($q) use ($salesId) {
                     $q->where('sales_id', $salesId);
                 })
@@ -70,36 +74,34 @@ class SalesStatsOverview extends Widget
                 ->sum('nominal');
             $pembayaranGrowth = $pembayaranBulanLalu > 0 ? (($pembayaranBulanIni - $pembayaranBulanLalu) / $pembayaranBulanLalu) * 100 : ($pembayaranBulanIni > 0 ? 100 : 0);
 
-            // 4. Komisi
-            $komisiBulanIni = PayrollSales::where('sales_id', $salesId)
-                ->where('bulan', now()->month)
-                ->where('tahun', now()->year)
-                ->sum('bonus_nominal');
-            $komisiBulanLalu = PayrollSales::where('sales_id', $salesId)
-                ->where('bulan', now()->subMonth()->month)
-                ->where('tahun', now()->subMonth()->year)
-                ->sum('bonus_nominal');
-            $komisiGrowth = $komisiBulanLalu > 0 ? (($komisiBulanIni - $komisiBulanLalu) / $komisiBulanLalu) * 100 : ($komisiBulanIni > 0 ? 100 : 0);
+            // 4. Total Kunjungan Sales
+            $kunjunganBulanIni = KunjunganSales::where('sales_id', $salesId)
+                ->whereBetween('tanggal_kunjungan', [$startOfMonth, $endOfMonth])
+                ->count();
+            $kunjunganBulanLalu = KunjunganSales::where('sales_id', $salesId)
+                ->whereBetween('tanggal_kunjungan', [$startOfLastMonth, $endOfLastMonth])
+                ->count();
+            $kunjunganGrowth = $kunjunganBulanLalu > 0 ? (($kunjunganBulanIni - $kunjunganBulanLalu) / $kunjunganBulanLalu) * 100 : ($kunjunganBulanIni > 0 ? 100 : 0);
         }
 
         return [
             [
-                'label' => 'Total Kunjungan',
-                'value' => number_format($kunjunganBulanIni, 0, ',', '.'),
-                'trend' => number_format(abs($kunjunganGrowth), 1, ',', '.') . '% dari bulan lalu',
-                'trend_up' => $kunjunganGrowth >= 0,
-                'icon_bg' => '#fee2e2',
-                'icon_color' => '#ef4444',
-                'icon' => 'users',
-            ],
-            [
-                'label' => 'Total Tagihan',
-                'value' => 'Rp ' . number_format($tagihanBulanIni, 0, ',', '.'),
-                'trend' => number_format(abs($tagihanGrowth), 1, ',', '.') . '% dari bulan lalu',
-                'trend_up' => $tagihanGrowth >= 0,
+                'label' => 'Total Penjualan',
+                'value' => 'Rp ' . number_format($penjualanBulanIni, 0, ',', '.'),
+                'trend' => number_format(abs($penjualanGrowth), 1, ',', '.') . '% dari bulan lalu',
+                'trend_up' => $penjualanGrowth >= 0,
                 'icon_bg' => '#dcfce7',
                 'icon_color' => '#22c55e',
-                'icon' => 'banknotes',
+                'icon' => 'shopping-bag',
+            ],
+            [
+                'label' => 'Total Harus Ditagih',
+                'value' => 'Rp ' . number_format($harusDitagihBulanIni, 0, ',', '.'),
+                'trend' => number_format(abs($harusDitagihGrowth), 1, ',', '.') . '% dari bulan lalu',
+                'trend_up' => $harusDitagihGrowth <= 0, // Less is better for outstanding
+                'icon_bg' => '#fef9c3',
+                'icon_color' => '#eab308',
+                'icon' => 'document-text',
             ],
             [
                 'label' => 'Total Pembayaran',
@@ -108,16 +110,16 @@ class SalesStatsOverview extends Widget
                 'trend_up' => $pembayaranGrowth >= 0,
                 'icon_bg' => '#dbeafe',
                 'icon_color' => '#3b82f6',
-                'icon' => 'credit-card',
+                'icon' => 'banknotes',
             ],
             [
-                'label' => 'Komisi',
-                'value' => 'Rp ' . number_format($komisiBulanIni, 0, ',', '.'),
-                'trend' => number_format(abs($komisiGrowth), 1, ',', '.') . '% dari bulan lalu',
-                'trend_up' => $komisiGrowth >= 0,
-                'icon_bg' => '#fef9c3',
-                'icon_color' => '#eab308',
-                'icon' => 'receipt-percent',
+                'label' => 'Total Kunjungan',
+                'value' => number_format($kunjunganBulanIni, 0, ',', '.'),
+                'trend' => number_format(abs($kunjunganGrowth), 1, ',', '.') . '% dari bulan lalu',
+                'trend_up' => $kunjunganGrowth >= 0,
+                'icon_bg' => '#fee2e2',
+                'icon_color' => '#ef4444',
+                'icon' => 'users',
             ],
         ];
     }

@@ -462,78 +462,7 @@
                 </div>
             </div>
 
-            <!-- STATS WIDGETS -->
-            <div class="ts-stats-grid">
-                <!-- Total Penjualan -->
-                <div class="ts-stat-card">
-                    <div class="ts-stat-icon-wrapper ts-icon-red">
-                        <x-heroicon-o-shopping-bag class="ts-stat-icon" />
-                    </div>
-                    <div class="ts-stat-info">
-                        <div class="ts-stat-title">Total Penjualan</div>
-                        <div class="ts-stat-value">{{ $stats['total_order'] ?? 0 }}</div>
-                        <div class="ts-stat-meta">
-                            <span class="ts-stat-desc">Order</span>
-                            <span class="ts-stat-badge {{ ($stats['order_growth'] ?? 0) >= 0 ? 'ts-badge-success' : 'ts-badge-danger' }}">
-                                @if(($stats['order_growth'] ?? 0) >= 0) &uarr; @else &darr; @endif
-                                {{ abs($stats['order_growth'] ?? 0) }}%
-                            </span>
-                        </div>
-                        <div class="ts-stat-meta" style="margin-top: 0.125rem;">
-                            <span class="ts-stat-desc">dari bulan lalu</span>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Total Pendapatan -->
-                <div class="ts-stat-card">
-                    <div class="ts-stat-icon-wrapper ts-icon-green">
-                        <x-heroicon-o-wallet class="ts-stat-icon" />
-                    </div>
-                    <div class="ts-stat-info">
-                        <div class="ts-stat-title">Total Pendapatan</div>
-                        <div class="ts-stat-value">Rp {{ number_format($stats['total_pendapatan'] ?? 0, 0, ',', '.') }}</div>
-                        <div class="ts-stat-meta">
-                            <span class="ts-stat-desc">dari {{ $stats['total_order'] ?? 0 }} order</span>
-                            <span class="ts-stat-badge {{ ($stats['pendapatan_growth'] ?? 0) >= 0 ? 'ts-badge-success' : 'ts-badge-danger' }}">
-                                @if(($stats['pendapatan_growth'] ?? 0) >= 0) &uarr; @else &darr; @endif
-                                {{ abs($stats['pendapatan_growth'] ?? 0) }}%
-                            </span>
-                        </div>
-                        <div class="ts-stat-meta" style="margin-top: 0.125rem;">
-                            <span class="ts-stat-desc">dari bulan lalu</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Rata-rata Order -->
-                <div class="ts-stat-card">
-                    <div class="ts-stat-icon-wrapper ts-icon-blue">
-                        <x-heroicon-o-credit-card class="ts-stat-icon" />
-                    </div>
-                    <div class="ts-stat-info">
-                        <div class="ts-stat-title">Rata-rata Order</div>
-                        <div class="ts-stat-value">Rp {{ number_format($stats['avg_order'] ?? 0, 0, ',', '.') }}</div>
-                        <div class="ts-stat-meta">
-                            <span class="ts-stat-desc">per order</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Konversi Pembayaran -->
-                <div class="ts-stat-card">
-                    <div class="ts-stat-icon-wrapper ts-icon-yellow">
-                        <x-heroicon-o-clock class="ts-stat-icon" />
-                    </div>
-                    <div class="ts-stat-info">
-                        <div class="ts-stat-title">Konversi Pembayaran</div>
-                        <div class="ts-stat-value">{{ $stats['konversi'] ?? 0 }}%</div>
-                        <div class="ts-stat-meta">
-                            <span class="ts-stat-desc">{{ $stats['lunas_count'] ?? 0 }} dari {{ $stats['total_order'] ?? 0 }} order</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <!-- CUSTOM TABLE SECTION -->
                 <div class="ts-main-content">
@@ -755,56 +684,7 @@
                 </div>
             </div>
 
-            <!-- STATS CARDS (PENAGIHAN) -->
-            @php
-                $dibayarPct = $stats['penagihan_total_tagihan'] > 0 ? ($stats['penagihan_total_dibayar'] / $stats['penagihan_total_tagihan']) * 100 : 0;
-                $sisaPct = $stats['penagihan_total_tagihan'] > 0 ? ($stats['penagihan_sisa'] / $stats['penagihan_total_tagihan']) * 100 : 0;
-            @endphp
-            <div class="ts-stats-grid" style="margin-bottom: 2rem;">
-                <div class="ts-stat-card">
-                    <div class="ts-stat-icon-wrapper" style="background-color: #fee2e2;">
-                        <x-heroicon-o-document-text style="width:1.75rem; height:1.75rem; color: #ef4444;" />
-                    </div>
-                    <div class="ts-stat-content">
-                        <div class="ts-stat-title">Total Tagihan</div>
-                        <div class="ts-stat-value">{{ number_format($stats['penagihan_count'], 0, '.', ',') }}</div>
-                        <div class="ts-stat-desc">Cicilan aktif</div>
-                    </div>
-                </div>
-                
-                <div class="ts-stat-card">
-                    <div class="ts-stat-icon-wrapper" style="background-color: #dcfce7;">
-                        <x-heroicon-o-wallet style="width:1.75rem; height:1.75rem; color: #10b981;" />
-                    </div>
-                    <div class="ts-stat-content">
-                        <div class="ts-stat-title">Total Tagihan</div>
-                        <div class="ts-stat-value">Rp {{ number_format($stats['penagihan_total_tagihan'], 0, '.', '.') }}</div>
-                        <div class="ts-stat-desc">Total keseluruhan</div>
-                    </div>
-                </div>
-                
-                <div class="ts-stat-card">
-                    <div class="ts-stat-icon-wrapper" style="background-color: #dbeafe;">
-                        <x-heroicon-o-banknotes style="width:1.75rem; height:1.75rem; color: #3b82f6;" />
-                    </div>
-                    <div class="ts-stat-content">
-                        <div class="ts-stat-title">Total Dibayar</div>
-                        <div class="ts-stat-value">Rp {{ number_format($stats['penagihan_total_dibayar'], 0, '.', '.') }}</div>
-                        <div class="ts-stat-desc">{{ round($dibayarPct, 1) }}% dari total tagihan</div>
-                    </div>
-                </div>
-                
-                <div class="ts-stat-card">
-                    <div class="ts-stat-icon-wrapper" style="background-color: #fef3c7;">
-                        <x-heroicon-o-clock style="width:1.75rem; height:1.75rem; color: #f59e0b;" />
-                    </div>
-                    <div class="ts-stat-content">
-                        <div class="ts-stat-title">Sisa Tagihan</div>
-                        <div class="ts-stat-value">Rp {{ number_format($stats['penagihan_sisa'], 0, '.', '.') }}</div>
-                        <div class="ts-stat-desc">{{ round($sisaPct, 1) }}% belum lunas</div>
-                    </div>
-                </div>
-            </div>
+
 
             <div class="ts-main-content">
                 <div class="ts-table-header">
