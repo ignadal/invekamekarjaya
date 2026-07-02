@@ -110,6 +110,7 @@
             gap: 0.375rem;
             margin: 0;
             font-weight: 500;
+            white-space: nowrap;
         }
         
         .aktivitas-item-date svg {
@@ -128,6 +129,7 @@
             border-radius: 0.5rem;
             font-size: 0.875rem;
             font-weight: 700;
+            white-space: nowrap;
         }
         
         .aktivitas-arrow-btn {
@@ -153,6 +155,51 @@
         .variant-pembayaran .aktivitas-icon { background: #dbeafe; color: #3b82f6; }
         .variant-pembayaran .aktivitas-arrow-btn { border-color: #bfdbfe; color: #3b82f6; }
         .variant-pembayaran .aktivitas-amount { background: #dbeafe; color: #3b82f6; }
+
+        @media (max-width: 640px) {
+            .aktivitas-card {
+                padding: 1rem;
+            }
+            .aktivitas-item {
+                gap: 0.75rem;
+            }
+            .aktivitas-icon {
+                width: 2.25rem;
+                height: 2.25rem;
+            }
+            .aktivitas-list::before {
+                left: 1.125rem;
+            }
+            .aktivitas-right {
+                gap: 0.5rem;
+            }
+            .aktivitas-arrow-btn {
+                width: 1.5rem;
+                height: 1.5rem;
+            }
+            .aktivitas-amount {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.75rem;
+            }
+            .aktivitas-item-title {
+                font-size: 0.875rem;
+            }
+        }
+
+        html.dark .aktivitas-card { background: #18181b; border-color: #3f3f46; }
+        html.dark .aktivitas-title { color: #f4f4f5; }
+        html.dark .aktivitas-content { border-bottom-color: #3f3f46; }
+        html.dark .aktivitas-item-title { color: #f4f4f5; }
+        html.dark .aktivitas-list::before { border-left-color: #3f3f46; }
+        html.dark .aktivitas-arrow-btn { background: transparent; }
+        html.dark .variant-kunjungan .aktivitas-icon { background: #064e3b; color: #34d399; }
+        html.dark .variant-kunjungan .aktivitas-arrow-btn { border-color: #065f46; color: #34d399; }
+        html.dark .variant-penjualan .aktivitas-icon { background: #78350f; color: #fbbf24; }
+        html.dark .variant-penjualan .aktivitas-arrow-btn { border-color: #92400e; color: #fbbf24; }
+        html.dark .variant-penjualan .aktivitas-amount { background: #78350f; color: #fbbf24; }
+        html.dark .variant-pembayaran .aktivitas-icon { background: #1e3a8a; color: #60a5fa; }
+        html.dark .variant-pembayaran .aktivitas-arrow-btn { border-color: #1e40af; color: #60a5fa; }
+        html.dark .variant-pembayaran .aktivitas-amount { background: #1e3a8a; color: #60a5fa; }
     </style>
 
     <div class="aktivitas-card">

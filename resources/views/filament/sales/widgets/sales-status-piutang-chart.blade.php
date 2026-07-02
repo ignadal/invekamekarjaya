@@ -200,6 +200,17 @@
                 height: 220px;
             }
         }
+
+        html.dark .piutang-card { background: #18181b; border-color: #3f3f46; }
+        html.dark .piutang-title { color: #f4f4f5; }
+        html.dark .piutang-hole { background: #18181b; }
+        html.dark .piutang-separator { background: #18181b; }
+        html.dark .piutang-legend { background: #27272a; border-color: #3f3f46; }
+        html.dark .piutang-legend-divider { background: #3f3f46; }
+        html.dark .legend-label { color: #a1a1aa; }
+        html.dark .piutang-main-icon { background: #450a0a; color: #f87171; }
+        html.dark .piutang-hole-value { color: #f4f4f5; }
+        html.dark .piutang-hole-icon { background: #450a0a; color: #f87171; }
     </style>
 
     <div class="piutang-card">
@@ -237,8 +248,6 @@
             <div class="piutang-doughnut">
                 <div class="piutang-separator"></div>
                 <div class="piutang-hole">
-                    <h3 class="piutang-hole-value">Rp {{ $totalCount > 0 ? $belumLunasPct : 0 }}%</h3>
-                    <p class="piutang-hole-label-bottom">Belum Lunas</p>
                 </div>
             </div>
         </div>

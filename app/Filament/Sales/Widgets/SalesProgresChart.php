@@ -37,15 +37,16 @@ class SalesProgresChart extends ChartWidget
 
     public function getHeading(): string|\Illuminate\Contracts\Support\Htmlable|null
     {
-        return "Progres Tagihan vs Pembayaran {$this->periodeLabel}";
+        return "Total Penjualan dan Penagihan {$this->periodeLabel}";
     }
 
     protected static ?int $sort = 2;
     protected int | string | array $columnSpan = 'full';
+    protected string $view = 'filament.sales.widgets.sales-progres-chart';
     
     protected ?string $maxHeight = '300px';
 
-    protected ?string $heading = 'Progres Tagihan vs Pembayaran';
+    protected ?string $heading = 'Total Penjualan dan Penagihan';
 
     public function getDescription(): string|\Illuminate\Contracts\Support\Htmlable|null
     {
@@ -83,10 +84,10 @@ class SalesProgresChart extends ChartWidget
         $endOfMonthDay = $endOfMonth->day;
 
         $labels = [
-            "Minggu 1 (1-7 $monthName)",
-            "Minggu 2 (8-14 $monthName)",
-            "Minggu 3 (15-21 $monthName)",
-            "Minggu 4 (22-$endOfMonthDay $monthName)",
+            ["Minggu 1", "(1-7 $monthName)"],
+            ["Minggu 2", "(8-14 $monthName)"],
+            ["Minggu 3", "(15-21 $monthName)"],
+            ["Minggu 4", "(22-$endOfMonthDay $monthName)"],
         ];
         $tagihanData = [0, 0, 0, 0];
         $pembayaranData = [0, 0, 0, 0];
@@ -131,7 +132,7 @@ class SalesProgresChart extends ChartWidget
                     'backgroundColor' => '#3b82f6',
                     'borderColor' => '#2563eb',
                     'borderWidth' => 1,
-                    'categoryPercentage' => 0.25,
+                    'categoryPercentage' => 0.7,
                     'barPercentage' => 0.9,
                     'borderRadius' => 4,
                 ],
@@ -141,7 +142,7 @@ class SalesProgresChart extends ChartWidget
                     'backgroundColor' => '#22c55e',
                     'borderColor' => '#16a34a',
                     'borderWidth' => 1,
-                    'categoryPercentage' => 0.25,
+                    'categoryPercentage' => 0.7,
                     'barPercentage' => 0.9,
                     'borderRadius' => 4,
                 ],

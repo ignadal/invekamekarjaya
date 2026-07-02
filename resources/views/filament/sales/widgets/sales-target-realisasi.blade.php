@@ -112,6 +112,19 @@
             font-weight: 700;
             color: #15803d;
         }
+
+        html.dark .target-card { background: #18181b; border-color: #3f3f46; }
+        html.dark .target-header { color: #f4f4f5; }
+        html.dark .target-amount { color: #f4f4f5; }
+        html.dark .target-amount-right { color: #f87171; }
+        html.dark .target-progress-bar { background: #3f3f46; }
+        html.dark .target-motivation { background: #450a0a; border-color: #7f1d1d; }
+        html.dark .target-motivation-desc { color: #fca5a5; }
+        html.dark .target-motivation-title { color: #f87171; }
+        html.dark .bonus-info { background: #14532d; border-color: #166534; }
+        html.dark .bonus-label { color: #4ade80; }
+        html.dark .bonus-amount { color: #86efac; }
+        html.dark .target-label { color: #a1a1aa; }
     </style>
 
     @php
@@ -149,7 +162,7 @@
         <!-- Target 1 (75 Juta) -->
         <div style="margin-top: 1rem;">
             <div class="target-values" style="margin-bottom: 0.25rem;">
-                <p class="target-label" style="font-weight: 600; color: #374151;">Target 1 (Bonus 0,5%)</p>
+                <p class="target-label" style="font-weight: 600; color: inherit;">Target 1 (Bonus 0,5%)</p>
                 <p class="target-label">Rp 75 Juta</p>
             </div>
             <div class="target-progress-bar">
@@ -164,7 +177,7 @@
         <!-- Target 2 (100 Juta) -->
         <div style="margin-top: 0.5rem;">
             <div class="target-values" style="margin-bottom: 0.25rem;">
-                <p class="target-label" style="font-weight: 600; color: #374151;">Target 2 (Bonus 1%)</p>
+                <p class="target-label" style="font-weight: 600; color: inherit;">Target 2 (Bonus 1%)</p>
                 <p class="target-label">Rp 100 Juta</p>
             </div>
             <div class="target-progress-bar">

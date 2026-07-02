@@ -86,6 +86,11 @@
             width: 2rem;
             height: 2rem;
         }
+
+        html.dark .sales-stat-card { background: #18181b; border-color: #3f3f46; }
+        html.dark .sales-stat-label { color: #f4f4f5; }
+        html.dark .sales-stat-sublabel { color: #a1a1aa; }
+        html.dark .sales-stat-value { color: #f4f4f5; }
     </style>
 
     <div class="sales-stats-grid">

@@ -15,7 +15,6 @@
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 1.5rem;
-            flex-wrap: wrap;
             gap: 1rem;
         }
 
@@ -51,6 +50,25 @@
             font-size: 0.875rem;
             color: #6b7280;
             margin: 0;
+        }
+
+        @media (max-width: 640px) {
+            .top-toko-title {
+                font-size: 1.05rem;
+            }
+            .top-toko-subtitle {
+                font-size: 0.75rem;
+            }
+            .top-toko-main-icon {
+                padding: 0.625rem;
+            }
+            .top-toko-main-icon svg {
+                width: 1.5rem;
+                height: 1.5rem;
+            }
+            .top-toko-title-area {
+                gap: 0.75rem;
+            }
         }
 
         .top-toko-search {
@@ -92,8 +110,10 @@
 
         .top-toko-table {
             width: 100%;
+            min-width: 650px;
             border-collapse: collapse;
             text-align: left;
+            table-layout: fixed;
         }
 
         .top-toko-table th {
@@ -137,7 +157,8 @@
         .toko-cell, .owner-cell {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.5rem;
+            overflow: hidden;
         }
 
         .cell-icon {
@@ -160,8 +181,11 @@
         .toko-info-name, .owner-info-name {
             font-weight: 700;
             color: #111827;
-            font-size: 0.9375rem;
+            font-size: 0.875rem;
             margin-bottom: 0.125rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .toko-info-id {
@@ -258,6 +282,23 @@
         .custom-modal-close-btn:hover {
             color: #4b5563;
         }
+
+        html.dark .top-toko-card { background: #18181b; border-color: #3f3f46; }
+        html.dark .top-toko-title { color: #f4f4f5; }
+        html.dark .top-toko-search input { background: #18181b; border-color: #3f3f46; color: #f4f4f5; }
+        html.dark .top-toko-table th { background: #27272a !important; color: #f4f4f5; border-color: #3f3f46 !important; }
+        html.dark .top-toko-table td { border-bottom-color: #3f3f46; }
+        html.dark .toko-info-name, html.dark .owner-info-name, html.dark .total-cell { color: #f4f4f5; }
+        html.dark .top-toko-main-icon { background: #450a0a; color: #f87171; }
+        html.dark .top-toko-footer-btn { background: #450a0a; color: #f87171; }
+        html.dark .top-toko-footer-btn:hover { background: #7f1d1d; }
+        html.dark .custom-modal-content { background-color: #18181b; }
+        html.dark .custom-modal-header { border-bottom-color: #3f3f46; }
+        html.dark .custom-modal-header h2 { color: #f4f4f5 !important; }
+        html.dark .rank-badge[style*="background: #fef2f2"] { background: #450a0a !important; color: #f87171 !important; }
+        html.dark .cell-icon[style*="background: #fef2f2"] { background: #450a0a !important; color: #f87171 !important; }
+        html.dark .rank-badge[style*="background: #f3f4f6"] { background: #27272a !important; color: #a1a1aa !important; }
+        html.dark .cell-icon[style*="background: #f3f4f6"] { background: #27272a !important; color: #a1a1aa !important; }
     </style>
 
     <div x-data="{ showModal: false }" class="top-toko-card">
@@ -270,16 +311,21 @@
                     </svg>
                 </div>
                 <div>
-                    <h2 class="top-toko-title">Top 5 Toko Teraktif {{ $periodeLabel }}</h2>
+                    <h2 class="top-toko-title">Top 5 Toko Pembelian Terbanyak {{ $periodeLabel }}</h2>
                     <p class="top-toko-subtitle">Berdasarkan total transaksi</p>
                 </div>
             </div>
             
-            <div class="top-toko-search">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                </svg>
-                <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search toko...">
+            <div x-data="{ open: false }" style="position: relative; flex-shrink: 0;">
+                <button type="button" @click.prevent.stop="open = !open" style="color: #9ca3af; background: none; border: none; cursor: pointer; padding: 0.5rem; margin: -0.5rem; outline: none; display: flex; transition: color 0.2s;" onmouseover="this.style.color='#6b7280'" onmouseout="this.style.color='#9ca3af'">
+                    <svg style="width: 1.5rem; height: 1.5rem;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <div x-show="open" @click.away="open = false" x-transition style="display: none; position: absolute; z-index: 50; width: 220px; background-color: #1f2937; color: #f9fafb; padding: 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: normal; line-height: 1.4; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); top: 100%; right: 0;">
+                    <div style="position: absolute; top: -4px; right: 8px; width: 8px; height: 8px; background-color: #1f2937; transform: rotate(45deg);"></div>
+                    Menampilkan urutan toko yang paling banyak melakukan transaksi berdasarkan total nilai rupiah pada periode ini.
+                </div>
             </div>
         </div>
 
@@ -288,15 +334,12 @@
             <table class="top-toko-table">
                 <thead>
                     <tr>
-                        <th style="width: 5%;">#</th>
-                        <th style="width: 40%;">Toko</th>
-                        <th style="width: 30%;">Pemilik</th>
-                        <th style="width: 25%; white-space: nowrap;">
+                        <th style="width: 10%;">#</th>
+                        <th style="width: 35%;">Toko</th>
+                        <th style="width: 25%;">Pemilik</th>
+                        <th style="width: 30%;">
                             <div style="display: flex; align-items: center; gap: 0.25rem;">
                                 Total Transaksi 
-                                <svg style="width: 1rem; height: 1rem; color: #6b7280;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                </svg>
                             </div>
                         </th>
                     </tr>
@@ -369,7 +412,7 @@
                             </svg>
                         </div>
                         <div>
-                            <h2 style="font-size: 1.25rem; font-weight: 700; color: #111827; margin: 0;">Ranking Lengkap Toko Teraktif</h2>
+                            <h2 style="font-size: 1.25rem; font-weight: 700; color: #111827; margin: 0;">Ranking Lengkap Toko Pembelian Terbanyak</h2>
                             <p style="font-size: 0.875rem; color: #6b7280; margin: 0;">Semua data transaksi pelanggan Anda bulan ini</p>
                         </div>
                     </div>
@@ -383,13 +426,13 @@
                 <!-- Modal Body with Scroll -->
                 <div class="custom-modal-body">
                     <div class="top-toko-table-wrapper" style="border: 1px solid #e5e7eb; border-radius: 0.5rem;">
-                        <table class="top-toko-table" style="min-width: 100%;">
-                            <thead style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+                        <table class="top-toko-table">
+                            <thead>
                                 <tr>
-                                    <th style="width: 5%; background: #f9fafb;">#</th>
-                                    <th style="width: 40%; background: #f9fafb;">Toko</th>
-                                    <th style="width: 30%; background: #f9fafb;">Pemilik</th>
-                                    <th style="width: 25%; white-space: nowrap; background: #f9fafb;">Total Transaksi</th>
+                                    <th style="width: 5%;">#</th>
+                                    <th style="width: 40%;">Toko</th>
+                                    <th style="width: 30%;">Pemilik</th>
+                                    <th style="width: 25%; white-space: nowrap;">Total Transaksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -430,7 +473,7 @@
                                 @empty
                                     <tr>
                                         <td colspan="4" style="text-align: center; padding: 2rem; color: #6b7280;">
-                                            Tidak ada data pelanggan teraktif.
+                                            Tidak ada data toko pembelian terbanyak.
                                         </td>
                                     </tr>
                                 @endforelse

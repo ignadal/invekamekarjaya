@@ -12,10 +12,13 @@
         }
         
         .kunjungan-header {
+            position: relative;
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
         
         .kunjungan-title {
@@ -39,6 +42,7 @@
             text-decoration: none;
             cursor: pointer;
             transition: all 0.2s;
+            white-space: nowrap;
         }
         .kunjungan-header-btn:hover {
             background: #fef2f2;
@@ -79,6 +83,7 @@
         
         .kunjungan-table {
             width: 100%;
+            min-width: 450px;
             border-collapse: separate;
             border-spacing: 0 0.5rem;
             font-size: 0.875rem;
@@ -105,9 +110,8 @@
         /* Optional subtle row background */
         .kunjungan-table tbody tr {
             border-radius: 0.5rem;
-            transition: background 0.2s;
         }
-        .kunjungan-table tbody tr:hover {
+        .kunjungan-table tbody tr:hover td {
             background: #f9fafb;
         }
         
@@ -137,25 +141,41 @@
             font-weight: 700;
             color: #111827;
             font-size: 0.9375rem;
+            white-space: nowrap;
         }
         
         .kunjungan-lokasi-text {
             font-weight: 600;
             color: #4b5563;
+            white-space: nowrap;
         }
         
         .kunjungan-waktu-date {
             color: #6b7280;
             font-weight: 500;
             display: block;
+            white-space: nowrap;
         }
         .kunjungan-waktu-time {
             color: #9ca3af;
             font-size: 0.8125rem;
             display: block;
             margin-top: 0.125rem;
+            white-space: nowrap;
         }
-        
+
+        html.dark .kunjungan-card { background: #18181b; border-color: #3f3f46; }
+        html.dark .kunjungan-title { color: #f4f4f5; }
+        html.dark .kunjungan-header-btn { background: #18181b; border-color: #3f3f46; color: #f87171; }
+        html.dark .kunjungan-header-btn:hover { background: #450a0a; }
+        html.dark .kunjungan-table td { border-bottom-color: #3f3f46; background: #27272a; }
+        html.dark .kunjungan-table tbody tr:hover td { background: #3f3f46; }
+        html.dark .kunjungan-table th { color: #a1a1aa; border-bottom-color: #3f3f46; }
+        html.dark .kunjungan-toko-name { color: #f4f4f5; }
+        html.dark .kunjungan-lokasi-text { color: #d4d4d8; }
+        html.dark .kunjungan-toko-icon { background: #450a0a; color: #f87171; }
+        html.dark .kunjungan-banner { background: linear-gradient(135deg, #450a0a 0%, #7f1d1d 100%); }
+        html.dark .kunjungan-banner-decor { background: rgba(0, 0, 0, 0.2); }
 
         .kunjungan-empty {
             flex: 1;
@@ -184,13 +204,13 @@
             <div class="kunjungan-title">
                 Kunjungan Terbaru
                 <div x-data="{ open: false }" style="position: relative; display: inline-flex; align-items: center;">
-                    <button type="button" @click.stop="open = !open" style="outline: none; background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center;">
+                    <button type="button" @click="open = !open" style="outline: none; background: none; border: none; cursor: pointer; padding: 0.5rem; margin: -0.5rem; display: flex; align-items: center;">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#9ca3af" style="width: 1.25rem; height: 1.25rem;">
                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
                         </svg>
                     </button>
-                    <div x-show="open" @click.away="open = false" x-transition style="display: none; position: absolute; z-index: 9999; width: 220px; background-color: #1f2937; color: #f9fafb; padding: 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: normal; line-height: 1.4; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); top: 125%; left: 0; white-space: normal;">
-                        <div style="position: absolute; top: -5px; left: 8px; width: 10px; height: 10px; background-color: #1f2937; transform: rotate(45deg);"></div>
+                    <div x-show="open" @click.away="open = false" x-transition style="display: none; position: absolute; z-index: 99999; width: 220px; background-color: #1f2937; color: #f9fafb; padding: 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: normal; line-height: 1.4; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); top: 150%; left: 50%; transform: translateX(-50%); white-space: normal;">
+                        <div style="position: absolute; top: -4px; left: 50%; margin-left: -5px; width: 10px; height: 10px; background-color: #1f2937; transform: rotate(45deg);"></div>
                         Daftar 5 toko terakhir yang Anda kunjungi hari ini.
                     </div>
                 </div>
@@ -219,7 +239,7 @@
                     </thead>
                     <tbody>
                         @foreach($this->kunjungans as $kunjungan)
-                            <tr style="cursor: pointer; transition: background 0.2s;" onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='transparent'" wire:click="gotoView('{{ $kunjungan->buyer_id }}')">
+                            <tr style="cursor: pointer;" wire:click="gotoView('{{ $kunjungan->buyer_id }}')">
                                 <td>
                                     <div class="kunjungan-toko-cell">
                                         <div class="kunjungan-toko-icon">

@@ -82,6 +82,26 @@
             }
         }
 
+        @media (max-width: 640px) {
+            .filter-title {
+                font-size: 1rem;
+            }
+            .filter-subtitle {
+                font-size: 0.75rem;
+            }
+            .filter-icon-circle {
+                width: 3rem;
+                height: 3rem;
+            }
+            .filter-icon-circle svg {
+                width: 1.25rem;
+                height: 1.25rem;
+            }
+            .filter-header {
+                gap: 0.75rem;
+            }
+        }
+
         .filter-input-group {
             display: flex;
             flex-direction: column;
@@ -160,6 +180,24 @@
         /* Dark mode overrides if necessary */
         html.dark .filter-widget-card {
             background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 50%, #7f1d1d 100%);
+        }
+        html.dark .filter-select-wrapper {
+            background: #18181b;
+            border: 1px solid #3f3f46;
+        }
+        html.dark .filter-select {
+            color: #f4f4f5;
+        }
+        html.dark .filter-select-chevron {
+            color: #a1a1aa;
+        }
+        html.dark .filter-reset-btn {
+            background-color: #27272a;
+            border: 1px solid #3f3f46;
+            color: #f4f4f5;
+        }
+        html.dark .filter-reset-btn:hover {
+            background-color: #3f3f46;
         }
     </style>
 
