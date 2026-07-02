@@ -173,10 +173,12 @@
                         </div>
                     </div>
                     @else
-                    <div class="empty-state" style="padding: 4rem 2rem; display: flex; flex-direction: column; align-items: center; text-align: center;">
-                        <x-heroicon-o-clipboard-document-check style="width: 4rem; height: 4rem; color: #d1d5db; margin-bottom: 1rem;" />
-                        <h3 style="font-size: 1.125rem; font-weight: 700; color: #111827; margin: 0 0 0.5rem 0;">Belum ada riwayat kunjungan</h3>
-                        <p style="color: #6b7280; font-size: 0.875rem; margin: 0 0 1rem 0;">
+                    <div class="empty-state" style="padding: 4rem 2rem; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.75rem;">
+                        <div class="ts-empty-icon-wrapper">
+                            <x-heroicon-o-clipboard-document-check class="ts-empty-icon" />
+                        </div>
+                        <h3 style="font-size: 1.125rem; font-weight: 700; color: #111827; margin: 0;">Belum ada riwayat kunjungan</h3>
+                        <p style="color: #6b7280; font-size: 0.875rem; margin: 0 0 0.5rem 0;">
                             @if($search || $filterKecamatan)
                                 Tidak ada hasil yang sesuai dengan kriteria filter Anda.
                             @else
@@ -360,10 +362,12 @@
                 </div>
                 
                 @else
-                <div class="empty-state" style="padding: 4rem 2rem; display: flex; flex-direction: column; align-items: center; text-align: center;">
-                    <x-heroicon-o-building-storefront style="width: 4rem; height: 4rem; color: #d1d5db; margin-bottom: 1rem;" />
-                    <h3 style="font-size: 1.125rem; font-weight: 700; color: #111827; margin: 0 0 0.5rem 0;">Tidak ada toko ditemukan</h3>
-                    <p style="color: #6b7280; font-size: 0.875rem; margin: 0 0 1rem 0;">
+                <div class="empty-state" style="padding: 4rem 2rem; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.75rem;">
+                    <div class="ts-empty-icon-wrapper">
+                        <x-heroicon-o-building-storefront class="ts-empty-icon" />
+                    </div>
+                    <h3 style="font-size: 1.125rem; font-weight: 700; color: #111827; margin: 0;">Tidak ada toko ditemukan</h3>
+                    <p style="color: #6b7280; font-size: 0.875rem; margin: 0 0 0.5rem 0;">
                         @if($search || $filterKecamatan || $statusFilter !== 'semua')
                             Tidak ada hasil yang sesuai dengan kriteria filter Anda.
                         @else
@@ -385,6 +389,37 @@
 </div>
 
 <style>
+    /* Custom Empty State Styling */
+    .ts-empty-icon-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 3.5rem;
+        height: 3.5rem;
+        background-color: #fee2e2;
+        border-radius: 9999px;
+        box-shadow: 0 4px 10px rgba(220, 38, 38, 0.03);
+        margin-bottom: 0.25rem;
+        transition: all 0.2s ease-in-out;
+    }
+    .ts-empty-icon {
+        width: 1.75rem;
+        height: 1.75rem;
+        color: #dc2626;
+    }
+    html.dark .ts-empty-icon-wrapper {
+        background-color: rgba(220, 38, 38, 0.15);
+    }
+    html.dark .ts-empty-icon {
+        color: #f87171;
+    }
+    html.dark .empty-state h3 {
+        color: #f3f4f6 !important;
+    }
+    html.dark .empty-state p {
+        color: #9ca3af !important;
+    }
+
     /* Tabs */
     .tb-tab-container {
         display: inline-flex;

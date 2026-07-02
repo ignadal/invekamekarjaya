@@ -91,21 +91,52 @@
         }
 
         .ts-empty-state {
-            color: #6b7280;
             text-align: center;
-            padding: 2.5rem 0;
+            padding: 3.5rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
         }
-        html.dark .ts-empty-state {
-            color: #a1a1aa;
+        .ts-empty-icon-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 3.5rem;
+            height: 3.5rem;
+            background-color: #fee2e2;
+            border-radius: 9999px;
+            box-shadow: 0 4px 10px rgba(227, 6, 19, 0.03);
+            margin-bottom: 0.25rem;
+            transition: all 0.2s ease-in-out;
         }
-
         .ts-empty-icon {
-            width: 3rem;
-            height: 3rem;
-            margin: 0 auto 0.75rem auto;
-            color: #9ca3af;
+            width: 1.75rem;
+            height: 1.75rem;
+            color: #E30613;
+        }
+        html.dark .ts-empty-icon-wrapper {
+            background-color: rgba(227, 6, 19, 0.15);
         }
         html.dark .ts-empty-icon {
+            color: #ef4444;
+        }
+        .ts-empty-title {
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.875rem;
+            margin: 0;
+        }
+        html.dark .ts-empty-title {
+            color: #d1d5db;
+        }
+        .ts-empty-desc {
+            margin: 0;
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+        html.dark .ts-empty-desc {
             color: #71717a;
         }
         
@@ -320,8 +351,11 @@
                     </div>
                 @else
                     <div class="ts-empty-state">
-                        <x-heroicon-o-inbox class="ts-empty-icon" />
-                        <p style="margin: 0;">Informasi Gaji Pokok belum tersedia.</p>
+                        <div class="ts-empty-icon-wrapper">
+                            <x-heroicon-o-banknotes class="ts-empty-icon" />
+                        </div>
+                        <p class="ts-empty-title">Informasi Gaji Pokok belum tersedia.</p>
+                        <p class="ts-empty-desc">Hubungi Admin jika data Gaji Pokok Anda belum ada.</p>
                     </div>
                 @endif
             </div>
@@ -428,8 +462,11 @@
                 <div class="ts-content-card">
                     <h2 class="ts-content-title">Uang Makan & Bensin</h2>
                     <div class="ts-empty-state">
-                        <x-heroicon-o-inbox class="ts-empty-icon" />
-                        <p style="margin: 0;">Rincian Uang Makan/Bensin belum tersedia.</p>
+                        <div class="ts-empty-icon-wrapper">
+                            <x-heroicon-o-map-pin class="ts-empty-icon" />
+                        </div>
+                        <p class="ts-empty-title">Rincian Uang Makan & Bensin belum tersedia.</p>
+                        <p class="ts-empty-desc">Tunjangan harian akan dihitung otomatis setelah kehadiran divalidasi oleh admin.</p>
                     </div>
                 </div>
             @endif
@@ -469,8 +506,11 @@
                     </div>
                 @else
                     <div class="ts-empty-state">
-                        <x-heroicon-o-inbox class="ts-empty-icon" />
-                        <p style="margin: 0;">Informasi Bonus, Komisi, dan insentif lainnya belum tersedia.</p>
+                        <div class="ts-empty-icon-wrapper">
+                            <x-heroicon-o-gift class="ts-empty-icon" />
+                        </div>
+                        <p class="ts-empty-title">Informasi Bonus & Komisi belum tersedia.</p>
+                        <p class="ts-empty-desc">Bonus penjualan dihitung berdasarkan performa bulanan dan keberhasilan penagihan.</p>
                     </div>
                 @endif
             </div>

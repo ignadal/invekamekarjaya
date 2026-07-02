@@ -384,6 +384,37 @@
             color: #dc2626 !important;
             font-weight: 600 !important;
         }
+
+        /* Custom Empty State Styling */
+        .ts-empty-state-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+        .ts-empty-icon-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 3.5rem;
+            height: 3.5rem;
+            background-color: #fee2e2;
+            border-radius: 9999px;
+            box-shadow: 0 4px 10px rgba(227, 6, 19, 0.03);
+            transition: all 0.2s ease-in-out;
+        }
+        .ts-empty-icon {
+            width: 1.75rem;
+            height: 1.75rem;
+            color: #E30613;
+        }
+        html.dark .ts-empty-icon-wrapper {
+            background-color: rgba(227, 6, 19, 0.15);
+        }
+        html.dark .ts-empty-icon {
+            color: #ef4444;
+        }
     </style>
 
     <div style="margin-bottom: 2rem;">
@@ -553,9 +584,16 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" style="text-align: center; padding: 3rem 1rem; color: #6b7280;">
-                                            <x-heroicon-o-inbox style="width:3rem; height:3rem; margin: 0 auto 1rem auto; color: #9ca3af;" />
-                                            Belum ada data penjualan ditemukan.
+                                        <td colspan="6" style="padding: 4rem 1rem; text-align: center;">
+                                            <div class="ts-empty-state-wrapper">
+                                                <div class="ts-empty-icon-wrapper">
+                                                    <x-heroicon-o-inbox class="ts-empty-icon" />
+                                                </div>
+                                                <div style="font-weight: 600; color: #4b5563; font-size: 0.875rem;" class="ts-text-muted-strong">
+                                                    Belum ada data penjualan.
+                                                </div>
+                                                <p style="color: #9ca3af; font-size: 0.75rem;">Lakukan penjualan pertama untuk menambahkan data.</p>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforelse
@@ -606,7 +644,14 @@
                                     </div>
                                 </div>
                             @empty
-                                <div style="text-align: center; padding: 2rem; color: #6b7280;">Tidak ada data penjualan ditemukan.</div>
+                                <div style="padding: 3rem 1rem;" class="ts-empty-state-wrapper">
+                                    <div class="ts-empty-icon-wrapper">
+                                        <x-heroicon-o-inbox class="ts-empty-icon" />
+                                    </div>
+                                    <div style="font-weight: 600; color: #4b5563; font-size: 0.875rem;" class="ts-text-muted-strong">
+                                        Tidak ada data penjualan ditemukan.
+                                    </div>
+                                </div>
                             @endforelse
                         </div>
                         
@@ -783,9 +828,15 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" style="text-align: center; padding: 3rem; color: #6b7280;">
-                                        <x-heroicon-o-check-circle style="width:3rem; height:3rem; margin: 0 auto 1rem auto; color: #9ca3af;" />
-                                        Belum ada data penagihan cicilan.
+                                    <td colspan="7" style="padding: 4rem 1rem; text-align: center;">
+                                        <div class="ts-empty-state-wrapper">
+                                            <div class="ts-empty-icon-wrapper">
+                                                <x-heroicon-o-check-circle class="ts-empty-icon" />
+                                            </div>
+                                            <div style="font-weight: 600; color: #4b5563; font-size: 0.875rem;" class="ts-text-muted-strong">
+                                                Belum ada data penagihan cicilan.
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforelse
@@ -848,7 +899,14 @@
                                 </div>
                             </div>
                         @empty
-                            <div style="text-align: center; padding: 2rem; color: #6b7280;">Belum ada data penagihan cicilan.</div>
+                            <div style="padding: 3rem 1rem;" class="ts-empty-state-wrapper">
+                                <div class="ts-empty-icon-wrapper">
+                                    <x-heroicon-o-check-circle class="ts-empty-icon" />
+                                </div>
+                                <div style="font-weight: 600; color: #4b5563; font-size: 0.875rem;" class="ts-text-muted-strong">
+                                    Belum ada data penagihan cicilan.
+                                </div>
+                            </div>
                         @endforelse
                     </div>
 
