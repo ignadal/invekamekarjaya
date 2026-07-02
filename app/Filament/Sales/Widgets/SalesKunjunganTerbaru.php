@@ -23,9 +23,21 @@ class SalesKunjunganTerbaru extends Widget
 
         return KunjunganSales::with(['buyer', 'buyer.kecamatan'])
             ->where('sales_id', $salesId)
-            ->latest('tanggal_kunjungan')
-            ->latest('created_at')
+            ->whereDate('tanggal_kunjungan', \Carbon\Carbon::today()->toDateString())
+            ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get();
+    }
+
+    public function gotoView($buyerId)
+    {
+        if ($buyerId) {
+            $this->redirect(\App\Filament\Sales\Resources\TokoLanggananResource::getUrl('view', ['record' => $buyerId]));
+        }
+    }
+
+    public function gotoList()
+    {
+        $this->redirect(\App\Filament\Sales\Resources\TokoLanggananResource::getUrl('index'));
     }
 }

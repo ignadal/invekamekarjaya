@@ -28,18 +28,6 @@
             margin: 0;
         }
         
-        .aktivitas-header-btn {
-            padding: 0.375rem 0.75rem;
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: #ef4444;
-            background: #fff;
-            border: 1px solid #fee2e2;
-            border-radius: 0.5rem;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        
         .aktivitas-list {
             position: relative;
             display: flex;
@@ -152,27 +140,6 @@
             border: 1px solid;
             background: #fff;
             flex-shrink: 0;
-        }
-        
-        .aktivitas-bottom-btn {
-            width: 100%;
-            margin-top: 2rem;
-            padding: 1rem;
-            background: #f9fafb;
-            border: none;
-            border-radius: 0.75rem;
-            color: #ef4444;
-            font-weight: 600;
-            font-size: 0.9375rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .aktivitas-bottom-btn:hover {
-            background: #f3f4f6;
         }
         
         /* Variants */
