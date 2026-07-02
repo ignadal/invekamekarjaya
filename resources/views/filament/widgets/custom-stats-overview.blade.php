@@ -107,9 +107,24 @@
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="{{ $stat['icon_color'] }}"><path fill-rule="evenodd" d="M5.625 1.5H9a3.75 3.75 0 0 1 3.75 3.75v1.875c0 1.036.84 1.875 1.875 1.875H16.5a3.75 3.75 0 0 1 3.75 3.75v7.875c0 1.035-.84 1.875-1.875 1.875H5.625a1.875 1.875 0 0 1-1.875-1.875V3.375c0-1.036.84-1.875 1.875-1.875ZM10.5 18.5a.75.75 0 0 0 0-1.5h-4.5a.75.75 0 0 0 0 1.5h4.5Zm2.25-3a.75.75 0 0 0 0-1.5h-6.75a.75.75 0 0 0 0 1.5h6.75Zm0-3a.75.75 0 0 0 0-1.5h-6.75a.75.75 0 0 0 0 1.5h6.75Z" clip-rule="evenodd"/><path d="M14.25 5.25a5.23 5.23 0 0 0-1.279-3.434 9.768 9.768 0 0 1 6.963 6.963 5.23 5.23 0 0 0-3.434-1.279h-2.25Z"/></svg>
                         @endif
                     </div>
-                    <div>
-                        <p class="sales-stat-label">{{ $stat['label'] }}</p>
-                        <p class="sales-stat-sublabel">Bulan Ini</p>
+                    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                        <div>
+                            <p class="sales-stat-label">{{ $stat['label'] }}</p>
+                            <p class="sales-stat-sublabel">Bulan Ini</p>
+                        </div>
+                        @if(isset($stat['explanation']))
+                            <div x-data="{ open: false }" style="position: relative; display: inline-flex; align-items: center;">
+                                <button type="button" @click.stop="open = !open" style="outline: none; background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#9ca3af" style="width: 1.25rem; height: 1.25rem;">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                                <div x-show="open" @click.away="open = false" x-transition style="display: none; position: absolute; z-index: 9999; width: 220px; background-color: #1f2937; color: #f9fafb; padding: 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: normal; line-height: 1.4; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); top: 125%; right: 0; white-space: normal;">
+                                    <div style="position: absolute; top: -5px; right: 8px; width: 10px; height: 10px; background-color: #1f2937; transform: rotate(45deg);"></div>
+                                    {{ $stat['explanation'] }}
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
 

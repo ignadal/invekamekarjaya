@@ -104,7 +104,20 @@
     @endphp
 
     <div class="target-card">
-        <h3 class="target-header">Target vs Realisasi (Bulan Ini)</h3>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin: 0 0 1.25rem 0;">
+            <h3 class="target-header" style="margin: 0;">Target vs Realisasi (Bulan Ini)</h3>
+            <div x-data="{ open: false }" style="position: relative; display: inline-flex; align-items: center;">
+                <button type="button" @click.stop="open = !open" style="outline: none; background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#9ca3af" style="width: 1.25rem; height: 1.25rem;">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <div x-show="open" @click.away="open = false" x-transition style="display: none; position: absolute; z-index: 9999; width: 220px; background-color: #1f2937; color: #f9fafb; padding: 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: normal; line-height: 1.4; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); top: 125%; right: 0; white-space: normal;">
+                    <div style="position: absolute; top: -5px; right: 8px; width: 10px; height: 10px; background-color: #1f2937; transform: rotate(45deg);"></div>
+                    Grafik ini menunjukkan sejauh mana Anda mencapai target bulanan (Rp 100 Juta) untuk mendapatkan bonus/komisi.
+                </div>
+            </div>
+        </div>
 
         <div class="target-values">
             <div>

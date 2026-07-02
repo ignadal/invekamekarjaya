@@ -87,6 +87,7 @@ class SalesStatsOverview extends Widget
         return [
             [
                 'label' => 'Total Penjualan',
+                'explanation' => 'Total nilai pesanan atau order baru yang Anda hasilkan bulan ini.',
                 'value' => 'Rp ' . number_format($penjualanBulanIni, 0, ',', '.'),
                 'trend' => number_format(abs($penjualanGrowth), 1, ',', '.') . '% dari bulan lalu',
                 'trend_up' => $penjualanGrowth >= 0,
@@ -96,6 +97,7 @@ class SalesStatsOverview extends Widget
             ],
             [
                 'label' => 'Total Harus Ditagih',
+                'explanation' => 'Sisa tagihan bulan ini yang belum lunas dan masih harus Anda tagih ke toko.',
                 'value' => 'Rp ' . number_format($harusDitagihBulanIni, 0, ',', '.'),
                 'trend' => number_format(abs($harusDitagihGrowth), 1, ',', '.') . '% dari bulan lalu',
                 'trend_up' => $harusDitagihGrowth <= 0, // Less is better for outstanding
@@ -105,6 +107,7 @@ class SalesStatsOverview extends Widget
             ],
             [
                 'label' => 'Total Pembayaran',
+                'explanation' => 'Total uang setoran atau cicilan yang berhasil Anda kumpulkan bulan ini.',
                 'value' => 'Rp ' . number_format($pembayaranBulanIni, 0, ',', '.'),
                 'trend' => number_format(abs($pembayaranGrowth), 1, ',', '.') . '% dari bulan lalu',
                 'trend_up' => $pembayaranGrowth >= 0,
@@ -114,6 +117,7 @@ class SalesStatsOverview extends Widget
             ],
             [
                 'label' => 'Total Kunjungan',
+                'explanation' => 'Jumlah toko yang sudah Anda kunjungi dan catat laporannya bulan ini.',
                 'value' => number_format($kunjunganBulanIni, 0, ',', '.'),
                 'trend' => number_format(abs($kunjunganGrowth), 1, ',', '.') . '% dari bulan lalu',
                 'trend_up' => $kunjunganGrowth >= 0,

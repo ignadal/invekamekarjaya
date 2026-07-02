@@ -9,8 +9,8 @@ use App\Models\Penjualan;
 class SalesTargetRealisasi extends Widget
 {
     protected string $view = 'filament.sales.widgets.sales-target-realisasi';
-    protected static ?int $sort = 5;
-    protected int | string | array $columnSpan = 2;
+    protected static ?int $sort = 3;
+    protected int | string | array $columnSpan = 1;
 
     public function getTargetRealisasiProperty()
     {
@@ -18,7 +18,7 @@ class SalesTargetRealisasi extends Widget
         $salesId = $sales ? $sales->id : null;
 
         // Assuming fixed target 150.000.000 for demo, or could be fetched from DB if exists
-        $target = 150000000;
+        $target = 100000000;
         
         $realisasi = Penjualan::where('sales_id', $salesId)
             ->whereMonth('tanggal_beli', now()->month)

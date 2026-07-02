@@ -11,8 +11,8 @@ use App\Models\CicilanBuyer;
 class SalesAktivitasTerakhir extends Widget
 {
     protected string $view = 'filament.sales.widgets.sales-aktivitas-terakhir';
-    protected static ?int $sort = 4;
-    protected int | string | array $columnSpan = 1;
+    protected static ?int $sort = 6;
+    protected int | string | array $columnSpan = 2;
 
     public function getActivitiesProperty()
     {
