@@ -272,6 +272,17 @@
             --radius-lg: 1rem;
         }
 
+        html.dark {
+            --primary-light: rgba(185, 28, 28, 0.15);
+            --bg-color: #09090b;
+            --card-color: #18181b;
+            --text-dark: #f8fafc;
+            --text-gray: #cbd5e1;
+            --text-light: #94a3b8;
+            --border-color: #27272a;
+            --border-light: #27272a;
+        }
+
         .catalog-wrapper {
             font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
             color: var(--text-gray);

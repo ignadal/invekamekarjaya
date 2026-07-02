@@ -100,7 +100,7 @@
                     @if($toko->count() > 0)
                     <div style="display: flex; flex-direction: column; gap: 1rem;">
                         @foreach($toko as $kunjungan)
-                        <div style="padding: 1.5rem; border-radius: 1rem; border: 1px solid #e5e7eb; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; gap: 1.5rem; flex-direction: column; @media (min-width: 768px) { flex-direction: row; }">
+                        <div class="kunjungan-card" style="padding: 1.5rem; border-radius: 1rem; border: 1px solid #e5e7eb; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; gap: 1.5rem; flex-direction: column;">
                             <div style="flex: 1;">
                                 <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
                                     <span style="font-weight: 700; font-size: 1.125rem; color: #111827;">{{ $kunjungan->buyer->nama_toko ?? '-' }}</span>
@@ -314,7 +314,7 @@
                             </div>
                             
                             {{-- Full-width Button --}}
-                            <a href="{{ $viewUrl }}" wire:navigate style="margin-top: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.375rem; padding: 0.625rem; background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 0.5rem; color: #dc2626; font-size: 0.875rem; font-weight: 600; text-decoration: none; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#fee2e2'" onmouseout="this.style.backgroundColor='#fef2f2'">
+                            <a href="{{ $viewUrl }}" wire:navigate class="lihat-detail-btn" style="margin-top: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.375rem; padding: 0.625rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 600; text-decoration: none; transition: background-color 0.2s;">
                                 <x-heroicon-o-eye style="width: 1.125rem; height: 1.125rem;" />
                                 Lihat Detail
                             </a>
@@ -927,6 +927,149 @@
         background-position: right 0.5rem center;
         background-repeat: no-repeat;
         background-size: 1.5em 1.5em;
+    }
+    }
+
+    /* Additional Custom Styles extracted from inline for dark mode support */
+    .lihat-detail-btn {
+        background-color: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #dc2626;
+    }
+    .lihat-detail-btn:hover {
+        background-color: #fee2e2;
+    }
+    @media (min-width: 768px) {
+        .kunjungan-card {
+            flex-direction: row !important;
+        }
+    }
+
+    /* Dark Mode Overrides */
+    html.dark .tb-tab-container,
+    html.dark .catalog-sidebar,
+    html.dark .products-section,
+    html.dark .product-card,
+    html.dark .kunjungan-card,
+    html.dark .per-page-select,
+    html.dark .page-btn:not([disabled]),
+    html.dark .page-num-btn:not(.active) {
+        background-color: #18181b !important;
+        border-color: #3f3f46 !important;
+    }
+    html.dark .page-btn:not([disabled]):hover,
+    html.dark .page-num-btn:not(.active):hover {
+        background-color: #27272a !important;
+        border-color: #52525b !important;
+        color: #f8fafc !important;
+    }
+    html.dark .product-image-wrapper {
+        background-color: #27272a !important;
+        border-color: #3f3f46 !important;
+    }
+    html.dark .sidebar-title,
+    html.dark .section-title,
+    html.dark .product-name,
+    html.dark .page-num-btn:not(.active) {
+        color: #f3f4f6 !important;
+        border-color: #3f3f46 !important;
+    }
+    html.dark .filter-heading {
+        color: #d1d5db !important;
+    }
+    html.dark .search-input {
+        background-color: #27272a !important;
+        border-color: #3f3f46 !important;
+        color: #f3f4f6 !important;
+    }
+    html.dark .status-toggles {
+        background-color: #27272a !important;
+        border-color: #3f3f46 !important;
+    }
+    html.dark .status-btn {
+        color: #9ca3af !important;
+        border-color: #3f3f46 !important;
+    }
+    html.dark .status-btn:hover:not(.active) {
+        background-color: #3f3f46 !important;
+        color: #f3f4f6 !important;
+    }
+    
+    html.dark .status-btn[wire\:click*="'semua'"].active {
+        background-color: #3f3f46 !important;
+        color: #f3f4f6 !important;
+        border-color: #52525b !important;
+    }
+    html.dark .status-btn[wire\:click*="'sukses'"].active {
+        background-color: rgba(16, 185, 129, 0.2) !important;
+        color: #34d399 !important;
+        border-color: rgba(16, 185, 129, 0.3) !important;
+    }
+    html.dark .status-btn[wire\:click*="'gagal'"].active {
+        background-color: rgba(239, 68, 68, 0.2) !important;
+        color: #f87171 !important;
+        border-color: rgba(239, 68, 68, 0.3) !important;
+    }
+
+    html.dark .custom-badge {
+        background-color: #27272a !important;
+        border-color: #3f3f46 !important;
+        color: #d1d5db !important;
+    }
+    html.dark .custom-badge[style*="background-color: #dcfce7"] {
+        background-color: rgba(22, 163, 74, 0.2) !important;
+        border-color: rgba(22, 163, 74, 0.3) !important;
+        color: #4ade80 !important;
+    }
+    html.dark .custom-badge[style*="background-color: #fee2e2"] {
+        background-color: rgba(220, 38, 38, 0.2) !important;
+        border-color: rgba(220, 38, 38, 0.3) !important;
+        color: #f87171 !important;
+    }
+    
+    html.dark .products-header {
+        border-color: #3f3f46 !important;
+    }
+    
+    /* Inline styles overrides */
+    html.dark [style*="color: #111827"] {
+        color: #f3f4f6 !important;
+    }
+    html.dark [style*="color: #374151"] {
+        color: #d1d5db !important;
+    }
+    html.dark [style*="color: #6b7280"] {
+        color: #9ca3af !important;
+    }
+    html.dark [style*="color: #475569"] {
+        color: #94a3b8 !important;
+    }
+    html.dark [style*="color: #1e293b"] {
+        color: #f8fafc !important;
+    }
+    html.dark [style*="color: #64748b"] {
+        color: #cbd5e1 !important;
+    }
+    
+    html.dark [style*="background: #f9fafb"],
+    html.dark [style*="background-color: #f3f4f6"] {
+        background: #27272a !important;
+        background-color: #27272a !important;
+        border-color: #3f3f46 !important;
+    }
+    
+    html.dark [style*="background-color: #f0f9ff"] {
+        background-color: rgba(37, 99, 235, 0.1) !important;
+        border-color: rgba(37, 99, 235, 0.2) !important;
+    }
+    
+    html.dark .lihat-detail-btn {
+        background-color: rgba(220, 38, 38, 0.1) !important;
+        border-color: rgba(220, 38, 38, 0.2) !important;
+        color: #f87171 !important;
+    }
+    html.dark .lihat-detail-btn:hover {
+        background-color: rgba(220, 38, 38, 0.2) !important;
     }
 </style>
     <x-filament-actions::modals />
