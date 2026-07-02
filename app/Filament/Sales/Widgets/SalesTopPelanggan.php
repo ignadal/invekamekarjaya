@@ -8,13 +8,39 @@ use Filament\Widgets\TableWidget as BaseWidget;
 use App\Models\Sales;
 use App\Models\Buyer;
 use Illuminate\Database\Eloquent\Builder;
+use Livewire\Attributes\On;
 
 class SalesTopPelanggan extends BaseWidget
 {
+    public ?string $filterBulan = null;
+    public ?string $filterTahun = null;
+    public string $periodeLabel = '';
+
+    public function mount(): void
+    {
+        $namaBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        $this->periodeLabel = $namaBulan[now()->month - 1] . ' ' . now()->year;
+    }
+
+    #[On('sales-dashboard-filter-changed')]
+    public function updateFilter(?string $bulan, ?string $tahun): void
+    {
+        $this->filterBulan = $bulan;
+        $this->filterTahun = $tahun;
+
+        if ($bulan && $tahun) {
+            $namaBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            $this->periodeLabel = $namaBulan[$bulan - 1] . ' ' . $tahun;
+        } else {
+            $namaBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            $this->periodeLabel = $namaBulan[now()->month - 1] . ' ' . now()->year;
+        }
+    }
+
     protected static ?int $sort = 5;
     protected int | string | array $columnSpan = 2; 
 
-    protected static ?string $heading = 'Top 5 Toko Teraktif Bulan Ini';
+    protected static ?string $heading = 'Top 5 Toko Teraktif';
 
     public function getDescription(): string|\Illuminate\Contracts\Support\Htmlable|null
     {
@@ -38,8 +64,13 @@ class SalesTopPelanggan extends BaseWidget
         $sales = Sales::where('user_id', auth()->id())->first();
         $salesId = $sales ? $sales->id : null;
 
-        $startOfMonth = now()->startOfMonth();
-        $endOfMonth = now()->endOfMonth();
+        $targetDate = now();
+        if ($this->filterBulan && $this->filterTahun) {
+            $targetDate = now()->setDate((int) $this->filterTahun, (int) $this->filterBulan, 1);
+        }
+
+        $startOfMonth = $targetDate->copy()->startOfMonth();
+        $endOfMonth = $targetDate->copy()->endOfMonth();
 
         // Query buyers who have purchased from this sales this month
         $query = Buyer::query()
@@ -55,6 +86,7 @@ class SalesTopPelanggan extends BaseWidget
             ->limit(5);
 
         return $table
+            ->heading("Top 5 Toko Teraktif {$this->periodeLabel}")
             ->query($query)
             ->columns([
                 Tables\Columns\TextColumn::make('nama_toko')

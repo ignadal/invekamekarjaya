@@ -90,13 +90,17 @@
 
     <div class="sales-stats-grid">
         @foreach ($this->getCustomStats() as $stat)
-            <div class="sales-stat-card">
+            <div class="sales-stat-card" style="border-bottom: 3px solid {{ $stat['icon_color'] }}; border-radius: 0.75rem;">
                 <div class="sales-stat-card-header">
                     <div class="sales-stat-icon" style="background-color: {{ $stat['icon_bg'] }};">
                         @if($stat['icon'] === 'users')
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="{{ $stat['icon_color'] }}"><path d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"/></svg>
                         @elseif($stat['icon'] === 'banknotes')
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="{{ $stat['icon_color'] }}"><path d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="{{ $stat['icon_color'] }}">
+                                <path d="M12 7.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z" />
+                                <path fill-rule="evenodd" d="M1.5 4.875C1.5 3.839 2.34 3 3.375 3h17.25c1.035 0 1.875.84 1.875 1.875v9.75c0 1.036-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 0 1 1.5 14.625v-9.75ZM8.25 9.75a3.75 3.75 0 1 1 7.5 0 3.75 3.75 0 0 1-7.5 0ZM18.75 9a.75.75 0 0 0-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 0 0 .75-.75V9.75a.75.75 0 0 0-.75-.75h-.008ZM4.5 9.75A.75.75 0 0 1 5.25 9h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H5.25a.75.75 0 0 1-.75-.75V9.75Z" clip-rule="evenodd" />
+                                <path d="M2.25 18a.75.75 0 0 0 0 1.5c5.4 0 10.63.722 15.6 2.075 1.19.324 2.4-.558 2.4-1.82V18.75a.75.75 0 0 0-.75-.75H2.25Z" />
+                            </svg>
                         @elseif($stat['icon'] === 'credit-card')
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="{{ $stat['icon_color'] }}"><path d="M4.5 3.75a3 3 0 0 0-3 3v.75h21v-.75a3 3 0 0 0-3-3h-15Zm16.5 7.5h-21v6a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-6ZM6.75 15a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3Zm0 0h3"/></svg>
                         @elseif($stat['icon'] === 'receipt-percent')
@@ -110,7 +114,7 @@
                     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                         <div>
                             <p class="sales-stat-label">{{ $stat['label'] }}</p>
-                            <p class="sales-stat-sublabel">Bulan Ini</p>
+                            <p class="sales-stat-sublabel">{{ $this->periodeLabel }}</p>
                         </div>
                         @if(isset($stat['explanation']))
                             <div x-data="{ open: false }" style="position: relative; display: inline-flex; align-items: center;">
@@ -131,7 +135,7 @@
                 <div class="sales-stat-footer">
                     <div>
                         <p class="sales-stat-value">{{ $stat['value'] }}</p>
-                        <div class="sales-stat-trend {{ $stat['trend_up'] ? 'sales-stat-trend-up' : 'sales-stat-trend-down' }}" style="margin-top: 0.375rem;">
+                        <div class="sales-stat-trend" style="margin-top: 0.375rem; color: {{ $stat['icon_color'] }};">
                             @if($stat['trend_up'])
                                 <svg class="sales-stat-trend-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z" clip-rule="evenodd"/></svg>
                             @else
@@ -142,7 +146,7 @@
                     </div>
                     {{-- Decorative trend line --}}
                     <div class="sales-stat-chart-icon">
-                        <svg viewBox="0 0 64 32" fill="none" stroke="{{ $stat['trend_up'] ? '#22c55e' : '#ef4444' }}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.5;">
+                        <svg viewBox="0 0 64 32" fill="none" stroke="{{ $stat['icon_color'] }}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.5;">
                             <polyline points="2,28 12,22 22,26 32,14 42,18 52,8 62,4"/>
                         </svg>
                     </div>

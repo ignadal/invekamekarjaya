@@ -6,13 +6,44 @@ use Filament\Widgets\ChartWidget;
 use App\Models\Sales;
 use App\Models\Penjualan;
 use App\Models\CicilanBuyer;
+use Livewire\Attributes\On;
 
 class SalesProgresChart extends ChartWidget
 {
+    public ?string $filterBulan = null;
+    public ?string $filterTahun = null;
+    public string $periodeLabel = '';
+
+    public function mount(): void
+    {
+        $namaBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        $this->periodeLabel = $namaBulan[now()->month - 1] . ' ' . now()->year;
+    }
+
+    #[On('sales-dashboard-filter-changed')]
+    public function updateFilter(?string $bulan, ?string $tahun): void
+    {
+        $this->filterBulan = $bulan;
+        $this->filterTahun = $tahun;
+
+        if ($bulan && $tahun) {
+            $namaBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            $this->periodeLabel = $namaBulan[$bulan - 1] . ' ' . $tahun;
+        } else {
+            $namaBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            $this->periodeLabel = $namaBulan[now()->month - 1] . ' ' . now()->year;
+        }
+    }
+
+    public function getHeading(): string|\Illuminate\Contracts\Support\Htmlable|null
+    {
+        return "Progres Tagihan vs Pembayaran {$this->periodeLabel}";
+    }
+
     protected static ?int $sort = 2;
     protected int | string | array $columnSpan = 2;
 
-    protected ?string $heading = 'Progres Tagihan vs Pembayaran (Bulan Ini)';
+    protected ?string $heading = 'Progres Tagihan vs Pembayaran';
 
     public function getDescription(): string|\Illuminate\Contracts\Support\Htmlable|null
     {
@@ -36,11 +67,25 @@ class SalesProgresChart extends ChartWidget
         $sales = Sales::where('user_id', auth()->id())->first();
         $salesId = $sales ? $sales->id : null;
 
-        $startOfMonth = now()->startOfMonth();
-        $endOfMonth = now()->endOfMonth();
+        $targetDate = now();
+        if ($this->filterBulan && $this->filterTahun) {
+            $targetDate = now()->setDate((int) $this->filterTahun, (int) $this->filterBulan, 1);
+        }
 
-        // Get weekly data
-        $labels = ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'];
+        $startOfMonth = $targetDate->copy()->startOfMonth();
+        $endOfMonth = $targetDate->copy()->endOfMonth();
+
+        // Generate dynamic labels with date ranges
+        $namaBulanList = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        $monthName = $namaBulanList[$targetDate->month - 1] . ' ' . $targetDate->year;
+        $endOfMonthDay = $endOfMonth->day;
+
+        $labels = [
+            "Minggu 1 (1-7 $monthName)",
+            "Minggu 2 (8-14 $monthName)",
+            "Minggu 3 (15-21 $monthName)",
+            "Minggu 4 (22-$endOfMonthDay $monthName)",
+        ];
         $tagihanData = [0, 0, 0, 0];
         $pembayaranData = [0, 0, 0, 0];
 
@@ -81,22 +126,16 @@ class SalesProgresChart extends ChartWidget
                 [
                     'label' => 'Total Penjualan',
                     'data' => $tagihanData,
-                    'borderColor' => '#ef4444',
-                    'backgroundColor' => 'transparent',
-                    'pointBackgroundColor' => '#ef4444',
-                    'pointRadius' => 5,
-                    'tension' => 0.3,
-                    'borderWidth' => 2,
+                    'backgroundColor' => '#3b82f6',
+                    'borderColor' => '#2563eb',
+                    'borderWidth' => 1,
                 ],
                 [
                     'label' => 'Total Pembayaran',
                     'data' => $pembayaranData,
-                    'borderColor' => '#22c55e',
-                    'backgroundColor' => 'transparent',
-                    'pointBackgroundColor' => '#22c55e',
-                    'pointRadius' => 5,
-                    'tension' => 0.3,
-                    'borderWidth' => 2,
+                    'backgroundColor' => '#22c55e',
+                    'borderColor' => '#16a34a',
+                    'borderWidth' => 1,
                 ],
             ],
             'labels' => $labels,
@@ -105,6 +144,6 @@ class SalesProgresChart extends ChartWidget
 
     protected function getType(): string
     {
-        return 'line';
+        return 'bar';
     }
 }

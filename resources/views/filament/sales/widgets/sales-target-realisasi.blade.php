@@ -92,20 +92,40 @@
             margin: 0.125rem 0 0 0;
             line-height: 1.4;
         }
+        .bonus-info {
+            background: #dcfce7;
+            border: 1px solid #bbf7d0;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            margin-top: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .bonus-label {
+            font-size: 0.75rem;
+            color: #166534;
+            font-weight: 600;
+        }
+        .bonus-amount {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #15803d;
+        }
     </style>
 
     @php
         $data = $this->target_realisasi;
-        $motivationText = $data['percentage'] >= 100
-            ? 'Target tercapai! Kerja yang luar biasa!'
-            : ($data['percentage'] >= 75
-                ? 'Hampir mencapai target! Sedikit lagi!'
-                : 'Terus tingkatkan performa!');
+        $motivationText = $data['percentage2'] >= 100
+            ? 'Luar biasa! Bonus maksimal (1%) telah tercapai!'
+            : ($data['percentage1'] >= 100
+                ? 'Target 1 tercapai (Bonus 0,5%)! Ayo kejar Target 2!'
+                : 'Terus tingkatkan penagihan untuk mendapatkan bonus!');
     @endphp
 
     <div class="target-card">
         <div style="display: flex; align-items: center; justify-content: space-between; margin: 0 0 1.25rem 0;">
-            <h3 class="target-header" style="margin: 0;">Target vs Realisasi (Bulan Ini)</h3>
+            <h3 class="target-header" style="margin: 0;">Target Komisi {{ $this->periodeLabel }}</h3>
             <div x-data="{ open: false }" style="position: relative; display: inline-flex; align-items: center;">
                 <button type="button" @click.stop="open = !open" style="outline: none; background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center;">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#9ca3af" style="width: 1.25rem; height: 1.25rem;">
@@ -114,38 +134,63 @@
                 </button>
                 <div x-show="open" @click.away="open = false" x-transition style="display: none; position: absolute; z-index: 9999; width: 220px; background-color: #1f2937; color: #f9fafb; padding: 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: normal; line-height: 1.4; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); top: 125%; right: 0; white-space: normal;">
                     <div style="position: absolute; top: -5px; right: 8px; width: 10px; height: 10px; background-color: #1f2937; transform: rotate(45deg);"></div>
-                    Grafik ini menunjukkan sejauh mana Anda mencapai target bulanan (Rp 100 Juta) untuk mendapatkan bonus/komisi.
+                    Anda memiliki 2 target penagihan bulan ini: Rp 75 Juta (Bonus 0,5%) dan Rp 100 Juta (Bonus 1%).
                 </div>
             </div>
         </div>
 
-        <div class="target-values">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 0.5rem;">
             <div>
-                <p class="target-label">Target Tagihan</p>
-                <p class="target-amount">Rp {{ number_format($data['target'], 0, ',', '.') }}</p>
-            </div>
-            <div style="text-align: right;">
-                <p class="target-label">Realisasi</p>
-                <p class="target-amount-right">Rp {{ number_format($data['realisasi'], 0, ',', '.') }} <span class="target-percentage-badge">({{ $data['percentage'] }}%)</span></p>
+                <p class="target-label">Realisasi Penagihan</p>
+                <p class="target-amount-right" style="text-align: left; color: #dc2626;">Rp {{ number_format($data['realisasi'], 0, ',', '.') }}</p>
             </div>
         </div>
 
-        <div class="target-progress-bar">
-            <div class="target-progress-fill" style="width: {{ $data['percentage'] }}%;"></div>
-        </div>
-        <div class="target-progress-labels">
-            <span>{{ $data['percentage'] }}%</span>
-            <span>100%</span>
+        <!-- Target 1 (75 Juta) -->
+        <div style="margin-top: 1rem;">
+            <div class="target-values" style="margin-bottom: 0.25rem;">
+                <p class="target-label" style="font-weight: 600; color: #374151;">Target 1 (Bonus 0,5%)</p>
+                <p class="target-label">Rp 75 Juta</p>
+            </div>
+            <div class="target-progress-bar">
+                <div class="target-progress-fill" style="width: {{ $data['percentage1'] }}%; background-color: {{ $data['percentage1'] >= 100 ? '#16a34a' : '#f87171' }};"></div>
+            </div>
+            <div class="target-progress-labels">
+                <span>{{ $data['percentage1'] }}%</span>
+                <span>100%</span>
+            </div>
         </div>
 
-        <div class="target-motivation">
+        <!-- Target 2 (100 Juta) -->
+        <div style="margin-top: 0.5rem;">
+            <div class="target-values" style="margin-bottom: 0.25rem;">
+                <p class="target-label" style="font-weight: 600; color: #374151;">Target 2 (Bonus 1%)</p>
+                <p class="target-label">Rp 100 Juta</p>
+            </div>
+            <div class="target-progress-bar">
+                <div class="target-progress-fill" style="width: {{ $data['percentage2'] }}%; background-color: {{ $data['percentage2'] >= 100 ? '#16a34a' : '#b91c1c' }};"></div>
+            </div>
+            <div class="target-progress-labels">
+                <span>{{ $data['percentage2'] }}%</span>
+                <span>100%</span>
+            </div>
+        </div>
+
+        @if($data['estimated_bonus'] > 0)
+        <div class="bonus-info">
+            <span class="bonus-label">Estimasi Bonus Anda:</span>
+            <span class="bonus-amount">Rp {{ number_format($data['estimated_bonus'], 0, ',', '.') }}</span>
+        </div>
+        @endif
+
+        <div class="target-motivation" style="margin-top: 1rem;">
             <svg class="target-motivation-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="12" cy="12" r="10" stroke="#ef4444" stroke-width="1.5"/>
                 <path d="M8 12l2.5 2.5L16 9" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
             <div>
                 <p class="target-motivation-title">{{ $motivationText }}</p>
-                <p class="target-motivation-desc">Anda telah mencapai {{ $data['percentage'] }}% dari target bulan ini.</p>
+                <p class="target-motivation-desc">Hitungan bonus didasarkan pada total uang cicilan (penagihan) yang berhasil dikumpulkan bulan ini.</p>
             </div>
         </div>
     </div>
