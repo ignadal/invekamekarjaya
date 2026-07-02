@@ -41,7 +41,9 @@ class SalesProgresChart extends ChartWidget
     }
 
     protected static ?int $sort = 2;
-    protected int | string | array $columnSpan = 2;
+    protected int | string | array $columnSpan = 'full';
+    
+    protected ?string $maxHeight = '300px';
 
     protected ?string $heading = 'Progres Tagihan vs Pembayaran';
 
@@ -129,6 +131,9 @@ class SalesProgresChart extends ChartWidget
                     'backgroundColor' => '#3b82f6',
                     'borderColor' => '#2563eb',
                     'borderWidth' => 1,
+                    'categoryPercentage' => 0.25,
+                    'barPercentage' => 0.9,
+                    'borderRadius' => 4,
                 ],
                 [
                     'label' => 'Total Pembayaran',
@@ -136,6 +141,9 @@ class SalesProgresChart extends ChartWidget
                     'backgroundColor' => '#22c55e',
                     'borderColor' => '#16a34a',
                     'borderWidth' => 1,
+                    'categoryPercentage' => 0.25,
+                    'barPercentage' => 0.9,
+                    'borderRadius' => 4,
                 ],
             ],
             'labels' => $labels,

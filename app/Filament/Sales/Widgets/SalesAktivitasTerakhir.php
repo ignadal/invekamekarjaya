@@ -11,8 +11,8 @@ use App\Models\CicilanBuyer;
 class SalesAktivitasTerakhir extends Widget
 {
     protected string $view = 'filament.sales.widgets.sales-aktivitas-terakhir';
-    protected static ?int $sort = 6;
-    protected int | string | array $columnSpan = 2;
+    protected static ?int $sort = 7;
+    protected int | string | array $columnSpan = 'full';
 
     public function getActivitiesProperty()
     {
@@ -36,6 +36,7 @@ class SalesAktivitasTerakhir extends Widget
                         'amount' => null,
                         'icon' => 'heroicon-o-building-storefront',
                         'color' => 'warning',
+                        'url' => \App\Filament\Sales\Resources\TokoLanggananResource::getUrl('index'),
                     ];
                 });
 
@@ -53,6 +54,7 @@ class SalesAktivitasTerakhir extends Widget
                         'amount' => 'Rp ' . number_format($item->total_penjualan, 0, ',', '.'),
                         'icon' => 'heroicon-o-document-text',
                         'color' => 'danger',
+                        'url' => \App\Filament\Sales\Pages\Transaksi::getUrl(),
                     ];
                 });
 
@@ -72,6 +74,7 @@ class SalesAktivitasTerakhir extends Widget
                         'amount' => 'Rp ' . number_format($item->nominal, 0, ',', '.'),
                         'icon' => 'heroicon-o-banknotes',
                         'color' => 'success',
+                        'url' => \App\Filament\Sales\Pages\Transaksi::getUrl(),
                     ];
                 });
 

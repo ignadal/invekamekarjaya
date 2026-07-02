@@ -38,7 +38,7 @@ class SalesTopPelanggan extends BaseWidget
     }
 
     protected static ?int $sort = 5;
-    protected int | string | array $columnSpan = 2; 
+    protected int | string | array $columnSpan = 1;
 
     protected static ?string $heading = 'Top 5 Toko Teraktif';
 

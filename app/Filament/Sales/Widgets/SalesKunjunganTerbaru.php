@@ -9,7 +9,7 @@ use App\Models\Sales;
 class SalesKunjunganTerbaru extends Widget
 {
     protected string $view = 'filament.sales.widgets.sales-kunjungan-terbaru';
-    protected static ?int $sort = 7;
+    protected static ?int $sort = 6;
     protected int | string | array $columnSpan = 1;
 
     public function getKunjungansProperty()
