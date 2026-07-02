@@ -2,7 +2,7 @@
 <style>
     /* Theme Variables */
     :root {
-        --bg-body: #f3f4f6;
+        --bg-body: #f87171;
         --bg-card: #ffffff;
         --text-primary: #1f2937;
         --text-secondary: #4b5563;
@@ -12,19 +12,21 @@
         --theme-red-glow: rgba(220, 38, 38, 0.4);
         --neon-bg: #e5e7eb;
         --card-shadow: 0 0 25px rgba(220, 38, 38, 0.3), 0 10px 30px rgba(0, 0, 0, 0.1);
+        --anim-color: #ffffff;
     }
 
     [data-theme="dark"] {
-        --bg-body: #0a0a0a;
-        --bg-card: #13131a;
-        --text-primary: #ffffff;
-        --text-secondary: #9ca3af;
-        --input-border: #374151;
+        --bg-body: #0f172a;
+        --bg-card: #1e293b;
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --input-border: #334155;
         --theme-red: #ef4444;
         --theme-red-dark: #991b1b;
         --theme-red-glow: rgba(239, 68, 68, 0.8);
-        --neon-bg: #000000;
+        --neon-bg: #0f172a;
         --card-shadow: 0 0 25px rgba(239, 68, 68, 0.6), 0 0 50px rgba(0, 0, 0, 0.5);
+        --anim-color: var(--theme-red);
     }
 
     /* Reset & Base Settings */
@@ -154,7 +156,7 @@
         background: var(--bg-card);
         border-radius: 13px;
         display: flex;
-        flex-direction: column;
+        flex-direction: column-reverse;
         overflow: hidden;
     }
 
@@ -166,10 +168,9 @@
         }
     }
 
-    /* Left Side: Form */
     .card-left {
         width: 100%;
-        padding: 3rem 2rem;
+        padding: 2.5rem 1.5rem;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -182,12 +183,18 @@
     }
 
     .login-title {
-        font-size: 2rem;
+        font-size: 1.5rem;
         font-weight: 800;
         color: var(--text-primary);
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
         text-align: center;
         letter-spacing: -0.025em;
+    }
+    @media (min-width: 768px) {
+        .login-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
     }
 
     /* Filament Form Customizations */
@@ -296,7 +303,7 @@
     /* Right Side: Welcome Text */
     .card-right {
         width: 100%;
-        padding: 3rem 2rem;
+        padding: 2.5rem 1.5rem;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -315,22 +322,34 @@
     }
 
     .brand-logo {
-        height: 7rem;
-        margin-bottom: 1.5rem;
+        height: 5rem;
+        margin-bottom: 1rem;
         object-fit: contain;
         filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
         transition: all 0.3s ease;
     }
+    @media (min-width: 768px) {
+        .brand-logo {
+            height: 7rem;
+            margin-bottom: 1.5rem;
+        }
+    }
 
     .welcome-title {
-        font-size: 2.5rem;
+        font-size: 1.75rem;
         line-height: 1.1;
         font-weight: 900;
-        margin-bottom: 1rem;
+        margin-bottom: 0.75rem;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         color: var(--theme-red);
         text-shadow: 0 0 15px var(--theme-red-glow), 0 0 30px var(--theme-red-glow);
+    }
+    @media (min-width: 768px) {
+        .welcome-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
     }
 
     .welcome-text {
@@ -365,77 +384,108 @@
         color: var(--theme-red-dark) !important;
     }
 
-    /* Background Neon Chart */
-    .bg-chart-container {
+    /* Elegant Wind/Breeze Animation */
+    .breeze-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+        opacity: 1;
+    }
+
+    [data-theme="dark"] .breeze-container {
+        opacity: 0.7;
+    }
+
+    .wind-line {
+        position: absolute;
+        background: linear-gradient(to right, transparent, var(--anim-color), transparent);
+        height: 2px;
+        border-radius: 100%;
+        animation: windBlowing linear infinite;
+        opacity: 0;
+    }
+
+    /* Adding multiple wind lines with different positions, sizes, and animation durations */
+    .wind-line:nth-child(1) { top: 15%; width: 20%; animation-duration: 8s; animation-delay: 0s; }
+    .wind-line:nth-child(2) { top: 35%; width: 35%; animation-duration: 12s; animation-delay: 2s; height: 1px; }
+    .wind-line:nth-child(3) { top: 55%; width: 25%; animation-duration: 9s; animation-delay: 5s; }
+    .wind-line:nth-child(4) { top: 75%; width: 40%; animation-duration: 15s; animation-delay: 1s; height: 3px; filter: blur(2px); }
+    .wind-line:nth-child(5) { top: 85%; width: 30%; animation-duration: 11s; animation-delay: 7s; height: 1px; }
+    .wind-line:nth-child(6) { top: 25%; width: 20%; animation-duration: 10s; animation-delay: 4s; filter: blur(1px); }
+    .wind-line:nth-child(7) { top: 65%; width: 15%; animation-duration: 14s; animation-delay: 3s; height: 2px; }
+
+    @keyframes windBlowing {
+        0% { left: -50%; opacity: 0; transform: scaleX(0.5); }
+        20% { opacity: 0.6; transform: scaleX(1); }
+        80% { opacity: 0.6; transform: scaleX(1.2); }
+        100% { left: 120%; opacity: 0; transform: scaleX(0.5); }
+    }
+
+    /* Dust Particles */
+    .dust-particle {
+        position: absolute;
+        background: var(--anim-color);
+        border-radius: 50%;
+        opacity: 0;
+        animation: blowDust linear infinite;
+        box-shadow: 0 0 5px 1px var(--anim-color);
+    }
+    
+    .dust-1 { top: 20%; width: 4px; height: 4px; animation-duration: 7s; animation-delay: 1s; }
+    .dust-2 { top: 50%; width: 3px; height: 3px; animation-duration: 10s; animation-delay: 4s; }
+    .dust-3 { top: 80%; width: 5px; height: 5px; animation-duration: 8s; animation-delay: 2s; }
+    .dust-4 { top: 35%; width: 3px; height: 3px; animation-duration: 9s; animation-delay: 6s; }
+    .dust-5 { top: 65%; width: 4px; height: 4px; animation-duration: 12s; animation-delay: 3s; }
+    .dust-6 { top: 10%; width: 2px; height: 2px; animation-duration: 11s; animation-delay: 5s; }
+    .dust-7 { top: 90%; width: 3px; height: 3px; animation-duration: 14s; animation-delay: 0s; }
+
+    @keyframes blowDust {
+        0% { left: -10%; opacity: 0; transform: translateY(0); }
+        20% { opacity: 0.8; }
+        80% { opacity: 0.8; }
+        100% { left: 110%; opacity: 0; transform: translateY(-40px); }
+    }
+
+    /* Moving Wave Effect */
+    .wave-wrapper {
         position: absolute;
         bottom: 0;
         left: 0;
         width: 100%;
-        height: 80vh;
-        z-index: 0;
-        opacity: 0.8;
-        pointer-events: none;
+        height: 300px;
         overflow: hidden;
-        mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
-        -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+        z-index: 0;
+        pointer-events: none;
     }
 
-    [data-theme="dark"] .bg-chart-container {
-        opacity: 1;
-    }
-
-    .bg-chart {
-        width: 100%;
+    .wave {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 200%;
         height: 100%;
+        animation: wave-animation 12s linear infinite;
     }
 
-    .chart-line {
-        stroke-dasharray: 2000;
-        stroke-dashoffset: 2000;
-    }
-    
-    .chart-line.main {
-        animation: drawLine 2.5s ease-in-out forwards infinite alternate;
-    }
-    
-    .chart-line.fast {
-        stroke-dasharray: 1000;
-        animation: drawLine 1.5s linear forwards infinite alternate;
+    .wave-1 {
+        opacity: 0.3;
     }
 
-    .chart-area {
-        opacity: 0;
-        animation: fadeInArea 2.5s ease-in-out forwards infinite alternate;
+    .wave-2 {
+        animation-duration: 18s;
+        opacity: 0.15;
+        animation-direction: reverse;
+        bottom: -10px;
     }
 
-    .chart-node {
-        opacity: 0;
-        animation: pulseNode 1s ease-in-out forwards infinite alternate;
-    }
-    
-    .bar-anim {
-        transform-origin: bottom;
-        animation: scaleBar 2s ease-in-out forwards infinite alternate;
-    }
-
-    @keyframes drawLine {
-        0% { stroke-dashoffset: 2000; }
-        100% { stroke-dashoffset: 0; }
-    }
-
-    @keyframes fadeInArea {
-        0%, 30% { opacity: 0; }
-        100% { opacity: 1; }
-    }
-
-    @keyframes pulseNode {
-        0% { opacity: 0.2; transform: scale(0.5); }
-        100% { opacity: 1; transform: scale(1.5); }
-    }
-    
-    @keyframes scaleBar {
-        0% { transform: scaleY(0.3); opacity: 0.1; }
-        100% { transform: scaleY(1); opacity: 0.5; }
+    @keyframes wave-animation {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
     }
 
 </style>
@@ -454,58 +504,35 @@
         </button>
     </div>
 
-    <!-- Background Animated Neon Chart -->
-    <div class="bg-chart-container">
-        <svg class="bg-chart" viewBox="0 0 1000 400" preserveAspectRatio="none">
-            <defs>
-                <linearGradient id="chartGradient1" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="var(--theme-red)" stop-opacity="0.4" />
-                    <stop offset="100%" stop-color="var(--theme-red)" stop-opacity="0" />
-                </linearGradient>
-                <filter id="neonGlowHeavy" x="-20%" y="-20%" width="140%" height="140%">
-                    <feGaussianBlur stdDeviation="12" result="blur" />
-                    <feMerge>
-                        <feMergeNode in="blur" />
-                        <feMergeNode in="SourceGraphic" />
-                    </feMerge>
-                </filter>
-            </defs>
-            
-            <!-- Grid lines -->
-            <g class="chart-grid" stroke="var(--text-secondary)" stroke-opacity="0.25" stroke-width="1.5">
-                <line x1="0" y1="50" x2="1000" y2="50" />
-                <line x1="0" y1="150" x2="1000" y2="150" />
-                <line x1="0" y1="250" x2="1000" y2="250" />
-                <line x1="0" y1="350" x2="1000" y2="350" />
-            </g>
+    <!-- Background Animated Wind/Breeze -->
+    <div class="breeze-container">
+        <!-- Wind Lines -->
+        <div class="wind-line"></div>
+        <div class="wind-line"></div>
+        <div class="wind-line"></div>
+        <div class="wind-line"></div>
+        <div class="wind-line"></div>
+        <div class="wind-line"></div>
+        <div class="wind-line"></div>
 
-            <!-- Floating Bars (Bar Chart) -->
-            <g class="chart-bars" fill="var(--theme-red)" filter="url(#neonGlowHeavy)">
-                <rect x="50" y="200" width="30" height="200" class="bar-anim" style="animation-delay: 0.1s" />
-                <rect x="250" y="120" width="30" height="280" class="bar-anim" style="animation-delay: 0.4s" />
-                <rect x="450" y="80" width="30" height="320" class="bar-anim" style="animation-delay: 0.2s" />
-                <rect x="650" y="160" width="30" height="240" class="bar-anim" style="animation-delay: 0.7s" />
-                <rect x="850" y="60" width="30" height="340" class="bar-anim" style="animation-delay: 0.5s" />
-            </g>
+        <!-- Flying Dust Particles -->
+        <div class="dust-particle dust-1"></div>
+        <div class="dust-particle dust-2"></div>
+        <div class="dust-particle dust-3"></div>
+        <div class="dust-particle dust-4"></div>
+        <div class="dust-particle dust-5"></div>
+        <div class="dust-particle dust-6"></div>
+        <div class="dust-particle dust-7"></div>
 
-            <!-- Background Line (Fast curve) -->
-            <path class="chart-line fast" d="M0,300 Q100,200 200,320 T400,250 T600,100 T800,280 T1000,150" fill="none" stroke="#ff6b6b" stroke-width="2" filter="url(#neonGlowHeavy)" opacity="0.6" />
-
-            <!-- Area under Main Line -->
-            <path class="chart-area" d="M0,400 L0,250 L150,180 L300,260 L500,120 L700,160 L850,50 L1000,90 L1000,400 Z" fill="url(#chartGradient1)" />
-
-            <!-- Main Glowing Line -->
-            <path class="chart-line main" d="M0,250 L150,180 L300,260 L500,120 L700,160 L850,50 L1000,90" fill="none" stroke="var(--theme-red)" stroke-width="6" filter="url(#neonGlowHeavy)" />
-            
-            <!-- Nodes on Main Line -->
-            <g fill="white" filter="url(#neonGlowHeavy)">
-                <circle cx="150" cy="180" r="8" class="chart-node" style="animation-delay: 0.2s; transform-origin: 150px 180px;" />
-                <circle cx="300" cy="260" r="8" class="chart-node" style="animation-delay: 0.4s; transform-origin: 300px 260px;" />
-                <circle cx="500" cy="120" r="8" class="chart-node" style="animation-delay: 0.6s; transform-origin: 500px 120px;" />
-                <circle cx="700" cy="160" r="8" class="chart-node" style="animation-delay: 0.8s; transform-origin: 700px 160px;" />
-                <circle cx="850" cy="50" r="8" class="chart-node" style="animation-delay: 1.0s; transform-origin: 850px 50px;" />
-            </g>
-        </svg>
+        <!-- Moving Wave Effect -->
+        <div class="wave-wrapper">
+            <svg class="wave wave-1" viewBox="0 0 2000 100" preserveAspectRatio="none">
+                <path d="M0,50 C250,100 250,0 500,50 C750,100 750,0 1000,50 C1250,100 1250,0 1500,50 C1750,100 1750,0 2000,50 L2000,150 L0,150 Z" fill="var(--anim-color)"></path>
+            </svg>
+            <svg class="wave wave-2" viewBox="0 0 2000 100" preserveAspectRatio="none">
+                <path d="M0,50 C250,0 250,100 500,50 C750,0 750,100 1000,50 C1250,0 1250,100 1500,50 C1750,0 1750,100 2000,50 L2000,150 L0,150 Z" fill="var(--anim-color)"></path>
+            </svg>
+        </div>
     </div>
 
     <div class="neon-wrapper">
