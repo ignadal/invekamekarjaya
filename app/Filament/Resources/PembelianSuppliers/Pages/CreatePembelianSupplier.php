@@ -8,4 +8,9 @@ use Filament\Resources\Pages\CreateRecord;
 class CreatePembelianSupplier extends CreateRecord
 {
     protected static string $resource = PembelianSupplierResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

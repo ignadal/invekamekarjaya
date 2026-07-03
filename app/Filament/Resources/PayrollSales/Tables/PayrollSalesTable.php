@@ -206,6 +206,7 @@ class PayrollSalesTable
                     
                 ActionGroup::make([
                     EditAction::make()->color('gray'),
+                    \Filament\Actions\DeleteAction::make()->requiresConfirmation(),
                     Action::make('riwayat_tunjangan')
                         ->label('Riwayat Tunjangan')
                         ->icon('heroicon-o-clock')

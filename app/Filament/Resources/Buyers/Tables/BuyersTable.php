@@ -2,83 +2,133 @@
 
 namespace App\Filament\Resources\Buyers\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreBulkAction;
+use Carbon\Carbon;
+use Filament\Tables\Table;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Filters\TrashedFilter;
-use Filament\Tables\Table;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\Stack;
+use App\Filament\Resources\Buyers\BuyerResource;
+use Filament\Actions\ViewAction;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\Action;
 
 class BuyersTable
 {
     public static function configure(Table $table): Table
     {
         return $table
-            ->stackedOnMobile()
+            ->defaultPaginationPageOption(9)
+            ->paginationPageOptions([9, 18, 27])
+
             ->columns([
-                ImageColumn::make('foto_toko')
-                    ->label('Foto Toko')
-                    ->disk('public')
-                    ->height(80)
-                    ->width(100)
-                    ->stacked()
-                    ->limit(3)
-                    ->limitedRemainingText()
-                    ->defaultImageUrl(asset('images/default-toko.png'))
-                    ->extraImgAttributes([
-                        'style' => 'object-fit: cover; border-radius: 0.5rem; border: 2px solid #fecaca;',
-                    ]),
-                TextColumn::make('kecamatan.nama_kecamatan')
-                    ->label('Kecamatan')
-                    ->searchable(),
-                TextColumn::make('nama_toko')
-                    ->label('Nama Toko')
-                    ->searchable()
-                    ->weight('bold'),
-                TextColumn::make('nama_owner')
-                    ->label('Nama Owner')
-                    ->searchable(),
-                TextColumn::make('no_hp')
-                    ->label('No HP')
-                    ->searchable(),
-                TextColumn::make('jam_buka')
-                    ->label('Jam Operasional')
-                    ->formatStateUsing(function ($record) {
-                        $buka = $record->jam_buka ? \Carbon\Carbon::parse($record->jam_buka)->format('H:i') : '-';
-                        $tutup = $record->jam_tutup ? \Carbon\Carbon::parse($record->jam_tutup)->format('H:i') : '-';
-                        return $buka . ' – ' . $tutup;
-                    })
-                    ->icon('heroicon-o-clock')
-                    ->iconColor('danger'),
-                TextColumn::make('hari_operasional')
-                    ->label('Hari Buka')
-                    ->searchable()
-                    ->icon('heroicon-o-calendar-days')
-                    ->iconColor('danger'),
-                TextColumn::make('deleted_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                Stack::make([
+                    ImageColumn::make('foto_toko')
+                        ->disk('public')
+                        ->defaultImageUrl(asset('images/default-toko.png'))
+                        ->extraImgAttributes([
+                            'class' => 'w-full rounded-xl object-cover',
+                            'style' => 'height: 220px;',
+                        ]),
+
+                    Stack::make([
+                        TextColumn::make('nama_toko')
+                            ->weight('bold')
+                            ->size('xl')
+                            ->searchable(),
+
+                        TextColumn::make('nama_owner')
+                            ->icon('heroicon-m-user')
+                            ->color('gray')
+                            ->size('sm'),
+
+                        TextColumn::make('kecamatan.nama_kecamatan')
+                            ->icon('heroicon-m-map-pin')
+                            ->color('gray')
+                            ->size('sm'),
+
+                        TextColumn::make('no_hp')
+                            ->icon('heroicon-m-phone')
+                            ->color('gray')
+                            ->size('sm')
+                            ->copyable(),
+                    ])->space(2)->extraAttributes(['class' => 'mt-2']),
+
+                    Stack::make([
+                        Split::make([
+                            TextColumn::make('hari')
+                                ->state(fn ($record) => $record->hari_bukaakhir
+                                    ? "{$record->hari_buka} - {$record->hari_bukaakhir}"
+                                    : $record->hari_buka)
+                                ->icon('heroicon-m-calendar-days')
+                                ->badge()
+                                ->color('success'),
+
+                            TextColumn::make('jam_operasional')
+                                ->state(fn ($record) => Carbon::parse($record->jam_buka)->format('H:i') . ' - ' . Carbon::parse($record->jam_tutup)->format('H:i'))
+                                ->icon('heroicon-m-clock')
+                                ->badge()
+                                ->color('warning')
+                                ->alignEnd(),
+                        ]),
+                    ])->extraAttributes(['class' => 'mt-4 pt-4 border-t border-gray-200 dark:border-white/10']),
+                ])
+                ->space(3)
+                ->extraAttributes([
+                    'class' => 'p-2',
+                ])
+                ->grow(),
             ])
+            ->contentGrid([
+                'md' => 2,
+                'xl' => 3,
+            ])
+
             ->filters([
                 TrashedFilter::make(),
             ])
-            ->actionsColumnLabel('Aksi')
+
             ->recordActions([
-                \Filament\Actions\ViewAction::make()->label('View')->button()->outlined()->color('danger'),
-                EditAction::make()->iconButton()->label(''),
+                ViewAction::make()
+                    ->label('Detail')
+                    ->icon('heroicon-m-eye')
+                    ->color('danger')
+                    ->button(),
+
+                Action::make('whatsapp')
+                    ->label('WA')
+                    ->icon('heroicon-m-chat-bubble-oval-left-ellipsis')
+                    ->color('success')
+                    ->button()
+                    ->url(function ($record) {
+                        if (blank($record->no_hp)) {
+                            return '#';
+                        }
+
+                        $phone = preg_replace('/\D/', '', $record->no_hp);
+
+                        if (str_starts_with($phone, '0')) {
+                            $phone = '62' . substr($phone, 1);
+                        } elseif (! str_starts_with($phone, '62')) {
+                            $phone = '62' . $phone;
+                        }
+
+                        return "https://wa.me/{$phone}";
+                    }, true),
+
+                ActionGroup::make([
+                    EditAction::make()->color('warning'),
+                    DeleteAction::make()->requiresConfirmation(),
+                ]),
             ])
+
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),

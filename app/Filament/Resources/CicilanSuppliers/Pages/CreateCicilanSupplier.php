@@ -26,9 +26,14 @@ class CreateCicilanSupplier extends CreateRecord
         };
 
         $pembelian->update([
-            'sudah_dibayar' => $totalDibayar,
-            'sisa_pembayaran' => max(0, $sisaPembayaran),
-            'status' => $status,
+            'sudah_dibayar'    => $totalDibayar,
+            'sisa_pembayaran'  => max(0, $sisaPembayaran),
+            'status'           => $status,
         ]);
+    }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
     }
 }

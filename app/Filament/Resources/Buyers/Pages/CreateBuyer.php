@@ -8,4 +8,9 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateBuyer extends CreateRecord
 {
     protected static string $resource = BuyerResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

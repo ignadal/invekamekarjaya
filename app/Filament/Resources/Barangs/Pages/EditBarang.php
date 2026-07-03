@@ -15,9 +15,15 @@ class EditBarang extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
-            ForceDeleteAction::make(),
+            
+            
             RestoreAction::make(),
         ];
+    }
+
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
     }
 }

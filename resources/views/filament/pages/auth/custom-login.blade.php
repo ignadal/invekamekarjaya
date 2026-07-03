@@ -21,11 +21,11 @@
         --text-primary: #f8fafc;
         --text-secondary: #94a3b8;
         --input-border: #334155;
-        --theme-red: #a855f7; /* Neon Purple */
-        --theme-red-dark: #7e22ce; /* Dark Purple */
-        --theme-red-glow: rgba(168, 85, 247, 0.8);
+        --theme-red: #f43f5e; /* Crimson/Rose */
+        --theme-red-dark: #be123c;
+        --theme-red-glow: rgba(244, 63, 94, 0.8);
         --neon-bg: #0f172a;
-        --card-shadow: 0 0 25px rgba(168, 85, 247, 0.6), 0 0 50px rgba(0, 0, 0, 0.5);
+        --card-shadow: 0 0 25px rgba(244, 63, 94, 0.6), 0 0 50px rgba(0, 0, 0, 0.5);
         --anim-color: var(--theme-red);
     }
 

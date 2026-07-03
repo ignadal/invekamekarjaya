@@ -56,6 +56,7 @@ class SalesTable
                     ->url(fn ($record) => \App\Filament\Resources\Sales\SalesResource::getUrl('performa', ['record' => $record])),
                 \Filament\Actions\ViewAction::make()->label('View')->button()->outlined()->color('danger'),
                 EditAction::make()->iconButton()->label(''),
+                \Filament\Actions\DeleteAction::make()->iconButton()->requiresConfirmation(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

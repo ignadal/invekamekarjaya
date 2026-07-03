@@ -261,6 +261,7 @@ class PembelianSuppliersTable
                         ->visible(fn ($record) => $record->metode === 'nyicil' && $record->sisa_pembayaran > 0 && $record->cicilans()->exists()),
 
                     EditAction::make()->color('gray'),
+                    \Filament\Actions\DeleteAction::make()->requiresConfirmation(),
                 ])->icon('heroicon-m-ellipsis-vertical'),
             ]);
     }

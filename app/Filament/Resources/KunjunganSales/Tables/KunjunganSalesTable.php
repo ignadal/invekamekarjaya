@@ -57,6 +57,7 @@ class KunjunganSalesTable
                             ->label('Catatan/Deskripsi'),
                     ]),
                 EditAction::make()->iconButton()->label(''),
+                \Filament\Actions\DeleteAction::make()->iconButton()->requiresConfirmation(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([

@@ -17,7 +17,8 @@ class Buyer extends Model
         'foto_toko',
         'jam_buka',
         'jam_tutup',
-        'hari_operasional',
+        'hari_buka',
+        'hari_bukaakhir',
         'nama_owner',
         'no_hp',
         'alamat',
@@ -25,8 +26,26 @@ class Buyer extends Model
     ];
 
     protected $casts = [
-        'foto_toko' => 'array',
+        // 'foto_toko' => 'array',
     ];
+
+    protected function fotoToko(): \Illuminate\Database\Eloquent\Casts\Attribute
+    {
+        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
+            get: function ($value) {
+                if (!$value) return null;
+                $decoded = json_decode($value, true);
+                if (is_array($decoded)) {
+                    return count($decoded) > 0 ? array_values($decoded)[0] : null;
+                }
+                return $decoded;
+            },
+            set: function ($value) {
+                if (!$value) return null;
+                return json_encode(is_array($value) ? array_values($value) : [$value]);
+            },
+        );
+    }
 
     public function kecamatan(): BelongsTo
     {

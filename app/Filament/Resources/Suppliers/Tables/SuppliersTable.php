@@ -48,6 +48,7 @@ class SuppliersTable
             ->recordActions([
                 \Filament\Actions\ViewAction::make()->label('View')->button()->outlined()->color('danger'),
                 EditAction::make()->iconButton()->label(''),
+                \Filament\Actions\DeleteAction::make()->iconButton()->requiresConfirmation(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

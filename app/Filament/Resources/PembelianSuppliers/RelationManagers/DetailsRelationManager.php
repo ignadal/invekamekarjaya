@@ -64,6 +64,7 @@ class DetailsRelationManager extends RelationManager
             ])
             ->recordActions([
                 EditAction::make(),
+                \Filament\Actions\DeleteAction::make()->requiresConfirmation(),
                 DeleteAction::make(),
             ])
             ->headerActions([

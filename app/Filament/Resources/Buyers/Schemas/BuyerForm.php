@@ -30,12 +30,8 @@ class BuyerForm
                                 FileUpload::make('foto_toko')
                                     ->label('Foto Toko')
                                     ->image()
-                                    ->multiple()
                                     ->disk('public')
                                     ->directory('foto-toko')
-                                    ->maxFiles(5)
-                                    ->reorderable()
-                                    ->panelLayout('grid')
                                     ->nullable(),
                                 \Filament\Schemas\Components\Grid::make(2)
                                     ->schema([
@@ -52,7 +48,7 @@ class BuyerForm
                                     ]),
                                 \Filament\Schemas\Components\Grid::make(2)
                                     ->schema([
-                                        Select::make('hari_awal')
+                                        Select::make('hari_buka')
                                             ->label('Dari Hari')
                                             ->options([
                                                 'Senin' => 'Senin', 'Selasa' => 'Selasa', 'Rabu' => 'Rabu',
@@ -60,18 +56,8 @@ class BuyerForm
                                             ])
                                             ->prefixIcon('heroicon-o-calendar-days')
                                             ->placeholder('Pilih Hari')
-                                            ->selectablePlaceholder(false)
-                                            ->afterStateHydrated(function (Select $component, $state, $record) {
-                                                if ($record && $record->hari_operasional) {
-                                                    $parts = explode('-', $record->hari_operasional);
-                                                    if (count($parts) === 2) {
-                                                        $component->state(trim($parts[0]));
-                                                    }
-                                                }
-                                            })
-                                            ->dehydrated(false)
-                                            ->live(),
-                                        Select::make('hari_akhir')
+                                            ->selectablePlaceholder(false),
+                                        Select::make('hari_bukaakhir')
                                             ->label('Sampai Hari')
                                             ->options([
                                                 'Senin' => 'Senin', 'Selasa' => 'Selasa', 'Rabu' => 'Rabu',
@@ -79,20 +65,8 @@ class BuyerForm
                                             ])
                                             ->prefixIcon('heroicon-o-calendar-days')
                                             ->placeholder('Pilih Hari')
-                                            ->selectablePlaceholder(false)
-                                            ->afterStateHydrated(function (Select $component, $state, $record) {
-                                                if ($record && $record->hari_operasional) {
-                                                    $parts = explode('-', $record->hari_operasional);
-                                                    if (count($parts) === 2) {
-                                                        $component->state(trim($parts[1]));
-                                                    }
-                                                }
-                                            })
-                                            ->dehydrated(false)
-                                            ->live(),
+                                            ->selectablePlaceholder(false),
                                     ]),
-                                \Filament\Forms\Components\Hidden::make('hari_operasional')
-                                    ->dehydrateStateUsing(fn ($get) => $get('hari_awal') && $get('hari_akhir') ? $get('hari_awal') . ' - ' . $get('hari_akhir') : null),
                                 TextInput::make('nama_owner')
                                     ->required(),
                                 TextInput::make('no_hp')

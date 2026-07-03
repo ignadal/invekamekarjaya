@@ -164,6 +164,7 @@ class BarangsTable
                     }),
                 \Filament\Actions\ViewAction::make()->color('danger')->iconButton()->tooltip('Detail Barang'),
                 \Filament\Actions\EditAction::make()->color('danger')->iconButton()->tooltip('Edit'),
+                \Filament\Actions\DeleteAction::make()->iconButton()->requiresConfirmation(),
                 ]);
             // ->toolbarActions([
             //     BulkActionGroup::make([

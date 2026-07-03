@@ -44,6 +44,7 @@ class UsersTable
             ->recordActions([
                 \Filament\Actions\ViewAction::make()->iconButton(),
                 EditAction::make()->iconButton(),
+                \Filament\Actions\DeleteAction::make()->iconButton()->requiresConfirmation(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

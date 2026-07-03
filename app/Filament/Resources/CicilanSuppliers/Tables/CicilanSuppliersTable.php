@@ -31,6 +31,7 @@ class CicilanSuppliersTable
             ])
             ->recordActions([
                 EditAction::make(),
+                \Filament\Actions\DeleteAction::make()->requiresConfirmation(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

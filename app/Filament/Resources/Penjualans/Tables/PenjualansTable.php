@@ -274,6 +274,7 @@ class PenjualansTable
                         ->modalCancelActionLabel('Tutup')
                         ->visible(fn ($record) => $record->metode === 'cicil' && $record->cicilans()->exists()),
                     EditAction::make()->color('gray'),
+                    \Filament\Actions\DeleteAction::make()->requiresConfirmation(),
 
                 ])->icon('heroicon-m-ellipsis-vertical'),
             ]);

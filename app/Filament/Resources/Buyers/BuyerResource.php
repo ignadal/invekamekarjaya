@@ -10,6 +10,7 @@ use App\Filament\Resources\Buyers\Tables\BuyersTable;
 use App\Models\Buyer;
 use BackedEnum;
 use Filament\Resources\Resource;
+use Filament\Tables\Columns\Layout\Split;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
@@ -36,6 +37,11 @@ class BuyerResource extends Resource
     public static function table(Table $table): Table
     {
         return BuyersTable::configure($table);
+    }
+
+    public static function infolist(\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
+    {
+        return \App\Filament\Resources\Buyers\Schemas\BuyerInfolist::configure($schema);
     }
 
     public static function getRelations(): array
