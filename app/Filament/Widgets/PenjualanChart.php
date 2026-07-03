@@ -10,7 +10,7 @@ use Livewire\Attributes\On;
 class PenjualanChart extends ApexChartWidget
 {
     protected static ?string $chartId = 'penjualanChart';
-    protected static ?string $heading = 'Grafik Penjualan Per Bulan';
+    protected static ?string $heading = 'Grafik Pemasukan Per Bulan';
     protected static ?int $sort = 4;
     protected static bool $isLazy = true;
 
@@ -36,12 +36,19 @@ class PenjualanChart extends ApexChartWidget
             $month = Carbon::create($tahun ?: now()->year, $i, 1);
             $months[] = $month->translatedFormat('M');
 
-            $total = Penjualan::where('status_persetujuan', 'disetujui')
+            $omsetLunas = Penjualan::where('status_persetujuan', 'disetujui')
+                ->where('metode', 'lunas')
                 ->when($tahun, fn($q) => $q->whereYear('tanggal_beli', $tahun))
                 ->whereMonth('tanggal_beli', $i)
                 ->sum('total_penjualan');
+                
+            $omsetCicil = Penjualan::where('status_persetujuan', 'disetujui')
+                ->where('metode', 'cicil')
+                ->when($tahun, fn($q) => $q->whereYear('tanggal_beli', $tahun))
+                ->whereMonth('tanggal_beli', $i)
+                ->sum('sudah_dibayar');
 
-            $data[] = $total;
+            $data[] = (float) ($omsetLunas + $omsetCicil);
         }
 
         return [
@@ -53,7 +60,7 @@ class PenjualanChart extends ApexChartWidget
             ],
             'series' => [
                 [
-                    'name' => 'Total Penjualan',
+                    'name' => 'Total Pemasukan',
                     'data' => $data,
                 ],
             ],

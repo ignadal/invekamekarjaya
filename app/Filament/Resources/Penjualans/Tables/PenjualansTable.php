@@ -240,7 +240,7 @@ class PenjualansTable
                     ])
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Tutup')
-                    ->visible(fn ($record) => !($record->metode === 'cicil' && $record->sisa_pembayaran > 0 && $record->status_persetujuan === 'disetujui')),
+                    ->visible(fn ($record) => $record->status_persetujuan !== 'pending' && !($record->metode === 'cicil' && $record->sisa_pembayaran > 0 && $record->status_persetujuan === 'disetujui')),
 
                 Action::make('lihat_foto_btn')
                     ->label('Lihat Foto')
@@ -252,9 +252,38 @@ class PenjualansTable
                     ->modalContent(fn ($record) => view('filament.components.foto-modal', ['foto' => $record->foto_nota]))
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Tutup')
-                    ->visible(fn ($record) => $record->foto_nota),
+                    ->visible(fn ($record) => $record->status_persetujuan !== 'pending' && $record->foto_nota),
                     
                 ActionGroup::make([
+                    Action::make('detail_barang_dropdown')
+                        ->label('Detail Barang')
+                        ->icon('heroicon-o-shopping-bag')
+                        ->color('gray')
+                        ->infolist([
+                            \Filament\Infolists\Components\RepeatableEntry::make('details')
+                                ->hiddenLabel()
+                                ->contained(false)
+                                ->schema([
+                                    \Filament\Infolists\Components\TextEntry::make('barang.nama_barang')->label('Barang'),
+                                    \Filament\Infolists\Components\TextEntry::make('qty')->label('Qty'),
+                                    \Filament\Infolists\Components\TextEntry::make('harga_jual')->money('IDR')->label('Harga Satuan'),
+                                    \Filament\Infolists\Components\TextEntry::make('subtotal')->money('IDR')->label('Subtotal'),
+                                ])
+                                ->columns(4)
+                        ])
+                        ->modalSubmitAction(false)
+                        ->modalCancelActionLabel('Tutup')
+                        ->visible(fn ($record) => $record->status_persetujuan === 'pending'),
+
+                    Action::make('lihat_foto_dropdown')
+                        ->label('Lihat Foto')
+                        ->icon('heroicon-o-photo')
+                        ->color('gray')
+                        ->modalContent(fn ($record) => view('filament.components.foto-modal', ['foto' => $record->foto_nota]))
+                        ->modalSubmitAction(false)
+                        ->modalCancelActionLabel('Tutup')
+                        ->visible(fn ($record) => $record->status_persetujuan === 'pending' && $record->foto_nota),
+
                     Action::make('riwayat_cicilan')
                         ->label('Riwayat Cicilan')
                         ->icon('heroicon-o-clock')

@@ -27,41 +27,43 @@ class BuyersTable
         return $table
             ->defaultPaginationPageOption(9)
             ->paginationPageOptions([9, 18, 27])
-
+            ->recordClasses(['buyers-card'])
             ->columns([
                 Stack::make([
+                    TextColumn::make('nama_toko')
+                        ->weight('bold')
+                        ->size('xl')
+                        ->searchable()
+                        ->extraAttributes(['class' => 'mb-2']),
+
                     ImageColumn::make('foto_toko')
                         ->disk('public')
                         ->defaultImageUrl(asset('images/default-toko.png'))
                         ->extraImgAttributes([
                             'class' => 'w-full rounded-xl object-cover',
-                            'style' => 'height: 220px;',
+                            'style' => 'height: 160px;',
                         ]),
 
                     Stack::make([
-                        TextColumn::make('nama_toko')
-                            ->weight('bold')
-                            ->size('xl')
-                            ->searchable(),
-
-                        TextColumn::make('nama_owner')
-                            ->icon('heroicon-m-user')
-                            ->color('gray')
-                            ->size('sm'),
-
                         TextColumn::make('kecamatan.nama_kecamatan')
                             ->icon('heroicon-m-map-pin')
                             ->color('gray')
                             ->size('sm'),
 
-                        TextColumn::make('no_hp')
-                            ->icon('heroicon-m-phone')
-                            ->color('gray')
-                            ->size('sm')
-                            ->copyable(),
-                    ])->space(2)->extraAttributes(['class' => 'mt-2']),
+                        Split::make([
+                            TextColumn::make('nama_owner')
+                                ->icon('heroicon-m-user')
+                                ->color('gray')
+                                ->size('sm'),
 
-                    Stack::make([
+                            TextColumn::make('no_hp')
+                                ->icon('heroicon-m-phone')
+                                ->color('gray')
+                                ->size('sm')
+                                ->copyable()
+                                ->alignEnd(),
+                        ]),
+
                         Split::make([
                             TextColumn::make('hari')
                                 ->state(fn ($record) => $record->hari_bukaakhir
@@ -78,9 +80,20 @@ class BuyersTable
                                 ->color('warning')
                                 ->alignEnd(),
                         ]),
-                    ])->extraAttributes(['class' => 'mt-4 pt-4 border-t border-gray-200 dark:border-white/10']),
+                    ])->space(2)->extraAttributes(['class' => 'mt-3']),
+
+                    TextColumn::make('css_hack')
+                        ->state(fn() => '')
+                        ->extraAttributes(['class' => 'hidden'])
+                        ->description(fn() => new \Illuminate\Support\HtmlString('
+                            <style>
+                                .buyers-card .fi-ta-actions { gap: 0 !important; width: 100% !important; margin-top: 1rem !important; }
+                                .buyers-card .fi-ta-actions > * { flex: 1 1 0% !important; }
+                                .buyers-card .fi-ta-actions button, .buyers-card .fi-ta-actions a { border-radius: 0 !important; width: 100% !important; justify-content: center !important; }
+                            </style>
+                        ')),
                 ])
-                ->space(3)
+                ->space(1)
                 ->extraAttributes([
                     'class' => 'p-2',
                 ])
@@ -100,13 +113,16 @@ class BuyersTable
                     ->label('Detail')
                     ->icon('heroicon-m-eye')
                     ->color('danger')
-                    ->button(),
+                    ->button()
+                    ->extraAttributes(['style' => 'flex: 1 1 40%; justify-content: center;']),
 
                 Action::make('whatsapp')
-                    ->label('WA')
-                    ->icon('heroicon-m-chat-bubble-oval-left-ellipsis')
+                    ->label('WhatsApp')
+                    ->outlined()
+                    ->icon('bi-whatsapp')
                     ->color('success')
                     ->button()
+                    ->extraAttributes(['style' => 'flex: 1 1 40%; justify-content: center;'])
                     ->url(function ($record) {
                         if (blank($record->no_hp)) {
                             return '#';
@@ -126,15 +142,13 @@ class BuyersTable
                 ActionGroup::make([
                     EditAction::make()->color('warning'),
                     DeleteAction::make()->requiresConfirmation(),
-                ]),
-            ])
-
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
-                ]),
+                ])
+                // ->button()
+                ->color('primary')
+                ->label('')
+                ->icon('heroicon-m-ellipsis-vertical')
+                ->extraAttributes(['class' => 'flex-1']),
             ]);
+
     }
 }

@@ -37,15 +37,22 @@ class PengeluaranChart extends ApexChartWidget
             $month = Carbon::create($tahun ?: now()->year, $i, 1);
             $months[] = $month->translatedFormat('M');
 
-            $pembelian = PembelianSupplier::when($tahun, fn($q) => $q->whereYear('created_at', $tahun))
+            $pengeluaranSupplierLunas = PembelianSupplier::where('metode', 'lunas')
+                ->when($tahun, fn($q) => $q->whereYear('created_at', $tahun))
                 ->whereMonth('created_at', $i)
                 ->sum('total_pembelian');
+                
+            $pengeluaranSupplierNyicil = PembelianSupplier::where('metode', 'nyicil')
+                ->when($tahun, fn($q) => $q->whereYear('created_at', $tahun))
+                ->whereMonth('created_at', $i)
+                ->sum('sudah_dibayar');
 
-            $gaji = PayrollSales::when($tahun, fn($q) => $q->where('tahun', $tahun))
+            $gaji = PayrollSales::where('status_pembayaran', 'sudah_digaji')
+                ->when($tahun, fn($q) => $q->where('tahun', $tahun))
                 ->where('bulan', $i)
                 ->sum('total_gaji');
 
-            $data[] = $pembelian + $gaji;
+            $data[] = (float) ($pengeluaranSupplierLunas + $pengeluaranSupplierNyicil + $gaji);
         }
 
         return [

@@ -12,7 +12,7 @@ use Livewire\Attributes\On;
 class LabaChart extends ApexChartWidget
 {
     protected static ?string $chartId = 'labaChart';
-    protected static ?string $heading = 'Grafik Laba (Pemasukan - Pengeluaran)';
+    protected static ?string $heading = 'Grafik Laba (Penghasilan Bersih)';
     protected static ?int $sort = 2;
     protected static bool $isLazy = true;
     protected int | string | array $columnSpan = 'full';
@@ -39,20 +39,38 @@ class LabaChart extends ApexChartWidget
             $month = Carbon::create($tahun ?: now()->year, $i, 1);
             $months[] = $month->translatedFormat('M');
 
-            $omset = Penjualan::where('status_persetujuan', 'disetujui')
+            $omsetLunas = Penjualan::where('status_persetujuan', 'disetujui')
+                ->where('metode', 'lunas')
                 ->when($tahun, fn($q) => $q->whereYear('tanggal_beli', $tahun))
                 ->whereMonth('tanggal_beli', $i)
                 ->sum('total_penjualan');
+                
+            $omsetCicil = Penjualan::where('status_persetujuan', 'disetujui')
+                ->where('metode', 'cicil')
+                ->when($tahun, fn($q) => $q->whereYear('tanggal_beli', $tahun))
+                ->whereMonth('tanggal_beli', $i)
+                ->sum('sudah_dibayar');
+                
+            $omset = $omsetLunas + $omsetCicil;
 
-            $pembelian = PembelianSupplier::when($tahun, fn($q) => $q->whereYear('created_at', $tahun))
+            $pengeluaranSupplierLunas = PembelianSupplier::where('metode', 'lunas')
+                ->when($tahun, fn($q) => $q->whereYear('created_at', $tahun))
                 ->whereMonth('created_at', $i)
                 ->sum('total_pembelian');
+                
+            $pengeluaranSupplierNyicil = PembelianSupplier::where('metode', 'nyicil')
+                ->when($tahun, fn($q) => $q->whereYear('created_at', $tahun))
+                ->whereMonth('created_at', $i)
+                ->sum('sudah_dibayar');
 
-            $gaji = PayrollSales::when($tahun, fn($q) => $q->where('tahun', $tahun))
+            $gaji = PayrollSales::where('status_pembayaran', 'sudah_digaji')
+                ->when($tahun, fn($q) => $q->where('tahun', $tahun))
                 ->where('bulan', $i)
                 ->sum('total_gaji');
+                
+            $pengeluaran = $pengeluaranSupplierLunas + $pengeluaranSupplierNyicil + $gaji;
 
-            $data[] = (float) ($omset - ($pembelian + $gaji));
+            $data[] = (float) ($omset - $pengeluaran);
         }
 
         return [

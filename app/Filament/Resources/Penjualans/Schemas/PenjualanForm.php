@@ -37,12 +37,7 @@ class PenjualanForm
                 \Filament\Schemas\Components\Section::make('Informasi Umum')
                     ->heading(new \Illuminate\Support\HtmlString('
                         <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <div style="background-color: #fef2f2; padding: 0.5rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;">
-                                <svg style="width: 1.5rem; height: 1.5rem; color: #E30613;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                                </svg>
-                            </div>
-                            <span style="font-weight: 700; color: #111827; font-size: 1.125rem;">Informasi Umum</span>
+                            <span style="font-weight: 700; color: #ffffffff; font-size: 1.125rem;">Informasi Umum</span>
                         </div>
                     '))
                     ->schema([
@@ -74,12 +69,7 @@ class PenjualanForm
                 \Filament\Schemas\Components\Section::make('Daftar Barang')
                     ->heading(new \Illuminate\Support\HtmlString('
                         <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <div style="background-color: #fef2f2; padding: 0.5rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;">
-                                <svg style="width: 1.5rem; height: 1.5rem; color: #E30613;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                                </svg>
-                            </div>
-                            <span style="font-weight: 700; color: #111827; font-size: 1.125rem;">Daftar Barang</span>
+                            <span style="font-weight: 700; color: #ffffffff; font-size: 1.125rem;">Daftar Barang</span>
                         </div>
                     '))
                     ->schema([
@@ -240,12 +230,7 @@ class PenjualanForm
                 \Filament\Schemas\Components\Section::make('Pembayaran')
                     ->heading(new \Illuminate\Support\HtmlString('
                         <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <div style="background-color: #fef2f2; padding: 0.5rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;">
-                                <svg style="width: 1.5rem; height: 1.5rem; color: #E30613;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                                </svg>
-                            </div>
-                            <span style="font-weight: 700; color: #111827; font-size: 1.125rem;">Pembayaran</span>
+                            <span style="font-weight: 700; color: #ffffffff; font-size: 1.125rem;">Pembayaran</span>
                         </div>
                     '))
                     ->schema([
@@ -293,7 +278,8 @@ class PenjualanForm
                                     ->required()
                                     ->default(0)
                                     ->live(onBlur: true)
-                                    ->visible(fn (Get $get) => $get('metode') === 'cicil')
+                                    ->readOnly(fn (Get $get) => $get('metode') === 'lunas')
+                                    ->dehydrated()
                                     ->afterStateUpdated(function (Set $set, Get $get, $state) {
                                         $sudah = (int) $state;
                                         $total = (int) $get('total_penjualan');
@@ -307,7 +293,7 @@ class PenjualanForm
                                     ->numeric()
                                     ->required()
                                     ->readOnly()
-                                    ->visible(fn (Get $get) => $get('metode') === 'cicil')
+                                    ->dehydrated()
                                     ->default(0),
 
                                 \Filament\Forms\Components\Hidden::make('status_bayar')

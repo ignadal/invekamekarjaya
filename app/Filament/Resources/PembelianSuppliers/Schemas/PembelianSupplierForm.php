@@ -43,6 +43,15 @@ class PembelianSupplierForm
                                 ])
                                 ->required()
                                 ->live()
+                                ->afterStateUpdated(function (\Filament\Schemas\Components\Utilities\Set $set, \Filament\Schemas\Components\Utilities\Get $get, $state) {
+                                    if ($state === 'lunas') {
+                                        $set('sudah_dibayar', $get('total_pembelian') ?? 0);
+                                        $set('sisa_pembayaran', 0);
+                                    } else {
+                                        $set('sudah_dibayar', 0);
+                                        $set('sisa_pembayaran', $get('total_pembelian') ?? 0);
+                                    }
+                                })
                                 ->disabled(fn (string $operation) => $operation === 'edit'),
 
                             DatePicker::make('jatuh_tempo')
@@ -55,8 +64,9 @@ class PembelianSupplierForm
                                 ->numeric()
                                 ->default(0)
                                 ->live(debounce: 500)
-                                ->visible(fn (\Filament\Schemas\Components\Utilities\Get $get) => $get('metode') === 'nyicil')
+                                ->readOnly(fn (\Filament\Schemas\Components\Utilities\Get $get) => $get('metode') === 'lunas')
                                 ->disabled(fn (string $operation) => $operation === 'edit')
+                                ->dehydrated()
                                 ->afterStateUpdated(function (\Filament\Schemas\Components\Utilities\Set $set, \Filament\Schemas\Components\Utilities\Get $get, $state) {
                                     $set('sisa_pembayaran', (int)$get('total_pembelian') - (int)$state);
                                 }),
@@ -64,8 +74,8 @@ class PembelianSupplierForm
                             TextInput::make('sisa_pembayaran')
                                 ->numeric()
                                 ->default(0)
-                                ->visible(fn (\Filament\Schemas\Components\Utilities\Get $get) => $get('metode') === 'nyicil')
-                                ->readOnly(),
+                                ->readOnly()
+                                ->dehydrated(),
 
                         ]),
                 ]),
@@ -101,7 +111,12 @@ class PembelianSupplierForm
                                                 }
                                             }
                                             $set('../../total_pembelian', $total);
-                                            $set('../../sisa_pembayaran', $total - (int)$get('../../sudah_dibayar'));
+                                            if ($get('../../metode') === 'lunas') {
+                                                $set('../../sudah_dibayar', $total);
+                                                $set('../../sisa_pembayaran', 0);
+                                            } else {
+                                                $set('../../sisa_pembayaran', $total - (int)$get('../../sudah_dibayar'));
+                                            }
                                         }
                                     }
                                 }),
@@ -121,7 +136,12 @@ class PembelianSupplierForm
                                         }
                                     }
                                     $set('../../total_pembelian', $total);
-                                    $set('../../sisa_pembayaran', $total - (int)$get('../../sudah_dibayar'));
+                                    if ($get('../../metode') === 'lunas') {
+                                        $set('../../sudah_dibayar', $total);
+                                        $set('../../sisa_pembayaran', 0);
+                                    } else {
+                                        $set('../../sisa_pembayaran', $total - (int)$get('../../sudah_dibayar'));
+                                    }
                                 }),
 
                             TextInput::make('harga_beli')
@@ -138,7 +158,12 @@ class PembelianSupplierForm
                                         }
                                     }
                                     $set('../../total_pembelian', $total);
-                                    $set('../../sisa_pembayaran', $total - (int)$get('../../sudah_dibayar'));
+                                    if ($get('../../metode') === 'lunas') {
+                                        $set('../../sudah_dibayar', $total);
+                                        $set('../../sisa_pembayaran', 0);
+                                    } else {
+                                        $set('../../sisa_pembayaran', $total - (int)$get('../../sudah_dibayar'));
+                                    }
                                 }),
 
                             TextInput::make('subtotal')
@@ -156,7 +181,12 @@ class PembelianSupplierForm
                                 $total += (int) ($item['subtotal'] ?? 0);
                             }
                             $set('total_pembelian', $total);
-                            $set('sisa_pembayaran', $total - (int)$get('sudah_dibayar'));
+                            if ($get('metode') === 'lunas') {
+                                $set('sudah_dibayar', $total);
+                                $set('sisa_pembayaran', 0);
+                            } else {
+                                $set('sisa_pembayaran', $total - (int)$get('sudah_dibayar'));
+                            }
                         }),
 
                     TextInput::make('total_pembelian')
