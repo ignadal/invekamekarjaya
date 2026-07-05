@@ -414,8 +414,8 @@ class AdminPanelProvider extends PanelProvider
                     html:not(.dark) body aside.fi-sidebar [class*="warning"] .fi-sidebar-item-badge span,
                     html:not(.dark) body aside.fi-sidebar .fi-badge[class*="warning"],
                     html:not(.dark) body aside.fi-sidebar .fi-badge[class*="warning"] span {
-                        background-color: #fef08a !important;
-                        color: #b45309 !important;
+                        background-color: white !important;
+                        color: #b91c1c !important;
                         border: none !important;
                     }
                 </style>'

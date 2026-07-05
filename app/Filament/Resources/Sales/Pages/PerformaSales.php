@@ -81,6 +81,17 @@ class PerformaSales extends Page implements HasTable
                             $query->whereMonth('tanggal_beli', $data['value']);
                         }
                     }),
+                SelectFilter::make('tahun')
+                    ->label('Tahun')
+                    ->options(function () {
+                        $years = range(2024, now()->year);
+                        return array_combine($years, $years);
+                    })
+                    ->query(function ($query, array $data) {
+                        if (! empty($data['value'])) {
+                            $query->whereYear('tanggal_beli', $data['value']);
+                        }
+                    }),
             ]);
     }
 }
