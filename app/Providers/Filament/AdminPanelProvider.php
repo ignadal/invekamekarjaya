@@ -82,18 +82,30 @@ class AdminPanelProvider extends PanelProvider
                         /* =======================================
                            COLORS FOR LIGHT MODE (Red Box)
                            ======================================= */
-                        html:not(.dark) .fi-topbar-start { background-color: #b91c1c !important; }
+                        html:not(.dark) .fi-topbar-start { 
+                            background-color: #b91c1c !important;
+                            background-image: linear-gradient(135deg, #7f1d1d 0%, #dc2626 50%, #991b1b 100%) !important;
+                            background-attachment: fixed !important;
+                        }
                         html:not(.dark) .fi-topbar-start button { color: white !important; }
                         html:not(.dark) .fi-topbar-start button:hover { background-color: rgba(255,255,255,0.1) !important; }
                         html:not(.dark):has(.fi-main-ctn-sidebar-open) .fi-topbar-start .fi-logo { color: white !important; }
                         
-                        html:not(.dark):not(:has(.fi-main-ctn-sidebar-open)) .fi-topbar-start { background-color: transparent !important; }
+                        html:not(.dark):not(:has(.fi-main-ctn-sidebar-open)) .fi-topbar-start { 
+                            background-color: transparent !important; 
+                            background-image: none !important;
+                        }
                         html:not(.dark):not(:has(.fi-main-ctn-sidebar-open)) .fi-topbar-start button { color: #b91c1c !important; }
                         html:not(.dark):not(:has(.fi-main-ctn-sidebar-open)) .fi-topbar-start button:hover { background-color: rgba(185,28,28,0.1) !important; }
                     }
 
-                    /* Sidebar Background (Darker Red) */
-                    html:not(.dark) aside.fi-sidebar { background: #b91c1c !important; }
+                    /* Sidebar Background (Red Gradient Seamless) */
+                    html:not(.dark) aside.fi-sidebar {
+                        background-color: #b91c1c !important;
+                        background-image: linear-gradient(135deg, #7f1d1d 0%, #dc2626 50%, #991b1b 100%) !important;
+                        background-attachment: fixed !important;
+                        box-shadow: inset -5px 0 15px rgba(0,0,0,0.1) !important;
+                    }
                     html:not(.dark) aside.fi-sidebar nav,
                     html:not(.dark) aside.fi-sidebar section,
                     html:not(.dark) aside.fi-sidebar header { background-color: transparent !important; }
@@ -180,7 +192,7 @@ class AdminPanelProvider extends PanelProvider
                     
                     /* Apply VERY Dark Red Gradient in Dark Mode (Very Dark Red) */
                     html.dark .red-gradient-filter { 
-                        background: linear-gradient(to right, #450a0a, #7f1d1d, #450a0a) !important; 
+                        background: linear-gradient(to right, #450a0a, #991b1b, #450a0a) !important; 
                         background-size: 300% 300% !important;
                         animation: gradient-animation 8s ease infinite !important;
                         border-radius: 0.75rem !important;
@@ -417,6 +429,15 @@ class AdminPanelProvider extends PanelProvider
                         background-color: white !important;
                         color: #b91c1c !important;
                         border: none !important;
+                    }
+
+                    /* Avatar styling - Red Border for Admin */
+                    html .fi-topbar .fi-avatar,
+                    html .fi-topbar img.fi-avatar,
+                    html .fi-topbar img.rounded-full {
+                        border: 2px solid #E30613 !important;
+                        border-radius: 50% !important;
+                        box-sizing: content-box !important;
                     }
                 </style>'
             )

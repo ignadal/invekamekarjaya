@@ -190,6 +190,15 @@
 
     <div class="ts-flex-row" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; width: 100%;">
         <div class="ts-tab-container">
+            <!-- Gaji Bulan Ini Tab -->
+            <button 
+                wire:click="setTab('gaji_bulan_ini')"
+                class="ts-tab-btn {{ $activeTab === 'gaji_bulan_ini' ? 'ts-tab-btn-active' : 'ts-tab-btn-inactive' }}"
+            >
+                <x-heroicon-o-calendar-days class="ts-icon" />
+                Gaji Bulan Ini
+            </button>
+
             <!-- Gaji Pokok Tab -->
             <button 
                 wire:click="setTab('gaji_pokok')"
@@ -219,6 +228,7 @@
         </div>
 
         <!-- Filter Bulan & Tahun -->
+        @if ($activeTab !== 'gaji_bulan_ini')
         <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
             <select wire:model.live="filterBulan" class="ts-filter-select">
                 <option value="">Semua Bulan</option>
@@ -243,6 +253,7 @@
                 @endforeach
             </select>
         </div>
+        @endif
     </div>
 
     <style>
@@ -291,12 +302,12 @@
             color: #4ade80;
         }
         .ts-badge-warning {
-            background-color: #fef9c3;
-            color: #854d0e;
+            background-color: #fee2e2;
+            color: #b91c1c;
         }
         html.dark .ts-badge-warning {
-            background-color: #713f12;
-            color: #fde047;
+            background-color: #7f1d1d;
+            color: #fca5a5;
         }
         
         /* Calendar Block */
@@ -307,6 +318,38 @@
         .ts-cal-month { font-size: 0.65rem; font-weight: 700; color: #6b7280; text-transform: uppercase; }
         
         .ts-cal-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+
+        /* Wave Animation for Summary */
+        .summary-wave-bg { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: hidden; border-radius: 0.5rem; }
+        .summary-wave-bg svg { position: absolute; bottom: -2px; width: 200%; height: 35px; }
+        .wave-summary-parallax > use { animation: move-forever-summary 15s cubic-bezier(.55,.5,.45,.5) infinite; }
+        @keyframes move-forever-summary { 0% { transform: translate3d(-90px,0,0); } 100% { transform: translate3d(85px,0,0); } }
+        .wave-summary-parallax > use:nth-child(1) { animation-delay: -2s; animation-duration: 4s; fill: rgba(0,0,0,0.03); }
+        .wave-summary-parallax > use:nth-child(2) { animation-delay: -3s; animation-duration: 6s; fill: rgba(0,0,0,0.06); }
+        .wave-summary-parallax > use:nth-child(3) { animation-delay: -4s; animation-duration: 8s; fill: rgba(0,0,0,0.09); }
+        .wave-summary-parallax > use:nth-child(4) { animation-delay: -5s; animation-duration: 12s; fill: rgba(0,0,0,0.15); }
+
+        .ts-summary-red-wave {
+            background-color: #b91c1c;
+            background-image: linear-gradient(to right, #7f1d1d, #dc2626, #991b1b);
+            color: white;
+            position: relative;
+            overflow: hidden;
+            border: none;
+        }
+        .ts-summary-red-wave span {
+            color: #fecaca !important;
+            position: relative;
+            z-index: 1;
+        }
+        .ts-summary-red-wave strong {
+            color: white !important;
+            position: relative;
+            z-index: 1;
+        }
+        html.dark .ts-summary-red-wave {
+            background-color: #b91c1c;
+        }
     </style>
 
     <div>
@@ -319,10 +362,97 @@
             </div>
         @endif
 
-        @if ($activeTab === 'gaji_pokok')
+        @if ($activeTab === 'gaji_bulan_ini')
+            <div class="ts-content-card" style="margin-bottom: 2rem;">
+                <h2 class="ts-content-title" style="border-bottom: 1px solid #e5e7eb; padding-bottom: 0.75rem; margin-bottom: 1.5rem;">Ringkasan Gaji Bulan Ini ({{ now()->translatedFormat('F Y') }})</h2>
+                
+                @if($currentPayroll)
+                    <div class="ts-summary-box ts-summary-red-wave" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; padding: 1rem; border-radius: 0.5rem;">
+                        <div class="summary-wave-bg">
+                            <svg viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+                                <defs>
+                                    <path id="gentle-wave-summary" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+                                </defs>
+                                <g class="wave-summary-parallax">
+                                    <use xlink:href="#gentle-wave-summary" x="48" y="0" />
+                                    <use xlink:href="#gentle-wave-summary" x="48" y="3" />
+                                    <use xlink:href="#gentle-wave-summary" x="48" y="5" />
+                                    <use xlink:href="#gentle-wave-summary" x="48" y="7" />
+                                </g>
+                            </svg>
+                        </div>
+                        <div>
+                            <span>Gaji Pokok</span>
+                            <strong>Rp {{ number_format($currentPayroll->gaji_pokok, 0, ',', '.') }}</strong>
+                        </div>
+                        <div>
+                            <span>Uang Makan & Bensin</span>
+                            <strong>Rp {{ number_format($currentPayroll->uang_makan + $currentPayroll->uang_bensin, 0, ',', '.') }}</strong>
+                        </div>
+                        <div>
+                            <span>Bonus Penjualan</span>
+                            <strong>Rp {{ number_format($currentPayroll->bonus_nominal, 0, ',', '.') }}</strong>
+                        </div>
+                        <div>
+                            <span>Perkiraan Total Diterima</span>
+                            <strong style="font-size: 1.25rem;">
+                                Rp {{ number_format($currentPayroll->gaji_pokok + $currentPayroll->uang_makan + $currentPayroll->uang_bensin + $currentPayroll->bonus_nominal, 0, ',', '.') }}
+                            </strong>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 1rem; display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem;">
+                        <span style="font-weight: 600;">Status Pembayaran:</span>
+                        @if($currentPayroll->status_pembayaran === 'sudah_digaji')
+                            <span class="ts-badge ts-badge-success">Sudah Dibayar</span>
+                        @else
+                            <span class="ts-badge ts-badge-warning">Belum Dibayar</span>
+                        @endif
+                    </div>
+                @else
+                    <div class="ts-empty-state">
+                        <div class="ts-empty-icon-wrapper">
+                            <x-heroicon-o-wallet class="ts-empty-icon" />
+                        </div>
+                        <p class="ts-empty-title">Data Gaji Bulan Ini Belum Tersedia.</p>
+                        <p class="ts-empty-desc">Data slip gaji biasanya muncul pada akhir bulan atau saat diproses oleh Admin.</p>
+                    </div>
+                @endif
+            </div>
+            
+            {{-- Chart Performa --}}
+            <div style="margin-top: 2rem;">
+                @livewire(\App\Filament\Sales\Widgets\SalesMonthlyPerformanceChart::class)
+            </div>
+            
+        @elseif ($activeTab === 'gaji_pokok')
             <div class="ts-content-card">
                 <h2 class="ts-content-title">Rincian Gaji Pokok</h2>
                 @if(isset($payrollData) && count($payrollData) > 0)
+                    <div class="ts-summary-box ts-summary-red-wave" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; padding: 1rem; border-radius: 0.5rem;">
+                        <div class="summary-wave-bg">
+                            <svg viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+                                <defs>
+                                    <path id="gentle-wave-summary-pokok" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+                                </defs>
+                                <g class="wave-summary-parallax">
+                                    <use xlink:href="#gentle-wave-summary-pokok" x="48" y="0" />
+                                    <use xlink:href="#gentle-wave-summary-pokok" x="48" y="3" />
+                                    <use xlink:href="#gentle-wave-summary-pokok" x="48" y="5" />
+                                    <use xlink:href="#gentle-wave-summary-pokok" x="48" y="7" />
+                                </g>
+                            </svg>
+                        </div>
+                        <div>
+                            <span>Total Periode Tampil</span>
+                            <strong style="font-size: 1.25rem;">{{ count($payrollData) }} Bulan</strong>
+                        </div>
+                        <div>
+                            <span>Akumulasi Gaji Pokok</span>
+                            <strong style="font-size: 1.25rem;">Rp {{ number_format($payrollData->sum('gaji_pokok'), 0, ',', '.') }}</strong>
+                        </div>
+                    </div>
+                    
                     <div style="overflow-x: auto;">
                         <table class="ts-table">
                             <thead>
@@ -373,7 +503,20 @@
                         </h2>
                         
                         <!-- Ringkasan Tunjangan -->
-                        <div class="ts-summary-box" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; padding: 1rem; border-radius: 0.5rem;">
+                        <div class="ts-summary-box ts-summary-red-wave" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; padding: 1rem; border-radius: 0.5rem;">
+                            <div class="summary-wave-bg">
+                                <svg viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+                                    <defs>
+                                        <path id="gentle-wave-summary-tunjangan" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+                                    </defs>
+                                    <g class="wave-summary-parallax">
+                                        <use xlink:href="#gentle-wave-summary-tunjangan" x="48" y="0" />
+                                        <use xlink:href="#gentle-wave-summary-tunjangan" x="48" y="3" />
+                                        <use xlink:href="#gentle-wave-summary-tunjangan" x="48" y="5" />
+                                        <use xlink:href="#gentle-wave-summary-tunjangan" x="48" y="7" />
+                                    </g>
+                                </svg>
+                            </div>
                             <div>
                                 <span>Total Hari Kerja</span>
                                 <strong>{{ $payroll->hari_kerja ?? 0 }} Hari</strong>
@@ -388,7 +531,7 @@
                             </div>
                             <div>
                                 <span>Total Tunjangan</span>
-                                <strong style="color: #E30613;">Rp {{ number_format($payroll->uang_makan + $payroll->uang_bensin, 0, ',', '.') }}</strong>
+                                <strong style="font-size: 1.25rem;">Rp {{ number_format($payroll->uang_makan + $payroll->uang_bensin, 0, ',', '.') }}</strong>
                             </div>
                         </div>
 
@@ -474,6 +617,30 @@
             <div class="ts-content-card">
                 <h2 class="ts-content-title">Bonus & Komisi</h2>
                 @if(isset($payrollData) && count($payrollData) > 0)
+                    <div class="ts-summary-box ts-summary-red-wave" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; padding: 1rem; border-radius: 0.5rem;">
+                        <div class="summary-wave-bg">
+                            <svg viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+                                <defs>
+                                    <path id="gentle-wave-summary-bonus" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+                                </defs>
+                                <g class="wave-summary-parallax">
+                                    <use xlink:href="#gentle-wave-summary-bonus" x="48" y="0" />
+                                    <use xlink:href="#gentle-wave-summary-bonus" x="48" y="3" />
+                                    <use xlink:href="#gentle-wave-summary-bonus" x="48" y="5" />
+                                    <use xlink:href="#gentle-wave-summary-bonus" x="48" y="7" />
+                                </g>
+                            </svg>
+                        </div>
+                        <div>
+                            <span>Akumulasi Total Penagihan</span>
+                            <strong>Rp {{ number_format($payrollData->sum('total_penjualan'), 0, ',', '.') }}</strong>
+                        </div>
+                        <div>
+                            <span>Akumulasi Total Bonus</span>
+                            <strong style="font-size: 1.25rem;">Rp {{ number_format($payrollData->sum('bonus_nominal'), 0, ',', '.') }}</strong>
+                        </div>
+                    </div>
+                    
                     <div style="overflow-x: auto;">
                         <table class="ts-table">
                             <thead>

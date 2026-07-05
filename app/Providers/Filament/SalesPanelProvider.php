@@ -62,6 +62,7 @@ class SalesPanelProvider extends PanelProvider
                     }
                     html:not(.dark) .fi-topbar {
                         background-color: #b91c1c !important;
+                        background-image: linear-gradient(to right, #7f1d1d, #dc2626, #991b1b) !important;
                         border-bottom: none !important;
                         box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1) !important;
                         height: 4rem !important;
@@ -113,7 +114,7 @@ class SalesPanelProvider extends PanelProvider
                         left: 0 !important;
                         right: 0 !important;
                         height: 40px !important;
-                        background-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1440 160%22 preserveAspectRatio=%22none%22%3E%3Cpath d=%22M0,30 C200,180 400,-20 720,40 C1000,100 1250,-10 1440,30 L1440,0 L0,0 Z%22 fill=%22%23b91c1c%22/%3E%3C/svg%3E") !important;
+                        background-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1440 160%22 preserveAspectRatio=%22none%22%3E%3Cdefs%3E%3ClinearGradient id=%22grad1%22 x1=%220%25%22 y1=%220%25%22 x2=%22100%25%22 y2=%220%25%22%3E%3Cstop offset=%220%25%22 stop-color=%22%237f1d1d%22 /%3E%3Cstop offset=%2250%25%22 stop-color=%22%23dc2626%22 /%3E%3Cstop offset=%22100%25%22 stop-color=%22%23991b1b%22 /%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M0,30 C200,180 400,-20 720,40 C1000,100 1250,-10 1440,30 L1440,0 L0,0 Z%22 fill=%22url(%23grad1)%22 /%3E%3C/svg%3E") !important;
                         background-size: 100% 100% !important;
                         background-repeat: no-repeat !important;
                         z-index: -1 !important;
@@ -218,8 +219,9 @@ class SalesPanelProvider extends PanelProvider
                             right: 1rem !important;
                             top: auto !important;
                             width: calc(100% - 2rem) !important;
-                            height: 4rem !important; /* Reduced from 4.5rem since no text */
-                            background-color: #b91c1c !important; /* same red */
+                            height: 4.5rem !important;
+                            background-color: #b91c1c !important;
+                            background-image: linear-gradient(to right, #7f1d1d, #dc2626, #991b1b) !important;
                             display: flex !important;
                             flex-direction: row !important;
                             justify-content: space-around !important;
@@ -399,6 +401,15 @@ class SalesPanelProvider extends PanelProvider
                     /* Dark Mode (Basic Topbar Overrides Removed as they are merged above) */
                     html.dark .fi-topbar-nav-groups {
                         /* Background handled in media query */
+                    }
+
+                    /* Avatar styling - White Border for Sales */
+                    html .fi-topbar .fi-avatar,
+                    html .fi-topbar img.fi-avatar,
+                    html .fi-topbar img.rounded-full {
+                        border: 2px solid white !important;
+                        border-radius: 50% !important;
+                        box-sizing: content-box !important;
                     }
                 </style>'
             )

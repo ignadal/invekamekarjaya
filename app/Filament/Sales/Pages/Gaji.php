@@ -16,7 +16,7 @@ class Gaji extends Page
     
     protected static ?int $navigationSort = 4;
 
-    public $activeTab = 'gaji_pokok';
+    public $activeTab = 'gaji_bulan_ini';
     public $filterBulan = '';
     public $filterTahun = '';
 
@@ -62,11 +62,17 @@ class Gaji extends Page
             $payrollData = $payrollQuery->orderBy('tahun', 'desc')
                 ->orderBy('bulan', 'desc')
                 ->get();
+                
+            $currentPayroll = \App\Models\PayrollSales::where('sales_id', $sales->id)
+                ->where('bulan', now()->month)
+                ->where('tahun', now()->year)
+                ->first();
         }
 
         return [
             'sales' => $sales,
             'payrollData' => $payrollData,
+            'currentPayroll' => $currentPayroll ?? null,
             'tahunList' => $tahunList ?: [now()->year]
         ];
     }
