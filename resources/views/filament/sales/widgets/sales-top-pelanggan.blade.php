@@ -69,6 +69,38 @@
             .top-toko-title-area {
                 gap: 0.75rem;
             }
+            .top-toko-table {
+                min-width: 100% !important;
+                table-layout: auto !important;
+            }
+            /* Hide the 'Pemilik' column on mobile to save space */
+            .top-toko-table th:nth-child(3),
+            .top-toko-table td:nth-child(3) {
+                display: none;
+            }
+            .top-toko-table th:nth-child(1),
+            .top-toko-table td:nth-child(1) {
+                width: 15%;
+            }
+            .top-toko-table th:nth-child(2),
+            .top-toko-table td:nth-child(2) {
+                width: 50%;
+            }
+            .top-toko-table th:nth-child(4),
+            .top-toko-table td:nth-child(4) {
+                width: 35%;
+            }
+            .total-cell {
+                font-size: 0.8125rem;
+            }
+            .toko-info-name {
+                font-size: 0.8125rem;
+                white-space: normal;
+                word-break: break-word;
+            }
+            .toko-info-owner-mobile {
+                display: block;
+            }
         }
 
         .top-toko-search {
@@ -106,11 +138,22 @@
         /* Table Section */
         .top-toko-table-wrapper {
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+            padding-bottom: 0.5rem;
+        }
+        
+        .top-toko-table-wrapper::-webkit-scrollbar {
+            height: 4px;
+        }
+        .top-toko-table-wrapper::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
         }
 
         .top-toko-table {
             width: 100%;
-            min-width: 650px;
+            min-width: 600px;
             border-collapse: collapse;
             text-align: left;
             table-layout: fixed;
@@ -188,9 +231,10 @@
             text-overflow: ellipsis;
         }
         
-        .toko-info-id {
+        .toko-info-owner-mobile {
             color: #6b7280;
             font-size: 0.75rem;
+            display: none;
         }
         
         .owner-info-name {
@@ -359,7 +403,7 @@
                                     </div>
                                     <div>
                                         <div class="toko-info-name">{{ $toko->nama_toko }}</div>
-                                        <div class="toko-info-id">ID: TKD{{ str_pad($toko->id, 3, '0', STR_PAD_LEFT) }}</div>
+                                        <div class="toko-info-owner-mobile">{{ $toko->nama_owner ?? '-' }}</div>
                                     </div>
                                 </div>
                             </td>
@@ -450,7 +494,7 @@
                                                 </div>
                                                 <div>
                                                     <div class="toko-info-name">{{ $toko->nama_toko }}</div>
-                                                    <div class="toko-info-id">ID: TKD{{ str_pad($toko->id, 3, '0', STR_PAD_LEFT) }}</div>
+                                                    <div class="toko-info-owner-mobile">{{ $toko->nama_owner ?? '-' }}</div>
                                                 </div>
                                             </div>
                                         </td>

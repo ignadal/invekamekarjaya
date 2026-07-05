@@ -275,7 +275,7 @@
                     
                     <div class="profile-role-badge">
                         <x-heroicon-o-shield-check style="width: 14px; height: 14px;" />
-                        {{ implode(', ', $user->roles->pluck('name')->toArray() ?? ['Super Admin']) }}
+                        {{ ucfirst($user->role ?? 'Sales') }}
                     </div>
                 </div>
             </div>

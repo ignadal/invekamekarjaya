@@ -79,11 +79,21 @@
         
         .kunjungan-table-wrapper {
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+            padding-bottom: 0.5rem;
+        }
+        .kunjungan-table-wrapper::-webkit-scrollbar {
+            height: 4px;
+        }
+        .kunjungan-table-wrapper::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
         }
         
         .kunjungan-table {
             width: 100%;
-            min-width: 450px;
+            min-width: 400px;
             border-collapse: separate;
             border-spacing: 0 0.5rem;
             font-size: 0.875rem;
@@ -162,6 +172,35 @@
             display: block;
             margin-top: 0.125rem;
             white-space: nowrap;
+        }
+
+        @media (max-width: 640px) {
+            .kunjungan-table {
+                min-width: 100% !important;
+                table-layout: auto !important;
+            }
+            /* Hide the 'Lokasi' column on mobile to save space */
+            .kunjungan-table th:nth-child(2),
+            .kunjungan-table td:nth-child(2) {
+                display: none;
+            }
+            .kunjungan-table th:nth-child(1),
+            .kunjungan-table td:nth-child(1) {
+                width: 60%;
+            }
+            .kunjungan-table th:nth-child(3),
+            .kunjungan-table td:nth-child(3) {
+                width: 40%;
+                text-align: right;
+            }
+            .kunjungan-waktu-date, .kunjungan-waktu-time {
+                text-align: right;
+            }
+            .kunjungan-toko-name {
+                font-size: 0.8125rem;
+                white-space: normal;
+                word-break: break-word;
+            }
         }
 
         html.dark .kunjungan-card { background: #18181b; border-color: #3f3f46; }

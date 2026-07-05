@@ -13,6 +13,11 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ViewEntry;
+
+use Filament\Schemas\Components\Section as SchemaSection;
+use Filament\Schemas\Components\Grid as SchemaGrid;
 
 class TokoLanggananResource extends Resource
 {
@@ -20,7 +25,7 @@ class TokoLanggananResource extends Resource
     protected static ?string $pluralModelLabel = 'Toko Langganan';
     protected static ?string $modelLabel = 'Toko Langganan';
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingStorefront;
-    protected static ?string $navigationLabel = 'Toko Langganan';
+    protected static ?string $navigationLabel = 'Kunjungan';
     protected static ?int $navigationSort = 3;
 
     public static function form(Schema $schema): Schema
@@ -71,6 +76,59 @@ class TokoLanggananResource extends Resource
                             ->columnSpanFull()
                             ->disabled(),
                     ]),
+            ]);
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                SchemaSection::make('Informasi Utama')
+                    ->description('Detail informasi tentang toko pelanggan.')
+                    ->schema([
+                        ViewEntry::make('foto_toko')
+                            ->view('filament.sales.components.foto-toko-slider')
+                            ->columnSpanFull()
+                            ->label(''),
+                        SchemaGrid::make(1)->schema([
+                            TextEntry::make('nama_toko')
+                                ->label('Nama Toko')
+                                ->weight('bold')
+                                ->size('lg')
+                                ->color('primary'),
+                            TextEntry::make('nama_owner')
+                                ->label('Nama Pemilik (Owner)'),
+                            TextEntry::make('no_hp')
+                                ->label('No. Handphone')
+                                ->copyable()
+                                ->copyMessage('Nomor handphone disalin!'),
+                            TextEntry::make('kecamatan.nama_kecamatan')
+                                ->label('Kecamatan'),
+                        ]),
+                    ])->collapsible(),
+
+                SchemaSection::make('Waktu Operasional')
+                    ->schema([
+                        SchemaGrid::make(1)->schema([
+                            TextEntry::make('jam_buka')
+                                ->label('Jam Buka')
+                                ->color('success'),
+                            TextEntry::make('jam_tutup')
+                                ->label('Jam Tutup')
+                                ->color('danger'),
+                        ])
+                    ])->collapsible(),
+
+                SchemaSection::make('Lokasi & Catatan Tambahan')
+                    ->schema([
+                        TextEntry::make('alamat')
+                            ->label('Alamat Lengkap')
+                            ->columnSpanFull(),
+                        TextEntry::make('catatan')
+                            ->label('Catatan Khusus')
+                            ->columnSpanFull()
+                            ->default('-'),
+                    ])->collapsible(),
             ]);
     }
 
@@ -135,7 +193,6 @@ class TokoLanggananResource extends Resource
     {
         return [
             'index' => Pages\ListTokoLangganan::route('/'),
-            'view'  => Pages\ViewTokoLangganan::route('/{record}'),
         ];
     }
 }

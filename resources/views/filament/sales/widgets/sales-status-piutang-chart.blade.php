@@ -82,7 +82,7 @@
             width: 280px;
             height: 280px;
             border-radius: 50%;
-            background: conic-gradient(#ef4444 0% {{ $belumLunasPct }}%, #10b981 {{ $belumLunasPct }}% 100%);
+            background: conic-gradient(#111827  0% {{ $belumLunasPct }}%, #ef4444 {{ $belumLunasPct }}% 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -173,7 +173,7 @@
             height: 1rem;
             border-radius: 50%;
         }
-        .legend-dot.green { background: #10b981; }
+        .legend-dot.black { background: #111827; }
         .legend-dot.red { background: #ef4444; }
 
         .legend-text {
@@ -190,7 +190,7 @@
             font-size: 0.875rem;
             font-weight: 700;
         }
-        .legend-value.green { color: #10b981; }
+        .legend-value.black { color: #111827; }
         .legend-value.red { color: #ef4444; }
         
         /* Mobile responsive adjustments */
@@ -255,20 +255,20 @@
         <!-- Legend -->
         <div class="piutang-legend">
             <div class="piutang-legend-item">
-                <div class="legend-dot green"></div>
+                <div class="legend-dot red"></div>
                 <div class="legend-text">
                     <span class="legend-label">Lunas</span>
-                    <span class="legend-value green">{{ $totalCount > 0 ? $lunasPct : 0 }}%</span>
+                    <span class="legend-value red">{{ $totalCount > 0 ? $lunasPct : 0 }}%</span>
                 </div>
             </div>
             
             <div class="piutang-legend-divider"></div>
             
             <div class="piutang-legend-item">
-                <div class="legend-dot red"></div>
+                <div class="legend-dot black"></div>
                 <div class="legend-text">
                     <span class="legend-label">Belum Lunas</span>
-                    <span class="legend-value red">{{ $totalCount > 0 ? $belumLunasPct : 0 }}%</span>
+                    <span class="legend-value black">{{ $totalCount > 0 ? $belumLunasPct : 0 }}%</span>
                 </div>
             </div>
         </div>

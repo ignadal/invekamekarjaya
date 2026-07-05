@@ -149,7 +149,7 @@ class ListTokoLangganan extends ListRecords
     {
         return [
             Action::make('tambah_kunjungan')
-                ->label('Tambah Kunjungan')
+                ->label('Kunjungan Baru')
                 ->icon('heroicon-o-plus')
                 ->color('danger')
                 ->modalHeading('Tambah Laporan Kunjungan')
@@ -201,5 +201,19 @@ class ListTokoLangganan extends ListRecords
                         ->send();
                 })
         ];
+    }
+    
+    public function viewTokoAction(): \Filament\Actions\Action
+    {
+        return \Filament\Actions\Action::make('viewToko')
+            ->modalHeading('Detail Toko')
+            ->modalSubmitAction(false)
+            ->modalCancelAction(fn ($action) => $action->label('Tutup'))
+            ->record(function (array $arguments) {
+                return Buyer::find($arguments['record'] ?? null);
+            })
+            ->infolist(function (\Filament\Schemas\Schema $schema) {
+                return TokoLanggananResource::infolist($schema);
+            });
     }
 }

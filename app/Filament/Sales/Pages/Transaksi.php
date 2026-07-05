@@ -67,8 +67,9 @@ class Transaksi extends Page
         return [
             \Filament\Actions\CreateAction::make('tambahPenjualan')
                 ->model(Penjualan::class)
-                ->label('Buat Orderan')
+                ->label('Orderan Baru')
                 ->icon('heroicon-o-plus')
+                ->visible(fn () => $this->activeTab === 'penjualan')
                 ->color('danger')
                 ->modalHeading(new \Illuminate\Support\HtmlString('
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
@@ -131,7 +132,7 @@ class Transaksi extends Page
         return Action::make('detail')
             ->label('Riwayat')
             ->icon('heroicon-o-clock')
-            ->color('info')
+            ->color('danger')
             ->button()
             ->size('sm')
             ->modalHeading('Histori Pembayaran Cicilan')
@@ -206,7 +207,9 @@ class Transaksi extends Page
             $listQuery->where('metode', 'cicil')->where('status_persetujuan', 'disetujui');
         }
 
-        $records = $listQuery->latest('tanggal_beli')->paginate($this->perPage);
+        // Sort by status_persetujuan (Pending first) and then by date
+        $listQuery->orderByRaw("FIELD(status_persetujuan, 'pending', 'disetujui', 'ditolak')");
+        $records = $listQuery->latest('tanggal_beli')->latest('created_at')->paginate($this->perPage);
         $konversi = $currentCount > 0 ? ($lunasCount / $currentCount) * 100 : 0;
 
         $penagihanCount = 0;

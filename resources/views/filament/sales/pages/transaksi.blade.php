@@ -154,32 +154,63 @@
         html.dark .ts-text-muted-strong { color: #9ca3af; }
         
         /* Top Filter Bar */
-        .ts-top-filter-bar { display: flex; flex-direction: column; gap: 1rem; background-color: white; border-radius: 1rem; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; border: 1px solid rgba(229, 231, 235, 0.5); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03); }
+        .ts-top-filter-bar { 
+            position: relative;
+            overflow: hidden;
+            display: flex; flex-direction: column; gap: 1rem; 
+            background: linear-gradient(135deg, #b91c1c 0%, #dc2626 50%, #b91c1c 100%);
+            border-radius: 1rem; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; border: none; 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); 
+        }
+        .ts-top-filter-bar > * { position: relative; z-index: 10; }
+        .ts-top-filter-bar > .wave-bg { position: absolute !important; top: 0; left: 0; width: 100%; line-height: 0; z-index: 0 !important; pointer-events: none; transform: scaleY(-1); margin: 0; padding: 0; }
+        
         @media (min-width: 1024px) { .ts-top-filter-bar { flex-direction: row; align-items: flex-end; justify-content: space-between; } }
-        html.dark .ts-top-filter-bar { background-color: #18181b; border-color: #27272a; }
+        html.dark .ts-top-filter-bar { background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 50%, #7f1d1d 100%); border: none; }
+        
+        /* Animated wave CSS */
+        .parallax-dashboard > use { animation: move-forever-dashboard 25s cubic-bezier(.55,.5,.45,.5) infinite; }
+        @keyframes move-forever-dashboard { 0% { transform: translate3d(-90px,0,0); } 100% { transform: translate3d(85px,0,0); } }
+        .parallax-dashboard > use:nth-child(1) { animation-delay: -2s; animation-duration: 7s; fill: rgba(127, 29, 29, 0.3); }
+        .parallax-dashboard > use:nth-child(2) { animation-delay: -3s; animation-duration: 10s; fill: rgba(127, 29, 29, 0.5); }
+        .parallax-dashboard > use:nth-child(3) { animation-delay: -4s; animation-duration: 13s; fill: rgba(127, 29, 29, 0.7); }
+        .parallax-dashboard > use:nth-child(4) { animation-delay: -5s; animation-duration: 20s; fill: rgba(127, 29, 29, 0.9); }
         
         .ts-filter-grid { display: grid; grid-template-columns: repeat(1, 1fr); gap: 0.75rem; flex: 1; }
         @media (min-width: 640px) { .ts-filter-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; } }
         @media (min-width: 1024px) { .ts-filter-grid { grid-template-columns: repeat(4, 1fr); gap: 1rem; } }
         
         .ts-filter-item { display: flex; flex-direction: column; }
-        .ts-filter-label { display: flex; align-items: center; gap: 0.375rem; font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.5rem; }
-        html.dark .ts-filter-label { color: #a1a1aa; }
-        .ts-filter-icon { width: 1rem; height: 1rem; color: #9ca3af; }
+        .ts-filter-label { display: flex; align-items: center; gap: 0.375rem; font-size: 0.75rem; font-weight: 600; color: rgba(255, 255, 255, 0.9); margin-bottom: 0.5rem; }
+        html.dark .ts-filter-label { color: rgba(255, 255, 255, 0.9); }
+        .ts-filter-icon { width: 1rem; height: 1rem; color: rgba(255, 255, 255, 0.8); }
         
-        .ts-filter-input { width: 100%; border-radius: 0.5rem; border: 1px solid #e5e7eb; padding: 0.625rem 0.75rem; font-size: 0.875rem; font-weight: 600; background-color: white; color: #111827; outline: none; transition: border-color 0.2s;}
-        html.dark .ts-filter-input { background-color: #09090b; border-color: #27272a; color: white; }
-        .ts-filter-input:focus { border-color: #E30613; box-shadow: 0 0 0 1px #E30613; }
+        .ts-filter-input { width: 100%; border-radius: 0.5rem; border: none; padding: 0.625rem 0.75rem; font-size: 0.875rem; font-weight: 600; background-color: white; color: #111827; outline: none; transition: box-shadow 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.1);}
+        html.dark .ts-filter-input { background-color: #09090b; border: 1px solid #27272a; color: white; }
+        .ts-filter-input:focus { box-shadow: 0 0 0 2px white; }
+        html.dark .ts-filter-input:focus { box-shadow: 0 0 0 2px #3f3f46; }
         
         .ts-filter-actions { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1rem; width: 100%; }
         @media (min-width: 1024px) { .ts-filter-actions { width: auto; justify-content: flex-end; margin-top: 0; } }
         
-        .ts-filter-reset { color: #E30613; font-size: 0.875rem; font-weight: 600; background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.375rem; transition: color 0.2s;}
-        .ts-filter-reset:hover { color: #b91c1c; }
+        .ts-filter-reset { color: white; font-size: 0.875rem; font-weight: 600; background-color: #1f2937; padding: 0.625rem 1.25rem; border-radius: 0.5rem; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.375rem; transition: background-color 0.2s;}
+        .ts-filter-reset:hover { background-color: #111827; }
+        html.dark .ts-filter-reset { background-color: #27272a; border: 1px solid #3f3f46; }
         
-        .ts-filter-submit { background-color: #E30613; color: white; padding: 0.625rem 1.25rem; border-radius: 0.5rem; font-weight: 600; font-size: 0.875rem; border: none; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 0.5rem; white-space: nowrap; flex-grow: 1; }
+        .ts-filter-submit { background-color: white; color: #E30613; padding: 0.625rem 1.25rem; border-radius: 0.5rem; font-weight: 700; font-size: 0.875rem; border: none; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 0.5rem; white-space: nowrap; flex-grow: 1; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
         @media (min-width: 1024px) { .ts-filter-submit { flex-grow: 0; } }
-        .ts-filter-submit:hover { background-color: #c80511; box-shadow: 0 4px 12px rgba(227, 6, 19, 0.2); }
+        .ts-filter-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        html.dark .ts-filter-submit { background-color: #27272a; color: white; border: 1px solid #3f3f46; }
+        
+        /* Info Alert Box */
+        .ts-info-alert { background-color: #fff1f2; border: 1px solid #fecdd3; border-radius: 0.75rem; padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 0.75rem; }
+        html.dark .ts-info-alert { background-color: rgba(225, 29, 72, 0.1); border-color: rgba(225, 29, 72, 0.2); }
+        .ts-info-icon { width: 1.5rem; height: 1.5rem; color: #e11d48; flex-shrink: 0; margin-top: 0.125rem; }
+        html.dark .ts-info-icon { color: #fb7185; }
+        .ts-info-title { font-weight: 700; color: #9f1239; font-size: 0.875rem; margin-bottom: 0.25rem; }
+        html.dark .ts-info-title { color: #fecdd3; }
+        .ts-info-desc { color: #be123c; font-size: 0.8125rem; line-height: 1.4; }
+        html.dark .ts-info-desc { color: #fda4af; }
         
         /* Main Content Box */
         .ts-main-content { flex: 1; min-width: 0; background-color: white; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03); border: 1px solid rgba(229, 231, 235, 0.5); display: flex; flex-direction: column; overflow: hidden; }
@@ -214,8 +245,8 @@
         
         /* Row Status Left Borders */
         .row-status-border { position: absolute; left: 0; top: 0.25rem; bottom: 0.25rem; width: 4px; border-radius: 0 4px 4px 0; }
-        .border-disetujui { background-color: #10b981; } /* Green */
-        .border-pending { background-color: #f59e0b; } /* Yellow/Orange */
+        .border-disetujui { background-color: #E30613; } /* Red */
+        .border-pending { background-color: #94a3b8; } /* Gray */
         
         /* Calendar Block */
         .ts-cal-block { width: 3rem; height: 3rem; background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; flex-shrink: 0;}
@@ -228,25 +259,25 @@
         .ts-dot-text { display: inline-flex; align-items: center; gap: 0.375rem; font-weight: 600; font-size: 0.875rem; padding: 0.25rem 0.5rem; border-radius: 0.5rem;}
         .ts-dot { width: 0.375rem; height: 0.375rem; border-radius: 50%; }
         
-        .text-lunas { color: #10b981; background-color: #ecfdf5;}
-        .dot-lunas { background-color: #10b981; }
-        html.dark .text-lunas { background-color: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); color: #10b981; }
+        .text-lunas { color: #111827; background-color: #f3f4f6;}
+        .dot-lunas { background-color: #111827; }
+        html.dark .text-lunas { background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white; }
         
-        .text-cicil { color: #f59e0b; background-color: #fffbeb;}
-        .dot-cicil { background-color: #f59e0b; }
-        html.dark .text-cicil { background-color: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .text-cicil { color: #475569; background-color: #f1f5f9;}
+        .dot-cicil { background-color: #475569; }
+        html.dark .text-cicil { background-color: rgba(71, 85, 105, 0.2); border: 1px solid rgba(71, 85, 105, 0.3); color: #94a3b8; }
         
-        .text-pending { color: #f97316; background-color: #fff7ed;}
-        .dot-pending { background-color: #f97316; }
-        html.dark .text-pending { background-color: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.2); color: #f97316; }
+        .text-pending { color: #475569; background-color: #f1f5f9; }
+        .dot-pending { background-color: #475569; }
+        html.dark .text-pending { background-color: rgba(71, 85, 105, 0.2); border: 1px solid rgba(71, 85, 105, 0.3); color: #94a3b8; }
         
-        .text-disetujui { color: #10b981; background-color: #ecfdf5;}
-        .dot-disetujui { background-color: #10b981; }
-        html.dark .text-disetujui { background-color: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); color: #10b981; }
+        .text-disetujui { color: #E30613; background-color: #fef2f2;}
+        .dot-disetujui { background-color: #E30613; }
+        html.dark .text-disetujui { background-color: rgba(227, 6, 19, 0.15); border: 1px solid rgba(227, 6, 19, 0.3); color: #fca5a5; }
         
-        .text-ditolak { color: #ef4444; background-color: #fef2f2;}
-        .dot-ditolak { background-color: #ef4444; }
-        html.dark .text-ditolak { background-color: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .text-ditolak { color: #1f2937; background-color: #f3f4f6;}
+        .dot-ditolak { background-color: #1f2937; }
+        html.dark .text-ditolak { background-color: rgba(31, 41, 55, 0.4); border: 1px solid rgba(31, 41, 55, 0.5); color: #d1d5db; }
 
         .ts-action-btn { padding: 0.5rem; border-radius: 0.5rem; border: 1px solid #e5e7eb; background: white; color: #6b7280; cursor: pointer; transition: all 0.2s;}
         .ts-action-btn:hover { background: #f3f4f6; color: #111827;}
@@ -443,9 +474,20 @@
         @if ($activeTab === 'penjualan')
             <!-- TOP FILTER BAR -->
             <div class="ts-top-filter-bar">
+                <div class="wave-bg">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto" style="position: relative; width: 100%; height: 60px; margin-top: -7px; min-height: 60px; max-height: 80px;">
+                        <defs><path id="gentle-wave-dashboard" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" /></defs>
+                        <g class="parallax-dashboard">
+                            <use xlink:href="#gentle-wave-dashboard" x="48" y="0" />
+                            <use xlink:href="#gentle-wave-dashboard" x="48" y="3" />
+                            <use xlink:href="#gentle-wave-dashboard" x="48" y="5" />
+                            <use xlink:href="#gentle-wave-dashboard" x="48" y="7" />
+                        </g>
+                    </svg>
+                </div>
                 <div class="ts-filter-mobile-title" style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding-bottom: 0.5rem;">
-                    <div style="font-weight: 700; font-size: 0.875rem;" class="ts-text-strong">Filter</div>
-                    <x-heroicon-o-funnel style="width: 1.25rem; height: 1.25rem; color: #E30613;" />
+                    <div style="font-weight: 700; font-size: 0.875rem; color: white;">Filter</div>
+                    <x-heroicon-o-funnel style="width: 1.25rem; height: 1.25rem; color: white;" />
                 </div>
                 <div class="ts-filter-grid">
                     <div class="ts-filter-item">
@@ -476,7 +518,7 @@
                         <label class="ts-filter-label"><x-heroicon-o-clipboard-document-check class="ts-filter-icon" /> Status</label>
                         <select wire:model="filterStatus" class="ts-filter-input">
                             <option value="">Semua Status</option>
-                            <option value="pending">Diproses</option>
+                            <option value="pending">Pending</option>
                             <option value="disetujui">Diterima</option>
                             <option value="ditolak">Ditolak</option>
                         </select>
@@ -570,7 +612,7 @@
                                             <span class="ts-dot-text text-{{ $statusClass }}">
                                                 <span class="ts-dot dot-{{ $statusClass }}"></span>
                                                 @if ($record->status_persetujuan === 'pending')
-                                                    Diproses
+                                                    Pending
                                                 @elseif ($record->status_persetujuan === 'disetujui')
                                                     Diterima
                                                 @else
@@ -689,9 +731,20 @@
         @elseif ($activeTab === 'penagihan')
             <!-- TOP FILTER BAR (PENAGIHAN) -->
             <div class="ts-top-filter-bar" style="margin-bottom: 2rem;">
+                <div class="wave-bg">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto" style="position: relative; width: 100%; height: 60px; margin-top: -7px; min-height: 60px; max-height: 80px;">
+                        <defs><path id="gentle-wave-dashboard" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" /></defs>
+                        <g class="parallax-dashboard">
+                            <use xlink:href="#gentle-wave-dashboard" x="48" y="0" />
+                            <use xlink:href="#gentle-wave-dashboard" x="48" y="3" />
+                            <use xlink:href="#gentle-wave-dashboard" x="48" y="5" />
+                            <use xlink:href="#gentle-wave-dashboard" x="48" y="7" />
+                        </g>
+                    </svg>
+                </div>
                 <div class="ts-filter-mobile-title" style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding-bottom: 0.5rem;">
-                    <div style="font-weight: 700; font-size: 0.875rem;" class="ts-text-strong">Filter</div>
-                    <x-heroicon-o-funnel style="width: 1.25rem; height: 1.25rem; color: #E30613;" />
+                    <div style="font-weight: 700; font-size: 0.875rem; color: white;">Filter</div>
+                    <x-heroicon-o-funnel style="width: 1.25rem; height: 1.25rem; color: white;" />
                 </div>
                 <div class="ts-filter-grid">
                     <div class="ts-filter-item">
@@ -729,7 +782,16 @@
                 </div>
             </div>
 
-
+            <!-- Informasi Pembaruan Cicilan Box -->
+            <div class="ts-info-alert">
+                <x-heroicon-o-information-circle class="ts-info-icon" />
+                <div>
+                    <div class="ts-info-title">Informasi Pembaruan Cicilan</div>
+                    <div class="ts-info-desc">
+                        Jika terdapat pembayaran tagihan baru dari pelanggan, silakan hubungi <b>Admin/Owner</b> untuk mencatat dan memperbarui progres cicilan. Hanya Admin yang memiliki akses sistem untuk menambahkan data pembayaran.
+                    </div>
+                </div>
+            </div>
 
             <div class="ts-main-content">
                 <div class="ts-table-header">
@@ -803,10 +865,10 @@
                                         <div style="display: flex; flex-direction: column; gap: 0.25rem;">
                                             <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 600;">
                                                 <span class="ts-text-strong" style="color: #6b7280;">IDR {{ number_format($record->sudah_dibayar, 0, '.', ',') }}</span>
-                                                <span style="color: #2563eb;">{{ number_format($progress, 1) }}%</span>
+                                                <span style="color: #E30613;">{{ number_format($progress, 1) }}%</span>
                                             </div>
                                             <div style="width: 100%; height: 0.375rem; background-color: #f3f4f6; border-radius: 9999px; overflow: hidden;">
-                                                <div style="height: 100%; background-color: {{ $isLunas ? '#10b981' : '#3b82f6' }}; width: {{ $progress }}%; transition: width 0.3s ease;"></div>
+                                                <div style="height: 100%; background-color: {{ $isLunas ? '#111827' : '#E30613' }}; width: {{ $progress }}%; transition: width 0.3s ease;"></div>
                                             </div>
                                         </div>
                                     </td>
@@ -815,9 +877,9 @@
                                     </td>
                                     <td style="text-align: center;">
                                         @if($isLunas)
-                                            <span class="ts-stat-badge ts-badge-success">Lunas</span>
+                                            <span class="ts-stat-badge" style="background-color: #111827; color: white;">Lunas</span>
                                         @else
-                                            <span class="ts-stat-badge" style="background-color: #fef9c3; color: #ca8a04;">Belum Lunas</span>
+                                            <span class="ts-stat-badge" style="background-color: #f1f5f9; color: #475569;">Belum Lunas</span>
                                         @endif
                                     </td>
                                     <td style="text-align: right; min-width: 200px;">
@@ -866,9 +928,9 @@
                                     </div>
                                     <div style="text-align: right;">
                                         @if($isLunas)
-                                            <span class="ts-stat-badge ts-badge-success">Lunas</span>
+                                            <span class="ts-stat-badge" style="background-color: #111827; color: white;">Lunas</span>
                                         @else
-                                            <span class="ts-stat-badge" style="background-color: #fef9c3; color: #ca8a04;">Belum Lunas</span>
+                                            <span class="ts-stat-badge" style="background-color: #f1f5f9; color: #475569;">Belum Lunas</span>
                                         @endif
                                     </div>
                                 </div>
@@ -880,11 +942,11 @@
                                     </div>
                                     <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
                                         <span style="font-size: 0.75rem; color: #6b7280;">Sudah Dibayar</span>
-                                        <span style="font-size: 0.75rem; font-weight: 600; color: #10b981;">IDR {{ number_format($record->sudah_dibayar, 0, '.', ',') }}</span>
+                                        <span style="font-size: 0.75rem; font-weight: 700; color: #111827;">IDR {{ number_format($record->sudah_dibayar, 0, '.', ',') }}</span>
                                     </div>
                                     
                                     <div style="width: 100%; height: 0.375rem; background-color: #e5e7eb; border-radius: 9999px; overflow: hidden; margin-bottom: 0.5rem;">
-                                        <div style="height: 100%; background-color: {{ $isLunas ? '#10b981' : '#3b82f6' }}; width: {{ $progress }}%; transition: width 0.3s ease;"></div>
+                                        <div style="height: 100%; background-color: {{ $isLunas ? '#111827' : '#E30613' }}; width: {{ $progress }}%; transition: width 0.3s ease;"></div>
                                     </div>
                                     
                                     <div class="billing-divider" style="display: flex; justify-content: space-between; align-items: center; padding-top: 0.5rem;">

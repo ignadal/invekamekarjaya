@@ -70,7 +70,7 @@
                 <h3 class="filter-heading">Hasil Kunjungan</h3>
                 <div class="status-toggles" style="display: flex; flex-direction: column; gap: 0.5rem;">
                     <button wire:click="$set('filterHasilKunjungan', 'semua')" class="status-btn {{ $filterHasilKunjungan === 'semua' ? 'active' : '' }}" style="{{ $filterHasilKunjungan === 'semua' ? 'background-color: #f3f4f6; color: #111827; border: 1px solid #d1d5db;' : 'background-color: transparent; border: 1px solid #e5e7eb; color: #6b7280;' }}">Semua</button>
-                    <button wire:click="$set('filterHasilKunjungan', 'sukses')" class="status-btn {{ $filterHasilKunjungan === 'sukses' ? 'active' : '' }}" style="{{ $filterHasilKunjungan === 'sukses' ? 'background-color: #10b981; color: white; border-color: #10b981;' : 'background-color: transparent; border: 1px solid #e5e7eb; color: #10b981;' }}">Sukses (Order)</button>
+                    <button wire:click="$set('filterHasilKunjungan', 'sukses')" class="status-btn {{ $filterHasilKunjungan === 'sukses' ? 'active' : '' }}" style="{{ $filterHasilKunjungan === 'sukses' ? 'background-color: #991b1b; color: white; border-color: #991b1b;' : 'background-color: transparent; border: 1px solid #e5e7eb; color: #991b1b;' }}">Sukses (Order)</button>
                     <button wire:click="$set('filterHasilKunjungan', 'gagal')" class="status-btn {{ $filterHasilKunjungan === 'gagal' ? 'active' : '' }}" style="{{ $filterHasilKunjungan === 'gagal' ? 'background-color: #ef4444; color: white; border-color: #ef4444;' : 'background-color: transparent; border: 1px solid #e5e7eb; color: #ef4444;' }}">Gagal / Ditunda</button>
                 </div>
             </div>
@@ -105,7 +105,7 @@
                                 <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
                                     <span style="font-weight: 700; font-size: 1.125rem; color: #111827;">{{ $kunjungan->buyer->nama_toko ?? '-' }}</span>
                                     @if(strtolower($kunjungan->hasil_kunjungan) == 'sukses')
-                                        <span style="background: #dcfce7; color: #16a34a; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">Sukses</span>
+                                        <span style="background: #fee2e2; color: #991b1b; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">Sukses</span>
                                     @else
                                         <span style="background: #fef2f2; color: #dc2626; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">Gagal / Ditunda</span>
                                     @endif
@@ -128,7 +128,7 @@
                             
                             @if($kunjungan->foto)
                             <div style="width: 100%; max-width: 200px; border-radius: 0.75rem; overflow: hidden; border: 1px solid #e5e7eb; flex-shrink: 0; background-color: #f3f4f6; display: flex; align-items: center; justify-content: center;">
-                                <img src="{{ asset('storage/' . $kunjungan->foto) }}" alt="Foto Kunjungan" style="width: 100%; height: 150px; object-fit: cover;">
+                                <img src="{{ asset('storage/' . str_replace('public/', '', $kunjungan->foto)) }}" alt="Foto Kunjungan" style="width: 100%; height: 150px; object-fit: cover;">
                             </div>
                             @endif
                         </div>
@@ -217,11 +217,20 @@
                     @foreach($toko as $item)
                     @php
                         $fotoUrls = [];
-                        if (is_array($item->foto_toko) && count($item->foto_toko) > 0) {
-                            foreach ($item->foto_toko as $foto) {
-                                $fotoUrls[] = asset('storage/' . $foto);
+                        
+                        if ($item->foto_toko) {
+                            if (is_array($item->foto_toko)) {
+                                foreach ($item->foto_toko as $foto) {
+                                    $fotoPath = str_replace('public/', '', $foto);
+                                    $fotoUrls[] = asset('storage/' . $fotoPath);
+                                }
+                            } else {
+                                $fotoPath = str_replace('public/', '', $item->foto_toko);
+                                $fotoUrls[] = asset('storage/' . $fotoPath);
                             }
-                        } else {
+                        }
+                        
+                        if (empty($fotoUrls)) {
                             $fotoUrls[] = asset('images/default-toko.png');
                         }
 
@@ -234,8 +243,6 @@
                             $isOpen = $now >= \Carbon\Carbon::parse($item->jam_buka)->format('H:i')
                                    && $now <= \Carbon\Carbon::parse($item->jam_tutup)->format('H:i');
                         }
-
-                        $viewUrl = \App\Filament\Sales\Resources\TokoLanggananResource::getUrl('view', ['record' => $item->id]);
                     @endphp
 
                     <div class="product-card">
@@ -314,10 +321,10 @@
                             </div>
                             
                             {{-- Full-width Button --}}
-                            <a href="{{ $viewUrl }}" wire:navigate class="lihat-detail-btn" style="margin-top: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.375rem; padding: 0.625rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 600; text-decoration: none; transition: background-color 0.2s;">
+                            <button type="button" wire:click="mountAction('viewToko', { record: {{ $item->id }} })" class="lihat-detail-btn" style="width: 100%; margin-top: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.375rem; padding: 0.625rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 600; transition: background-color 0.2s; cursor: pointer; background-color: #ef4444; color: white; border: none;">
                                 <x-heroicon-o-eye style="width: 1.125rem; height: 1.125rem;" />
                                 Lihat Detail
-                            </a>
+                            </button>
                         </div>
                     </div>
                     @endforeach
@@ -1068,8 +1075,15 @@
         border-color: rgba(220, 38, 38, 0.2) !important;
         color: #f87171 !important;
     }
-    html.dark .lihat-detail-btn:hover {
-        background-color: rgba(220, 38, 38, 0.2) !important;
+    .lihat-detail-btn {
+        background-color: #ef4444;
+        color: white;
+        border: none;
+        position: relative;
+        overflow: hidden;
+    }
+    .lihat-detail-btn:hover {
+        background-color: #dc2626;
     }
 </style>
     <x-filament-actions::modals />

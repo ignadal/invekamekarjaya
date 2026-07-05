@@ -1,9 +1,14 @@
 @php
     $fotoToko = $getRecord()?->foto_toko;
     $images = [];
-    if (is_array($fotoToko) && count($fotoToko) > 0) {
-        foreach (array_values($fotoToko) as $path) {
-            $images[] = asset('storage/' . $path);
+    
+    if ($fotoToko) {
+        if (is_array($fotoToko)) {
+            foreach (array_values($fotoToko) as $path) {
+                $images[] = asset('storage/' . str_replace('public/', '', $path));
+            }
+        } else {
+            $images[] = asset('storage/' . str_replace('public/', '', $fotoToko));
         }
     } else {
         $images[] = asset('images/default-toko.png');
@@ -54,13 +59,13 @@
         <!-- Prev Button -->
         <button x-show="images.length > 1" @click="prev()" type="button"
                 class="absolute left-3 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white rounded-full p-2 transition-all focus:outline-none z-10 shadow-lg">
-            <x-heroicon-o-chevron-left class="w-5 h-5" />
+            <x-heroicon-o-chevron-left style="width: 20px; height: 20px;" />
         </button>
 
         <!-- Next Button -->
         <button x-show="images.length > 1" @click="next()" type="button"
                 class="absolute right-3 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white rounded-full p-2 transition-all focus:outline-none z-10 shadow-lg">
-            <x-heroicon-o-chevron-right class="w-5 h-5" />
+            <x-heroicon-o-chevron-right style="width: 20px; height: 20px;" />
         </button>
 
         <!-- Indicators -->
@@ -99,13 +104,13 @@
 
         {{-- Jam --}}
         <span class="inline-flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-400">
-            <x-heroicon-o-clock class="w-4 h-4 text-gray-400" />
+            <x-heroicon-o-clock style="width: 16px; height: 16px; color: #9ca3af;" />
             {{ $jamBuka }} – {{ $jamTutup }}
         </span>
     </div>
     @else
     <div class="flex items-center gap-1.5 mt-3 px-1 text-sm text-gray-400 dark:text-gray-500">
-        <x-heroicon-o-clock class="w-4 h-4" />
+        <x-heroicon-o-clock style="width: 16px; height: 16px;" />
         <span>Jam operasional belum diatur</span>
     </div>
     @endif
