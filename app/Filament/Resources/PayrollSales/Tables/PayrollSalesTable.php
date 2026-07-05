@@ -23,6 +23,22 @@ class PayrollSalesTable
                 'xl' => 3,
             ])
             ->defaultSort('tahun', 'desc')
+            ->heading(function (\Livewire\Component $livewire) {
+                $bulanArr = [
+                    '1' => 'Januari', '2' => 'Februari', '3' => 'Maret',
+                    '4' => 'April', '5' => 'Mei', '6' => 'Juni',
+                    '7' => 'Juli', '8' => 'Agustus', '9' => 'September',
+                    '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
+                ];
+                
+                $filters = $livewire->tableFilters ?? [];
+                $bulan = $filters['bulan']['value'] ?? now()->month;
+                $tahun = $filters['tahun']['value'] ?? now()->year;
+                
+                $bulanStr = $bulanArr[$bulan] ?? $bulan;
+                
+                return "Gaji Bulan {$bulanStr} {$tahun}";
+            })
             ->columns([
                 Stack::make([
                     TextColumn::make('sales.nama_sales')
@@ -84,7 +100,9 @@ class PayrollSalesTable
                         '7' => 'Juli', '8' => 'Agustus', '9' => 'September',
                         '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
                     ])
-                    ->default((string) now()->month),
+                    ->default((string) now()->month)
+                    ->selectablePlaceholder(false)
+                    ->indicateUsing(fn () => null),
                 \Filament\Tables\Filters\SelectFilter::make('tahun')
                     ->label('Tahun')
                     ->options(function () {
@@ -95,7 +113,9 @@ class PayrollSalesTable
                             ->toArray();
                         return $tahunList ?: [now()->year => now()->year];
                     })
-                    ->default((string) now()->year),
+                    ->default((string) now()->year)
+                    ->selectablePlaceholder(false)
+                    ->indicateUsing(fn () => null),
             ])
             ->recordActions([
                 Action::make('tambah_tunjangan')

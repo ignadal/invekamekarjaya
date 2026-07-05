@@ -26,5 +26,9 @@ class AppServiceProvider extends ServiceProvider
             'panels::sidebar.expand-button' => 'heroicon-o-bars-3',
             'panels::sidebar.collapse-button' => 'heroicon-o-bars-3',
         ]);
+
+        \Filament\Tables\Table::configureUsing(function (\Filament\Tables\Table $table): void {
+            $table->filtersLayout(\Filament\Tables\Enums\FiltersLayout::Modal);
+        });
     }
 }
