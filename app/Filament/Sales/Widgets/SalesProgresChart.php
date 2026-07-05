@@ -93,34 +93,38 @@ class SalesProgresChart extends ChartWidget
         $pembayaranData = [0, 0, 0, 0];
 
         if ($salesId) {
-            // Get all penjualan this month grouped by week
+            // 1. Tagihan (Total Penjualan)
             $penjualans = Penjualan::where('sales_id', $salesId)
+                ->where('status_persetujuan', 'disetujui')
                 ->whereBetween('tanggal_beli', [$startOfMonth, $endOfMonth])
                 ->get();
 
-            $cumulativeTagihan = 0;
             foreach ($penjualans as $p) {
                 $weekNum = min(3, (int) floor(($p->tanggal_beli->day - 1) / 7));
-                $cumulativeTagihan += $p->total_penjualan;
-                for ($i = $weekNum; $i < 4; $i++) {
-                    $tagihanData[$i] = $cumulativeTagihan;
-                }
+                $tagihanData[$weekNum] += $p->total_penjualan;
             }
 
-            // Get all pembayaran this month grouped by week
+            // 2. Pembayaran (Cicilan + Lunas)
             $pembayarans = CicilanBuyer::whereHas('penjualan', function($q) use ($salesId) {
-                    $q->where('sales_id', $salesId);
+                    $q->where('sales_id', $salesId)->where('status_persetujuan', 'disetujui');
                 })
                 ->whereBetween('tanggal_bayar', [$startOfMonth, $endOfMonth])
                 ->get();
 
-            $cumulativePembayaran = 0;
             foreach ($pembayarans as $p) {
                 $weekNum = min(3, (int) floor(($p->tanggal_bayar->day - 1) / 7));
-                $cumulativePembayaran += $p->nominal;
-                for ($i = $weekNum; $i < 4; $i++) {
-                    $pembayaranData[$i] = $cumulativePembayaran;
-                }
+                $pembayaranData[$weekNum] += $p->nominal;
+            }
+            
+            $penjualanLunas = Penjualan::where('sales_id', $salesId)
+                ->where('status_persetujuan', 'disetujui')
+                ->where('metode', 'lunas')
+                ->whereBetween('tanggal_beli', [$startOfMonth, $endOfMonth])
+                ->get();
+                
+            foreach ($penjualanLunas as $p) {
+                $weekNum = min(3, (int) floor(($p->tanggal_beli->day - 1) / 7));
+                $pembayaranData[$weekNum] += $p->total_penjualan;
             }
         }
 
@@ -129,8 +133,8 @@ class SalesProgresChart extends ChartWidget
                 [
                     'label' => 'Total Penjualan',
                     'data' => $tagihanData,
-                    'backgroundColor' => '#3b82f6',
-                    'borderColor' => '#2563eb',
+                    'backgroundColor' => '#fca5a5',
+                    'borderColor' => '#ef4444',
                     'borderWidth' => 1,
                     'categoryPercentage' => 0.7,
                     'barPercentage' => 0.9,
@@ -139,8 +143,8 @@ class SalesProgresChart extends ChartWidget
                 [
                     'label' => 'Total Pembayaran',
                     'data' => $pembayaranData,
-                    'backgroundColor' => '#22c55e',
-                    'borderColor' => '#16a34a',
+                    'backgroundColor' => '#f87171',
+                    'borderColor' => '#dc2626',
                     'borderWidth' => 1,
                     'categoryPercentage' => 0.7,
                     'barPercentage' => 0.9,

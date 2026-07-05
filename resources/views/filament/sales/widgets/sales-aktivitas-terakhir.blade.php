@@ -145,16 +145,16 @@
         }
         
         /* Variants */
-        .variant-kunjungan .aktivitas-icon { background: #dcfce7; color: #22c55e; }
-        .variant-kunjungan .aktivitas-arrow-btn { border-color: #bbf7d0; color: #22c55e; }
+        .variant-kunjungan .aktivitas-icon { background: #fef2f2; color: #ef4444; }
+        .variant-kunjungan .aktivitas-arrow-btn { border-color: #fecaca; color: #ef4444; }
         
-        .variant-penjualan .aktivitas-icon { background: #fef3c7; color: #f59e0b; }
-        .variant-penjualan .aktivitas-arrow-btn { border-color: #fde68a; color: #f59e0b; }
-        .variant-penjualan .aktivitas-amount { background: #fef3c7; color: #f59e0b; }
+        .variant-penjualan .aktivitas-icon { background: #fef2f2; color: #ef4444; }
+        .variant-penjualan .aktivitas-arrow-btn { border-color: #fecaca; color: #ef4444; }
+        .variant-penjualan .aktivitas-amount { background: #fef2f2; color: #ef4444; }
         
-        .variant-pembayaran .aktivitas-icon { background: #dbeafe; color: #3b82f6; }
-        .variant-pembayaran .aktivitas-arrow-btn { border-color: #bfdbfe; color: #3b82f6; }
-        .variant-pembayaran .aktivitas-amount { background: #dbeafe; color: #3b82f6; }
+        .variant-pembayaran .aktivitas-icon { background: #fef2f2; color: #ef4444; }
+        .variant-pembayaran .aktivitas-arrow-btn { border-color: #fecaca; color: #ef4444; }
+        .variant-pembayaran .aktivitas-amount { background: #fef2f2; color: #ef4444; }
 
         @media (max-width: 640px) {
             .aktivitas-card {
@@ -192,14 +192,14 @@
         html.dark .aktivitas-item-title { color: #f4f4f5; }
         html.dark .aktivitas-list::before { border-left-color: #3f3f46; }
         html.dark .aktivitas-arrow-btn { background: transparent; }
-        html.dark .variant-kunjungan .aktivitas-icon { background: #064e3b; color: #34d399; }
-        html.dark .variant-kunjungan .aktivitas-arrow-btn { border-color: #065f46; color: #34d399; }
-        html.dark .variant-penjualan .aktivitas-icon { background: #78350f; color: #fbbf24; }
-        html.dark .variant-penjualan .aktivitas-arrow-btn { border-color: #92400e; color: #fbbf24; }
-        html.dark .variant-penjualan .aktivitas-amount { background: #78350f; color: #fbbf24; }
-        html.dark .variant-pembayaran .aktivitas-icon { background: #1e3a8a; color: #60a5fa; }
-        html.dark .variant-pembayaran .aktivitas-arrow-btn { border-color: #1e40af; color: #60a5fa; }
-        html.dark .variant-pembayaran .aktivitas-amount { background: #1e3a8a; color: #60a5fa; }
+        html.dark .variant-kunjungan .aktivitas-icon { background: #450a0a; color: #f87171; }
+        html.dark .variant-kunjungan .aktivitas-arrow-btn { border-color: #7f1d1d; color: #f87171; }
+        html.dark .variant-penjualan .aktivitas-icon { background: #450a0a; color: #f87171; }
+        html.dark .variant-penjualan .aktivitas-arrow-btn { border-color: #7f1d1d; color: #f87171; }
+        html.dark .variant-penjualan .aktivitas-amount { background: #450a0a; color: #f87171; }
+        html.dark .variant-pembayaran .aktivitas-icon { background: #450a0a; color: #f87171; }
+        html.dark .variant-pembayaran .aktivitas-arrow-btn { border-color: #7f1d1d; color: #f87171; }
+        html.dark .variant-pembayaran .aktivitas-amount { background: #450a0a; color: #f87171; }
     </style>
 
     <div class="aktivitas-card">

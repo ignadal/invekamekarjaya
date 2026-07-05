@@ -260,6 +260,15 @@
         box-shadow: 0 6px 20px var(--theme-red-glow);
     }
 
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
+        20%, 40%, 60%, 80% { transform: translateX(8px); }
+    }
+    .animate-shake {
+        animation: shake 0.6s cubic-bezier(.36,.07,.19,.97) both;
+    }
+
     /* Divider */
     .neon-divider {
         display: none;
@@ -543,7 +552,7 @@
                 <h2 class="login-title">Login Sales</h2>
 
                 <div class="form-container">
-                    <form wire:submit="authenticate">
+                    <form wire:submit="authenticate" id="login-form" class="{{ $errors->any() ? 'animate-shake' : '' }}" x-data x-init="$el.addEventListener('animationend', () => $el.classList.remove('animate-shake'))">
                         {{ $this->form }}
 
                         <button type="submit" class="custom-login-btn">

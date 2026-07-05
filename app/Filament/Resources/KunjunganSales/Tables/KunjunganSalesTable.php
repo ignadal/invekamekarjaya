@@ -52,6 +52,7 @@ class KunjunganSalesTable
                     ->infolist([
                         \Filament\Infolists\Components\ImageEntry::make('foto')
                             ->hiddenLabel()
+                            ->disk('public')
                             ->extraImgAttributes(['style' => 'width: 100%; height: 100%; object-fit: contain;']),
                         \Filament\Infolists\Components\TextEntry::make('catatan')
                             ->label('Catatan/Deskripsi'),

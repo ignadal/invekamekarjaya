@@ -18,6 +18,7 @@ class BuyerInfolist
                 Section::make('Foto Toko')
                     ->schema([
                         ImageEntry::make('foto_toko')
+                            ->disk('public')
                             ->hiddenLabel()
                             ->disk('public')
                             ->extraImgAttributes([

@@ -9,7 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements \Filament\Models\Contracts\HasAvatar
+class User extends Authenticatable implements \Filament\Models\Contracts\HasAvatar, \Filament\Models\Contracts\FilamentUser
 {
     /** @use HasFactory<UserFactory> */
      use HasRoles, HasFactory, Notifiable;
@@ -32,6 +32,19 @@ class User extends Authenticatable implements \Filament\Models\Contracts\HasAvat
     public function getFilamentAvatarUrl(): ?string
     {
         return $this->avatar_url ? asset('storage/' . $this->avatar_url) : null;
+    }
+
+    public function canAccessPanel(\Filament\Panel $panel): bool
+    {
+        if ($panel->getId() === 'admin') {
+            return in_array($this->role, ['admin', 'super_admin']);
+        }
+
+        if ($panel->getId() === 'sales') {
+            return $this->role === 'sales';
+        }
+
+        return true;
     }
 
     /**

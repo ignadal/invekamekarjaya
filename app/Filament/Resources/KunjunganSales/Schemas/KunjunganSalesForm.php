@@ -50,6 +50,7 @@ class KunjunganSalesForm
                     ->schema([
                         FileUpload::make('foto')
                             ->image()
+                            ->disk('public')
                             ->directory('kunjungan_sales')
                             ->columnSpanFull(),
                             

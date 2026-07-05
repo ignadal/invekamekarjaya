@@ -30,6 +30,7 @@ class BarangsTable
             ->columns([
                 Stack::make([
                     ImageColumn::make('foto')
+                        ->disk('public')
                         ->alignment('center')
                         ->extraAttributes(['class' => 'custom-square-wrapper'])
                         ->extraImgAttributes(['class' => 'w-full object-cover rounded-t-xl aspect-square', 'style' => 'height: auto !important;']),

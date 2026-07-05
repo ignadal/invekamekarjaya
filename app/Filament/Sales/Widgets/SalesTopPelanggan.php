@@ -61,6 +61,7 @@ class SalesTopPelanggan extends Widget
         return Buyer::query()
             ->whereHas('penjualans', function (Builder $query) use ($salesId, $startOfMonth, $endOfMonth) {
                 $query->where('sales_id', $salesId)
+                      ->where('status_persetujuan', 'disetujui')
                       ->whereBetween('tanggal_beli', [$startOfMonth, $endOfMonth]);
             })
             ->when($this->search, function ($query) {
@@ -69,6 +70,7 @@ class SalesTopPelanggan extends Widget
             })
             ->withSum(['penjualans' => function ($query) use ($salesId, $startOfMonth, $endOfMonth) {
                 $query->where('sales_id', $salesId)
+                      ->where('status_persetujuan', 'disetujui')
                       ->whereBetween('tanggal_beli', [$startOfMonth, $endOfMonth]);
             }], 'total_penjualan')
             ->orderByDesc('penjualans_sum_total_penjualan')
@@ -96,6 +98,7 @@ class SalesTopPelanggan extends Widget
         return Buyer::query()
             ->whereHas('penjualans', function (Builder $query) use ($salesId, $startOfMonth, $endOfMonth) {
                 $query->where('sales_id', $salesId)
+                      ->where('status_persetujuan', 'disetujui')
                       ->whereBetween('tanggal_beli', [$startOfMonth, $endOfMonth]);
             })
             ->when($this->search, function ($query) {
@@ -104,6 +107,7 @@ class SalesTopPelanggan extends Widget
             })
             ->withSum(['penjualans' => function ($query) use ($salesId, $startOfMonth, $endOfMonth) {
                 $query->where('sales_id', $salesId)
+                      ->where('status_persetujuan', 'disetujui')
                       ->whereBetween('tanggal_beli', [$startOfMonth, $endOfMonth]);
             }], 'total_penjualan')
             ->orderByDesc('penjualans_sum_total_penjualan')

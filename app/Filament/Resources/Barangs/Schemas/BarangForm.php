@@ -22,6 +22,7 @@ class BarangForm
                             ->schema([
                                 FileUpload::make('foto')
                                     ->image()
+                                    ->disk('public')
                                     ->directory('barang')
                                     ->columnSpanFull(),
 

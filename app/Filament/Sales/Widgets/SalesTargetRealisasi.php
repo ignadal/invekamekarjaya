@@ -52,12 +52,21 @@ class SalesTargetRealisasi extends Widget
             $targetDate = now()->setDate((int) $this->filterTahun, (int) $this->filterBulan, 1);
         }
 
-        $realisasi = \App\Models\CicilanBuyer::whereHas('penjualan', function ($query) use ($salesId) {
-                $query->where('sales_id', $salesId);
+        $realisasiCicilan = \App\Models\CicilanBuyer::whereHas('penjualan', function ($query) use ($salesId) {
+                $query->where('sales_id', $salesId)->where('status_persetujuan', 'disetujui');
             })
             ->whereMonth('tanggal_bayar', $targetDate->month)
             ->whereYear('tanggal_bayar', $targetDate->year)
             ->sum('nominal');
+
+        $realisasiLunas = \App\Models\Penjualan::where('sales_id', $salesId)
+            ->where('status_persetujuan', 'disetujui')
+            ->where('metode', 'lunas')
+            ->whereMonth('tanggal_beli', $targetDate->month)
+            ->whereYear('tanggal_beli', $targetDate->year)
+            ->sum('total_penjualan');
+            
+        $realisasi = $realisasiCicilan + $realisasiLunas;
 
         $percentage1 = $target1 > 0 ? ($realisasi / $target1) * 100 : 0;
         if ($percentage1 > 100) $percentage1 = 100;
