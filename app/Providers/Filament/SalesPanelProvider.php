@@ -101,6 +101,60 @@ class SalesPanelProvider extends PanelProvider
                         padding-left: 0 !important;
                     }
 
+                    /* Wavy Bottom Edge for Navbar (Light Mode) */
+                    html:not(.dark) .fi-topbar {
+                        box-shadow: none !important;
+                        filter: none !important;
+                    }
+                    html:not(.dark) .fi-topbar::after {
+                        content: "" !important;
+                        position: absolute !important;
+                        bottom: -40px !important;
+                        left: 0 !important;
+                        right: 0 !important;
+                        height: 40px !important;
+                        background-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1440 160%22 preserveAspectRatio=%22none%22%3E%3Cpath d=%22M0,30 C200,180 400,-20 720,40 C1000,100 1250,-10 1440,30 L1440,0 L0,0 Z%22 fill=%22%23b91c1c%22/%3E%3C/svg%3E") !important;
+                        background-size: 100% 100% !important;
+                        background-repeat: no-repeat !important;
+                        z-index: -1 !important;
+                        pointer-events: none !important;
+                        filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1)) !important;
+                    }
+
+                    /* Wavy Bottom Edge for Navbar (Dark Mode) */
+                    html.dark .fi-topbar {
+                        box-shadow: none !important;
+                        filter: none !important;
+                        background-color: #18181b !important;
+                        border-bottom: 1px solid #3f3f46 !important;
+                        height: 4rem !important;
+                        min-height: 4rem !important;
+                        max-height: 4rem !important;
+                        position: fixed !important;
+                        top: 0 !important;
+                        left: 0 !important;
+                        right: 0 !important;
+                        z-index: 50 !important;
+                        display: flex !important;
+                        align-items: center !important;
+                        padding: 0 1rem !important;
+                        width: 100% !important;
+                    }
+                    html.dark .fi-topbar::after {
+                        content: "" !important;
+                        position: absolute !important;
+                        bottom: -40px !important;
+                        left: 0 !important;
+                        right: 0 !important;
+                        height: 40px !important;
+                        background-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1440 160%22 preserveAspectRatio=%22none%22%3E%3Cpath d=%22M0,30 C200,180 400,-20 720,40 C1000,100 1250,-10 1440,30 L1440,0 L0,0 Z%22 fill=%22%2318181b%22/%3E%3C/svg%3E") !important;
+                        background-size: 100% 100% !important;
+                        background-repeat: no-repeat !important;
+                        z-index: -1 !important;
+                        pointer-events: none !important;
+                        filter: drop-shadow(0 4px 4px rgba(0,0,0,0.3)) !important;
+                    }
+
                     /* === NAVBAR RESPONSIVE CONFIGURATION === */
                     @media (min-width: 1024px) {
                         /* Desktop layout: Nav links absolutely centered in header */
@@ -132,7 +186,19 @@ class SalesPanelProvider extends PanelProvider
                             outline: none !important;
                             box-sizing: border-box !important;
                             border-radius: 0.5rem !important;
-                            transition: background-color 0.15s ease !important;
+                            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                            position: relative !important;
+                        }
+
+                        /* Hover Animation */
+                        .fi-topbar .fi-topbar-item-btn:hover {
+                            transform: translateY(-2px) !important;
+                        }
+
+                        /* Active State Animation */
+                        .fi-topbar .fi-topbar-item.fi-active .fi-topbar-item-btn {
+                            transform: translateY(-2px) scale(1.03) !important;
+                            box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
                         }
 
                         .fi-topbar .fi-topbar-item-icon {
@@ -140,39 +206,63 @@ class SalesPanelProvider extends PanelProvider
                             height: 1.25rem !important;
                             flex-shrink: 0 !important;
                         }
+
                     }
 
                     @media (max-width: 1023px) {
-                        /* Mobile layout: Bottom navigation bar */
+                        /* Mobile layout: Bottom navigation bar (Floating Pill) */
                         .fi-topbar .fi-topbar-nav-groups {
                             position: fixed !important;
-                            bottom: 0 !important;
-                            left: 0 !important;
-                            right: 0 !important;
+                            bottom: 1.25rem !important;
+                            left: 1rem !important;
+                            right: 1rem !important;
                             top: auto !important;
-                            transform: none !important;
-                            width: 100% !important;
-                            height: 4.5rem !important;
+                            width: calc(100% - 2rem) !important;
+                            height: 4rem !important; /* Reduced from 4.5rem since no text */
                             background-color: #b91c1c !important; /* same red */
                             display: flex !important;
                             flex-direction: row !important;
                             justify-content: space-around !important;
                             align-items: center !important;
-                            padding: 0 !important; /* Reset padding to prevent left/right offset */
+                            padding: 0 0.5rem !important;
                             z-index: 99999 !important; /* Extremely high z-index to stay on top of all page content */
                             pointer-events: auto !important; /* Ensure clicks always register */
-                            border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
-                            box-shadow: 0 -4px 10px rgba(0,0,0,0.1) !important;
+                            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+                            box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important;
+                            border-radius: 1.5rem !important;
                             margin: 0 !important;
                             list-style: none !important;
                             white-space: nowrap !important;
+                            backdrop-filter: blur(8px) !important;
+                        }
+
+                        /* Mobile Sliding Indicator */
+                        .mobile-magic-indicator {
+                            position: absolute !important;
+                            width: 3rem !important;
+                            height: 3rem !important;
+                            border-radius: 50% !important;
+                            background-color: rgba(255, 255, 255, 0.25) !important;
+                            z-index: 0 !important;
+                            pointer-events: none !important;
+                            top: 0.5rem !important; /* Vertically centered: (4rem - 3rem) / 2 */
+                            box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+                        }
+                        html.dark .mobile-magic-indicator {
+                            background-color: rgba(255, 255, 255, 0.15) !important;
+                            box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
                         }
 
                         /* Dark mode bottom navigation */
                         html.dark .fi-topbar .fi-topbar-nav-groups {
-                            background-color: #18181b !important;
-                            border-top: 1px solid #3f3f46 !important;
-                            box-shadow: 0 -4px 10px rgba(0,0,0,0.3) !important;
+                            background-color: rgba(24, 24, 27, 0.95) !important;
+                            border: 1px solid #3f3f46 !important;
+                            box-shadow: 0 10px 25px rgba(0,0,0,0.4) !important;
+                        }
+
+                        /* Add padding to page container only when the topbar navbar exists */
+                        body:has(.fi-topbar) {
+                            padding-bottom: 6.5rem !important;
                         }
 
                         /* Ensure items spread evenly and are centered */
@@ -192,14 +282,24 @@ class SalesPanelProvider extends PanelProvider
                             flex-direction: column !important;
                             align-items: center !important;
                             justify-content: center !important;
-                            gap: 0.1rem !important;
-                            padding: 0.35rem 0.1rem !important;
-                            width: 100% !important; /* Fill the padded column area */
-                            height: 4.2rem !important;
-                            border-radius: 0.75rem !important; /* Match modern card/tab corner radius */
+                            padding: 0 !important;
+                            width: 3.5rem !important;
+                            height: 3.5rem !important;
+                            border-radius: 50% !important;
                             box-sizing: border-box !important;
-                            transition: background-color 0.15s ease !important;
+                            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
                             pointer-events: auto !important;
+                        }
+
+                        /* Active State for Mobile - Only affect icon */
+                        .fi-topbar .fi-topbar-item.fi-active .fi-topbar-item-btn {
+                            background-color: transparent !important;
+                            box-shadow: none !important;
+                            transform: none !important;
+                        }
+                        html.dark .fi-topbar .fi-topbar-item.fi-active .fi-topbar-item-btn {
+                            background-color: transparent !important;
+                            box-shadow: none !important;
                         }
 
                         /* Set icon size for mobile */
@@ -207,27 +307,21 @@ class SalesPanelProvider extends PanelProvider
                             width: 1.4rem !important;
                             height: 1.4rem !important;
                             flex-shrink: 0 !important;
-                            margin: 0 !important;
+                            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease !important;
                         }
 
-                        /* Style mobile labels - force fixed height and allow wrapping to center-align perfectly */
-                        .fi-topbar .fi-topbar-item-btn span {
-                            font-size: 0.58rem !important;
-                            font-weight: 700 !important;
-                            text-align: center !important;
-                            white-space: normal !important; /* Allow wrapping to 2 lines */
-                            line-height: 1.15 !important;
-                            max-width: 100% !important;
-                            height: 1.4rem !important; /* Fixed height for up to 2 lines of text */
-                            display: block !important; /* Change from flex to block for reliable browser text centering */
-                            overflow: hidden !important;
-                            text-overflow: ellipsis !important;
+                        /* Icon grows when active */
+                        .fi-topbar .fi-topbar-item.fi-active .fi-topbar-item-icon {
+                            transform: scale(1.3) !important;
+                            color: white !important;
                         }
 
-                        /* Add padding to page container only when the topbar navbar exists */
-                        body:has(.fi-topbar) {
-                            padding-bottom: 4.5rem !important;
+                        /* Hide labels completely on mobile */
+                        .fi-topbar .fi-topbar-item-label {
+                            display: none !important;
                         }
+
+                        /* Hide original body padding rule since we moved it above */
                     }
 
                     /* User menu area - fixed on right */
@@ -239,6 +333,7 @@ class SalesPanelProvider extends PanelProvider
                         display: flex !important;
                         align-items: center !important;
                         height: 4rem !important;
+                        margin-right: 0.5rem !important;
                     }
 
                     /* === PREMIUM CARD & SECTION CONTAINER STYLING === */
@@ -301,10 +396,9 @@ class SalesPanelProvider extends PanelProvider
                         border: none !important;
                     }
 
-                    /* Dark Mode */
-                    html.dark .fi-topbar {
-                        background-color: #18181b !important;
-                        border-bottom: 1px solid #3f3f46 !important;
+                    /* Dark Mode (Basic Topbar Overrides Removed as they are merged above) */
+                    html.dark .fi-topbar-nav-groups {
+                        /* Background handled in media query */
                     }
                 </style>'
             )
@@ -312,6 +406,134 @@ class SalesPanelProvider extends PanelProvider
                 \Filament\View\PanelsRenderHook::BODY_START,
                 fn (): string => '<div class="sales-global-bg"></div>'
             )
+            ->renderHook(
+                \Filament\View\PanelsRenderHook::BODY_END,
+                fn (): string => '<script>
+                    const initStatsAnimation = () => {
+                        const statElements = document.querySelectorAll(".fi-wi-stats-overview-stat-value:not(.has-animated), .sales-stat-value:not(.has-animated)");
+                        statElements.forEach(el => {
+                            el.classList.add("has-animated");
+                            const originalHTML = el.innerHTML;
+                            const originalText = el.innerText.trim();
+                            
+                            const match = originalText.match(/^([^\d]*)((?:\d{1,3}(?:[.,]\d{3})*|\d+)(?:[.,]\d+)?)([^\d]*)$/);
+                            if (match) {
+                                const prefix = match[1];
+                                const numberString = match[2];
+                                const suffix = match[3];
+                                
+                                const isIndonesian = numberString.indexOf(".") !== -1 && (numberString.indexOf(",") === -1 || numberString.indexOf(".") < numberString.indexOf(","));
+                                
+                                let cleanNumberString = numberString;
+                                if (isIndonesian) {
+                                    cleanNumberString = cleanNumberString.replace(/\./g, "").replace(",", ".");
+                                } else {
+                                    cleanNumberString = cleanNumberString.replace(/,/g, "");
+                                }
+                                
+                                const targetNumber = parseFloat(cleanNumberString);
+                                
+                                if (!isNaN(targetNumber) && targetNumber > 0) {
+                                    const duration = 2000;
+                                    const start = performance.now();
+                                    
+                                    const formatNumber = (num) => {
+                                        if (isIndonesian) {
+                                            return Math.floor(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                                        } else {
+                                            return Math.floor(num).toLocaleString("en-US");
+                                        }
+                                    };
+                                    
+                                    const update = (currentTime) => {
+                                        const elapsed = currentTime - start;
+                                        const progress = Math.min(elapsed / duration, 1);
+                                        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                                        const currentNumber = targetNumber * easeOutQuart;
+                                        
+                                        el.innerText = prefix + formatNumber(currentNumber) + suffix;
+                                        
+                                        if (progress < 1) {
+                                            requestAnimationFrame(update);
+                                        } else {
+                                            el.innerHTML = originalHTML;
+                                        }
+                                    };
+                                    requestAnimationFrame(update);
+                                }
+                            }
+                        });
+                    };
+
+                    const initMobileMagicIndicator = () => {
+                        if (window.innerWidth >= 1024) return;
+                        
+                        const navGroups = document.querySelector(".fi-topbar-nav-groups");
+                        if (!navGroups) return;
+
+                        let indicator = document.getElementById("mobile-magic-indicator");
+                        if (!indicator) {
+                            indicator = document.createElement("div");
+                            indicator.id = "mobile-magic-indicator";
+                            indicator.className = "mobile-magic-indicator";
+                            navGroups.appendChild(indicator);
+                        }
+
+                        const items = Array.from(navGroups.querySelectorAll(".fi-topbar-item"));
+                        const activeItem = navGroups.querySelector(".fi-active");
+                        
+                        if (!activeItem) return;
+
+                        const moveIndicator = (element, animate = true) => {
+                            if (!animate) {
+                                indicator.style.transition = "none";
+                            } else {
+                                indicator.style.transition = "left 0.25s cubic-bezier(0.4, 0, 0.2, 1)";
+                            }
+                            
+                            const itemRect = element.getBoundingClientRect();
+                            const navRect = navGroups.getBoundingClientRect();
+                            const width = 48; // 3rem = 48px
+                            const left = (itemRect.left - navRect.left) + (itemRect.width / 2) - (width / 2);
+                            
+                            indicator.style.left = left + "px";
+                        };
+
+                        // Snap immediately without animation on page load
+                        moveIndicator(activeItem, false);
+                        void indicator.offsetWidth;
+
+                        items.forEach((item) => {
+                            item.addEventListener("click", () => {
+                                // Provide instant snappy feedback before page navigates
+                                navGroups.querySelectorAll(".fi-active").forEach(el => el.classList.remove("fi-active"));
+                                item.classList.add("fi-active");
+                                moveIndicator(item, true);
+                            });
+                        });
+                    };
+
+                    document.addEventListener("DOMContentLoaded", () => {
+                        setTimeout(initStatsAnimation, 100);
+                        setTimeout(initMobileMagicIndicator, 100);
+                    });
+                    
+                    document.addEventListener("livewire:navigated", () => {
+                        setTimeout(initStatsAnimation, 100);
+                        setTimeout(initMobileMagicIndicator, 100);
+                    });
+                    
+                    window.addEventListener("resize", () => setTimeout(initMobileMagicIndicator, 100));
+                    
+                    const observer = new MutationObserver(() => {
+                        if (document.querySelector(".fi-wi-stats-overview-stat-value:not(.has-animated), .sales-stat-value:not(.has-animated)")) {
+                            initStatsAnimation();
+                        }
+                    });
+                    observer.observe(document.body, { childList: true, subtree: true });
+                </script>'
+            )
+
             ->discoverResources(in: app_path('Filament/Sales/Resources'), for: 'App\Filament\Sales\Resources')
             ->discoverPages(in: app_path('Filament/Sales/Pages'), for: 'App\Filament\Sales\Pages')
             ->pages([
