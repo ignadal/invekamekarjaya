@@ -143,8 +143,8 @@ class SalesProgresChart extends ChartWidget
                 [
                     'label' => 'Total Pembayaran',
                     'data' => $pembayaranData,
-                    'backgroundColor' => '#f87171',
-                    'borderColor' => '#dc2626',
+                    'backgroundColor' => '#86efac', // Green-300
+                    'borderColor' => '#22c55e', // Green-500
                     'borderWidth' => 1,
                     'categoryPercentage' => 0.7,
                     'barPercentage' => 0.9,

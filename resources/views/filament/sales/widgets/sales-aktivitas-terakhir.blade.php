@@ -140,26 +140,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #b91c1c 0%, #dc2626 50%, #b91c1c 100%);
+            background: #b91c1c;
             border: none;
             flex-shrink: 0;
             overflow: hidden;
             color: white !important;
             box-shadow: 0 4px 6px -1px rgba(227, 6, 19, 0.2);
-            transition: transform 0.2s, box-shadow 0.2s;
         }
-        .aktivitas-item:hover .aktivitas-arrow-btn {
-            transform: scale(1.1);
-        }
-        .aktivitas-arrow-bg { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-        .aktivitas-arrow-bg svg { position: absolute; bottom: -2px; width: 200%; height: 20px; }
-        
-        .wave-btn-parallax > use { animation: move-forever-btn 15s cubic-bezier(.55,.5,.45,.5) infinite; }
-        @keyframes move-forever-btn { 0% { transform: translate3d(-90px,0,0); } 100% { transform: translate3d(85px,0,0); } }
-        .wave-btn-parallax > use:nth-child(1) { animation-delay: -2s; animation-duration: 4s; fill: rgba(255,255,255,0.1); }
-        .wave-btn-parallax > use:nth-child(2) { animation-delay: -3s; animation-duration: 6s; fill: rgba(255,255,255,0.15); }
-        .wave-btn-parallax > use:nth-child(3) { animation-delay: -4s; animation-duration: 8s; fill: rgba(255,255,255,0.2); }
-        .wave-btn-parallax > use:nth-child(4) { animation-delay: -5s; animation-duration: 12s; fill: rgba(255,255,255,0.25); }
         
         /* Variants */
         .variant-kunjungan .aktivitas-icon { background: #fef2f2; color: #ef4444; }
@@ -257,17 +244,6 @@
                                 <span class="aktivitas-amount">{{ $activity['amount'] }}</span>
                             @endif
                             <div class="aktivitas-arrow-btn">
-                                <div class="aktivitas-arrow-bg">
-                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
-                                        <defs><path id="gentle-wave-arrow" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" /></defs>
-                                        <g class="wave-btn-parallax">
-                                            <use xlink:href="#gentle-wave-arrow" x="48" y="0" />
-                                            <use xlink:href="#gentle-wave-arrow" x="48" y="3" />
-                                            <use xlink:href="#gentle-wave-arrow" x="48" y="5" />
-                                            <use xlink:href="#gentle-wave-arrow" x="48" y="7" />
-                                        </g>
-                                    </svg>
-                                </div>
                                 <svg style="position: relative; z-index: 10;" width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd"/></svg>
                             </div>
                         </div>

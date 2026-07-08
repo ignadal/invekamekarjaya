@@ -245,7 +245,7 @@
         
         /* Row Status Left Borders */
         .row-status-border { position: absolute; left: 0; top: 0.25rem; bottom: 0.25rem; width: 4px; border-radius: 0 4px 4px 0; }
-        .border-disetujui { background-color: #E30613; } /* Red */
+        .border-disetujui { background-color: #16a34a; } /* Green */
         .border-pending { background-color: #94a3b8; } /* Gray */
         
         /* Calendar Block */
@@ -263,17 +263,17 @@
         .dot-lunas { background-color: #111827; }
         html.dark .text-lunas { background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white; }
         
-        .text-cicil { color: #475569; background-color: #f1f5f9;}
-        .dot-cicil { background-color: #475569; }
-        html.dark .text-cicil { background-color: rgba(71, 85, 105, 0.2); border: 1px solid rgba(71, 85, 105, 0.3); color: #94a3b8; }
+        .text-cicil { color: #d97706; background-color: #fffbeb;}
+        .dot-cicil { background-color: #d97706; }
+        html.dark .text-cicil { background-color: rgba(217, 119, 6, 0.2); border: 1px solid rgba(217, 119, 6, 0.3); color: #fcd34d; }
         
         .text-pending { color: #475569; background-color: #f1f5f9; }
         .dot-pending { background-color: #475569; }
         html.dark .text-pending { background-color: rgba(71, 85, 105, 0.2); border: 1px solid rgba(71, 85, 105, 0.3); color: #94a3b8; }
         
-        .text-disetujui { color: #E30613; background-color: #fef2f2;}
-        .dot-disetujui { background-color: #E30613; }
-        html.dark .text-disetujui { background-color: rgba(227, 6, 19, 0.15); border: 1px solid rgba(227, 6, 19, 0.3); color: #fca5a5; }
+        .text-disetujui { color: #16a34a; background-color: #f0fdf4;}
+        .dot-disetujui { background-color: #16a34a; }
+        html.dark .text-disetujui { background-color: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #6ee7b7; }
         
         .text-ditolak { color: #1f2937; background-color: #f3f4f6;}
         .dot-ditolak { background-color: #1f2937; }

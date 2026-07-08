@@ -62,7 +62,6 @@ class SalesPanelProvider extends PanelProvider
                     }
                     html:not(.dark) .fi-topbar {
                         background-color: #b91c1c !important;
-                        background-image: linear-gradient(to right, #7f1d1d, #dc2626, #991b1b) !important;
                         border-bottom: none !important;
                         box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1) !important;
                         height: 4rem !important;
@@ -114,7 +113,7 @@ class SalesPanelProvider extends PanelProvider
                         left: 0 !important;
                         right: 0 !important;
                         height: 40px !important;
-                        background-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1440 160%22 preserveAspectRatio=%22none%22%3E%3Cdefs%3E%3ClinearGradient id=%22grad1%22 x1=%220%25%22 y1=%220%25%22 x2=%22100%25%22 y2=%220%25%22%3E%3Cstop offset=%220%25%22 stop-color=%22%237f1d1d%22 /%3E%3Cstop offset=%2250%25%22 stop-color=%22%23dc2626%22 /%3E%3Cstop offset=%22100%25%22 stop-color=%22%23991b1b%22 /%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M0,30 C200,180 400,-20 720,40 C1000,100 1250,-10 1440,30 L1440,0 L0,0 Z%22 fill=%22url(%23grad1)%22 /%3E%3C/svg%3E") !important;
+                        background-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1440 160%22 preserveAspectRatio=%22none%22%3E%3Cpath d=%22M0,30 C200,180 400,-20 720,40 C1000,100 1250,-10 1440,30 L1440,0 L0,0 Z%22 fill=%22%23b91c1c%22/%3E%3C/svg%3E") !important;
                         background-size: 100% 100% !important;
                         background-repeat: no-repeat !important;
                         z-index: -1 !important;
@@ -214,24 +213,23 @@ class SalesPanelProvider extends PanelProvider
                         /* Mobile layout: Bottom navigation bar (Floating Pill) */
                         .fi-topbar .fi-topbar-nav-groups {
                             position: fixed !important;
-                            bottom: 1.25rem !important;
-                            left: 1rem !important;
-                            right: 1rem !important;
+                            bottom: 1rem !important;
+                            left: 0.5rem !important;
+                            right: 0.5rem !important;
                             top: auto !important;
-                            width: calc(100% - 2rem) !important;
-                            height: 4.5rem !important;
+                            width: calc(100% - 1rem) !important;
+                            height: 4rem !important;
                             background-color: #b91c1c !important;
-                            background-image: linear-gradient(to right, #7f1d1d, #dc2626, #991b1b) !important;
                             display: flex !important;
                             flex-direction: row !important;
-                            justify-content: space-around !important;
+                            justify-content: space-evenly !important;
                             align-items: center !important;
-                            padding: 0 0.5rem !important;
-                            z-index: 99999 !important; /* Extremely high z-index to stay on top of all page content */
-                            pointer-events: auto !important; /* Ensure clicks always register */
+                            padding: 0 0.25rem !important;
+                            z-index: 99999 !important;
+                            pointer-events: auto !important;
                             border: 1px solid rgba(255, 255, 255, 0.15) !important;
                             box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important;
-                            border-radius: 1.5rem !important;
+                            border-radius: 2rem !important;
                             margin: 0 !important;
                             list-style: none !important;
                             white-space: nowrap !important;
@@ -247,7 +245,7 @@ class SalesPanelProvider extends PanelProvider
                             background-color: rgba(255, 255, 255, 0.25) !important;
                             z-index: 0 !important;
                             pointer-events: none !important;
-                            top: 0.5rem !important; /* Vertically centered: (4rem - 3rem) / 2 */
+                            top: 0.5rem !important;
                             box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
                         }
                         html.dark .mobile-magic-indicator {
@@ -264,15 +262,14 @@ class SalesPanelProvider extends PanelProvider
 
                         /* Add padding to page container only when the topbar navbar exists */
                         body:has(.fi-topbar) {
-                            padding-bottom: 6.5rem !important;
+                            padding-bottom: 6rem !important;
                         }
 
                         /* Ensure items spread evenly and are centered */
                         .fi-topbar .fi-topbar-item {
                             flex: 1 1 0% !important;
-                            max-width: 20% !important;
                             margin: 0 !important;
-                            padding: 0 0.25rem !important; /* Uniform side padding for symmetric gap between buttons */
+                            padding: 0 !important;
                             display: flex !important;
                             justify-content: center !important;
                             align-items: center !important;
@@ -285,8 +282,8 @@ class SalesPanelProvider extends PanelProvider
                             align-items: center !important;
                             justify-content: center !important;
                             padding: 0 !important;
-                            width: 3.5rem !important;
-                            height: 3.5rem !important;
+                            width: 3rem !important;
+                            height: 3rem !important;
                             border-radius: 50% !important;
                             box-sizing: border-box !important;
                             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
@@ -322,8 +319,6 @@ class SalesPanelProvider extends PanelProvider
                         .fi-topbar .fi-topbar-item-label {
                             display: none !important;
                         }
-
-                        /* Hide original body padding rule since we moved it above */
                     }
 
                     /* User menu area - fixed on right */

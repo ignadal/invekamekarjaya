@@ -328,10 +328,9 @@
         .wave-summary-parallax > use:nth-child(2) { animation-delay: -3s; animation-duration: 6s; fill: rgba(0,0,0,0.06); }
         .wave-summary-parallax > use:nth-child(3) { animation-delay: -4s; animation-duration: 8s; fill: rgba(0,0,0,0.09); }
         .wave-summary-parallax > use:nth-child(4) { animation-delay: -5s; animation-duration: 12s; fill: rgba(0,0,0,0.15); }
-
+        
         .ts-summary-red-wave {
             background-color: #b91c1c;
-            background-image: linear-gradient(to right, #7f1d1d, #dc2626, #991b1b);
             color: white;
             position: relative;
             overflow: hidden;

@@ -84,8 +84,6 @@ class AdminPanelProvider extends PanelProvider
                            ======================================= */
                         html:not(.dark) .fi-topbar-start { 
                             background-color: #b91c1c !important;
-                            background-image: linear-gradient(135deg, #7f1d1d 0%, #dc2626 50%, #991b1b 100%) !important;
-                            background-attachment: fixed !important;
                         }
                         html:not(.dark) .fi-topbar-start button { color: white !important; }
                         html:not(.dark) .fi-topbar-start button:hover { background-color: rgba(255,255,255,0.1) !important; }
@@ -102,8 +100,6 @@ class AdminPanelProvider extends PanelProvider
                     /* Sidebar Background (Red Gradient Seamless) */
                     html:not(.dark) aside.fi-sidebar {
                         background-color: #b91c1c !important;
-                        background-image: linear-gradient(135deg, #7f1d1d 0%, #dc2626 50%, #991b1b 100%) !important;
-                        background-attachment: fixed !important;
                         box-shadow: inset -5px 0 15px rgba(0,0,0,0.1) !important;
                     }
                     html:not(.dark) aside.fi-sidebar nav,
@@ -180,29 +176,20 @@ class AdminPanelProvider extends PanelProvider
                         max-width: 100% !important; 
                     }
                     
-                    /* Apply Red Gradient in Light Mode (Brighter Red) */
+                    /* Apply Solid Red in Light Mode */
                     html:not(.dark) .red-gradient-filter { 
-                        background: linear-gradient(to right, #991b1b, #dc2626, #b91c1c, #991b1b) !important; 
-                        background-size: 300% 300% !important;
-                        animation: gradient-animation 8s ease infinite !important;
+                        background-color: #b91c1c !important; 
                         border-radius: 0.75rem !important;
                         margin-bottom: 1.5rem !important;
                         border: none !important;
                     }
                     
-                    /* Apply VERY Dark Red Gradient in Dark Mode (Very Dark Red) */
+                    /* Apply Solid Dark Red in Dark Mode */
                     html.dark .red-gradient-filter { 
-                        background: linear-gradient(to right, #450a0a, #991b1b, #450a0a) !important; 
-                        background-size: 300% 300% !important;
-                        animation: gradient-animation 8s ease infinite !important;
+                        background-color: #450a0a !important; 
                         border-radius: 0.75rem !important;
                         margin-bottom: 1.5rem !important;
                         border: none !important;
-                    }
-                    @keyframes gradient-animation {
-                        0% { background-position: 0% 50%; }
-                        50% { background-position: 100% 50%; }
-                        100% { background-position: 0% 50%; }
                     }
                     .red-gradient-filter .fi-section-header,
                     .red-gradient-filter header,
