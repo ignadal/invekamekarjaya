@@ -15,6 +15,7 @@ class KunjunganSalesTable
     {
         return $table
             ->StackedOnMobile()
+            ->defaultSort('tanggal_kunjungan', 'desc')
             ->columns([
                 TextColumn::make('tanggal_kunjungan')
                     ->date()

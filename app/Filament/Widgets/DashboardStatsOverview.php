@@ -57,13 +57,13 @@ class DashboardStatsOverview extends StatsOverviewWidget
             ->sum('sisa_pembayaran');
 
         $pengeluaranSupplierLunas = PembelianSupplier::where('metode', 'lunas')
-            ->when($tahun, fn($q) => $q->whereYear('created_at', $tahun))
-            ->when($bulan, fn($q) => $q->whereMonth('created_at', $bulan))
+            ->when($tahun, fn($q) => $q->whereYear('tanggal_pembelian', $tahun))
+            ->when($bulan, fn($q) => $q->whereMonth('tanggal_pembelian', $bulan))
             ->sum('total_pembelian');
             
         $pengeluaranSupplierNyicil = PembelianSupplier::where('metode', 'nyicil')
-            ->when($tahun, fn($q) => $q->whereYear('created_at', $tahun))
-            ->when($bulan, fn($q) => $q->whereMonth('created_at', $bulan))
+            ->when($tahun, fn($q) => $q->whereYear('tanggal_pembelian', $tahun))
+            ->when($bulan, fn($q) => $q->whereMonth('tanggal_pembelian', $bulan))
             ->sum('sudah_dibayar');
             
         $pengeluaranSupplier = $pengeluaranSupplierLunas + $pengeluaranSupplierNyicil;

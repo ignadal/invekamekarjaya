@@ -38,13 +38,13 @@ class PengeluaranChart extends ApexChartWidget
             $months[] = $month->translatedFormat('M');
 
             $pengeluaranSupplierLunas = PembelianSupplier::where('metode', 'lunas')
-                ->when($tahun, fn($q) => $q->whereYear('created_at', $tahun))
-                ->whereMonth('created_at', $i)
+                ->when($tahun, fn($q) => $q->whereYear('tanggal_pembelian', $tahun))
+                ->whereMonth('tanggal_pembelian', $i)
                 ->sum('total_pembelian');
                 
             $pengeluaranSupplierNyicil = PembelianSupplier::where('metode', 'nyicil')
-                ->when($tahun, fn($q) => $q->whereYear('created_at', $tahun))
-                ->whereMonth('created_at', $i)
+                ->when($tahun, fn($q) => $q->whereYear('tanggal_pembelian', $tahun))
+                ->whereMonth('tanggal_pembelian', $i)
                 ->sum('sudah_dibayar');
 
             $gaji = PayrollSales::where('status_pembayaran', 'sudah_digaji')

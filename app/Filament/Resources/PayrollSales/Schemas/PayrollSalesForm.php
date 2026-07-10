@@ -68,11 +68,10 @@ class PayrollSalesForm
                                         $tahun = $get('tahun') ?? now()->year;
                                         
                                         $query->where(function ($q) use ($bulan, $tahun, $record) {
-                                            // Disabled temporarily to show all sales
-                                            // $q->whereDoesntHave('payrollSales', function ($q2) use ($bulan, $tahun) {
-                                            //     $q2->where('bulan', $bulan)
-                                            //       ->where('tahun', $tahun);
-                                            // });
+                                            $q->whereDoesntHave('payrollSales', function ($q2) use ($bulan, $tahun) {
+                                                $q2->where('bulan', $bulan)
+                                                  ->where('tahun', $tahun);
+                                            });
                                             if ($record) {
                                                 $q->orWhere('id', $record->sales_id);
                                             }

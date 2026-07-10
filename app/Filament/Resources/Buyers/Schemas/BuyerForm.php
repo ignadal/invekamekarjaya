@@ -32,6 +32,7 @@ class BuyerForm
                                     ->image()
                                     ->disk('public')
                                     ->directory('foto-toko')
+                                    ->maxSize(5120)
                                     ->nullable(),
                                 \Filament\Schemas\Components\Grid::make(2)
                                     ->schema([
@@ -56,7 +57,8 @@ class BuyerForm
                                             ])
                                             ->prefixIcon('heroicon-o-calendar-days')
                                             ->placeholder('Pilih Hari')
-                                            ->selectablePlaceholder(false),
+                                            ->selectablePlaceholder(false)
+                                            ->default('Senin'),
                                         Select::make('hari_bukaakhir')
                                             ->label('Sampai Hari')
                                             ->options([
@@ -65,7 +67,8 @@ class BuyerForm
                                             ])
                                             ->prefixIcon('heroicon-o-calendar-days')
                                             ->placeholder('Pilih Hari')
-                                            ->selectablePlaceholder(false),
+                                            ->selectablePlaceholder(false)
+                                            ->default('Senin'),
                                     ]),
                                 TextInput::make('nama_owner')
                                     ->required(),

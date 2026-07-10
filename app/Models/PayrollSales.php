@@ -59,8 +59,18 @@ class PayrollSales extends Model
             ->first();
             
         if ($payroll) {
-            $totalMakan = $payroll->hari_kerja * $payroll->uang_makan_harian;
-            $totalBensin = $payroll->hari_kerja * $payroll->uang_bensin_harian;
+            $totalMakan = 0;
+            $totalBensin = 0;
+            
+            if (is_array($payroll->tanggal_kehadiran)) {
+                foreach ($payroll->tanggal_kehadiran as $item) {
+                    $totalMakan += (int)($item['uang_makan'] ?? $payroll->uang_makan_harian ?? 0);
+                    $totalBensin += (int)($item['uang_bensin'] ?? $payroll->uang_bensin_harian ?? 0);
+                }
+            } else {
+                $totalMakan = $payroll->hari_kerja * $payroll->uang_makan_harian;
+                $totalBensin = $payroll->hari_kerja * $payroll->uang_bensin_harian;
+            }
             
             $payroll->update([
                 'total_penjualan' => $totalPenjualan,

@@ -22,14 +22,15 @@ class PembelianSuppliersTable
                 'md' => 2,
                 'xl' => 3,
             ])
-            ->defaultSort('created_at', 'desc')
+            ->defaultSort('tanggal_pembelian', 'desc')
+            ->paginated([6, 12, 18, 24, 'all'])
             ->modifyQueryUsing(fn ($query) => $query->orderByRaw("
                 CASE 
                     WHEN status = 'sebagian' THEN 1
                     WHEN status = 'belum_dibayar' THEN 2
                     ELSE 3
                 END ASC
-            ")->orderBy('created_at', 'desc'))
+            ")->orderBy('tanggal_pembelian', 'desc'))
             ->columns([
                 Stack::make([
                     Split::make([

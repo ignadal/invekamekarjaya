@@ -144,53 +144,76 @@ class PayrollSalesTable
                             ->default(0)
                             ->required(),
                     ])
+                    ->visible(fn ($record) => $record->status_pembayaran === 'belum')
                     ->action(function ($record, array $data) {
                         $tanggalBaru = $data['tanggal'];
-                        $uangMakanHarian = $data['uang_makan_harian'];
-                        $uangBensinHarian = $data['uang_bensin_harian'];
+                        $uangMakanBaru = $data['uang_makan_harian'];
+                        $uangBensinBaru = $data['uang_bensin_harian'];
                         
-                        $tanggalKehadiran = $record->tanggal_kehadiran ?? [];
-                        
-                        // Konversi semua format lama ke string tanggal Y-m-d
-                        $tanggalKehadiran = array_map(function ($item) use ($record) {
-                            if (is_array($item)) {
-                                return $item['tanggal'] ?? null;
-                            }
-                            if (is_numeric($item)) {
-                                return \Carbon\Carbon::create($record->tahun, $record->bulan, (int)$item)->toDateString();
-                            }
-                            return $item;
-                        }, $tanggalKehadiran);
-                        $tanggalKehadiran = array_filter($tanggalKehadiran);
-                        
-                        if (!in_array($tanggalBaru, $tanggalKehadiran)) {
-                            $tanggalKehadiran[] = $tanggalBaru;
-                        }
-                        
-                        // Mapped to objects with new daily rates
+                        $tanggalKehadiranAsli = $record->tanggal_kehadiran ?? [];
                         $finalDates = [];
-                        foreach ($tanggalKehadiran as $d) {
-                            if ($d) {
+                        $found = false;
+                        
+                        $totalUangMakanList = 0;
+                        $totalUangBensinList = 0;
+                        
+                        foreach ($tanggalKehadiranAsli as $item) {
+                            $dateStr = null;
+                            $makan = $record->uang_makan_harian ?? 0;
+                            $bensin = $record->uang_bensin_harian ?? 0;
+                            
+                            if (is_array($item)) {
+                                $dateStr = $item['tanggal'] ?? null;
+                                $makan = (int)($item['uang_makan'] ?? $makan);
+                                $bensin = (int)($item['uang_bensin'] ?? $bensin);
+                            } elseif (is_numeric($item)) {
+                                $dateStr = \Carbon\Carbon::create($record->tahun, $record->bulan, (int)$item)->toDateString();
+                            } else {
+                                $dateStr = $item;
+                            }
+                            
+                            if ($dateStr) {
+                                if ($dateStr === $tanggalBaru) {
+                                    $found = true;
+                                    $makan = (int)$uangMakanBaru;
+                                    $bensin = (int)$uangBensinBaru;
+                                }
+                                
                                 $finalDates[] = [
-                                    'tanggal' => $d,
-                                    'uang_makan' => (int)$uangMakanHarian,
-                                    'uang_bensin' => (int)$uangBensinHarian,
+                                    'tanggal' => $dateStr,
+                                    'uang_makan' => $makan,
+                                    'uang_bensin' => $bensin,
                                 ];
+                                $totalUangMakanList += $makan;
+                                $totalUangBensinList += $bensin;
                             }
                         }
                         
-                        $finalDates = array_values($finalDates);
-                        $hariKerja = count($finalDates);
+                        if (!$found) {
+                            $finalDates[] = [
+                                'tanggal' => $tanggalBaru,
+                                'uang_makan' => (int)$uangMakanBaru,
+                                'uang_bensin' => (int)$uangBensinBaru,
+                            ];
+                            $totalUangMakanList += (int)$uangMakanBaru;
+                            $totalUangBensinList += (int)$uangBensinBaru;
+                        }
                         
-                        $uangMakan = $hariKerja * $uangMakanHarian;
-                        $uangBensin = $hariKerja * $uangBensinHarian;
+                        // Sort array by date string
+                        usort($finalDates, function ($a, $b) {
+                            return strtotime($a['tanggal']) - strtotime($b['tanggal']);
+                        });
+                        
+                        $hariKerja = count($finalDates);
+                        $uangMakan = $totalUangMakanList;
+                        $uangBensin = $totalUangBensinList;
                         $totalGaji = $record->gaji_pokok + $record->bonus_nominal + $uangMakan + $uangBensin;
                         
                         $record->update([
                             'tanggal_kehadiran' => $finalDates,
                             'hari_kerja' => $hariKerja,
-                            'uang_makan_harian' => $uangMakanHarian,
-                            'uang_bensin_harian' => $uangBensinHarian,
+                            'uang_makan_harian' => (int)$uangMakanBaru,
+                            'uang_bensin_harian' => (int)$uangBensinBaru,
                             'uang_makan' => $uangMakan,
                             'uang_bensin' => $uangBensin,
                             'total_gaji' => $totalGaji,
@@ -200,11 +223,13 @@ class PayrollSalesTable
                             ->title('Tunjangan berhasil ditambahkan')
                             ->success()
                             ->send();
-                    }),
+                    })
+                    ->visible(fn ($record) => $record->status_pembayaran === 'belum'),
 
                 Action::make('bayar')
                     ->label('Bayar')
                     ->icon('heroicon-o-check-circle')
+                    ->outlined()
                     ->color('danger')
                     ->button()
                     ->extraAttributes(['style' => 'flex: 1 1 30%; justify-content: center;'])
@@ -224,14 +249,87 @@ class PayrollSalesTable
                         return now()->greaterThanOrEqualTo($tanggalGajian);
                     }),
                     
+                Action::make('lihat_riwayat_tunjangan')
+                    ->label('Riwayat Tunjangan')
+                    ->icon('heroicon-o-clock')
+                    ->color('danger')
+                    ->button()
+                    ->outlined()
+                    ->extraAttributes(['style' => 'flex: 1 1 30%; justify-content: center;'])
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Tutup')
+                    ->fillForm(function ($record) {
+                        $data = $record->tanggal_kehadiran ?? [];
+                        $mapped = array_map(function ($item) use ($record) {
+                            $dateStr = null;
+                            $makan = $record->uang_makan_harian ?? 0;
+                            $bensin = $record->uang_bensin_harian ?? 0;
+                            if (is_array($item)) {
+                                $dateStr = $item['tanggal'] ?? null;
+                                $makan = $item['uang_makan'] ?? $makan;
+                                $bensin = $item['uang_bensin'] ?? $bensin;
+                            } elseif (is_numeric($item)) {
+                                $dateStr = \Carbon\Carbon::create($record->tahun, $record->bulan, (int)$item)->toDateString();
+                            } else {
+                                $dateStr = $item;
+                            }
+                            return [
+                                'tanggal' => $dateStr,
+                                'uang_makan' => $makan,
+                                'uang_bensin' => $bensin,
+                            ];
+                        }, $data);
+                        return ['tanggal_kehadiran' => $mapped];
+                    })
+                    ->form([
+                        \Filament\Forms\Components\Repeater::make('tanggal_kehadiran')
+                            ->disabled()
+                            ->label('Daftar Tanggal Kehadiran & Tunjangan')
+                            ->schema([
+                                \Filament\Forms\Components\DatePicker::make('tanggal')->label('Tanggal')->readOnly(),
+                                \Filament\Forms\Components\TextInput::make('uang_makan')->label('Uang Makan')->prefix('Rp')->numeric()->readOnly(),
+                                \Filament\Forms\Components\TextInput::make('uang_bensin')->label('Uang Bensin')->prefix('Rp')->numeric()->readOnly(),
+                            ])
+                            ->columns(3)
+                            ->addable(false)
+                            ->deletable(false)
+                            ->reorderable(false)
+                    ])
+                    ->visible(fn ($record) => $record->status_pembayaran === 'sudah_digaji'),
+                    
                 ActionGroup::make([
                     Action::make('riwayat_tunjangan')
                         ->label('Riwayat Tunjangan')
                         ->icon('heroicon-o-clock')
                         ->color('gray')
-                        ->modalSubmitActionLabel('Simpan')
+                        ->fillForm(function ($record) {
+                            $data = $record->tanggal_kehadiran ?? [];
+                            $mapped = array_map(function ($item) use ($record) {
+                                $dateStr = null;
+                                $makan = $record->uang_makan_harian ?? 0;
+                                $bensin = $record->uang_bensin_harian ?? 0;
+                                
+                                if (is_array($item)) {
+                                    $dateStr = $item['tanggal'] ?? null;
+                                    $makan = $item['uang_makan'] ?? $makan;
+                                    $bensin = $item['uang_bensin'] ?? $bensin;
+                                } elseif (is_numeric($item)) {
+                                    $dateStr = \Carbon\Carbon::create($record->tahun, $record->bulan, (int)$item)->toDateString();
+                                } else {
+                                    $dateStr = $item;
+                                }
+                                
+                                return [
+                                    'tanggal' => $dateStr,
+                                    'uang_makan' => $makan,
+                                    'uang_bensin' => $bensin,
+                                ];
+                            }, $data);
+                            return ['tanggal_kehadiran' => $mapped];
+                        })
                         ->form([
                             \Filament\Forms\Components\Repeater::make('tanggal_kehadiran')
+                                ->disabled(fn ($record) => $record && $record->status_pembayaran !== 'belum')
                                 ->label('Daftar Tanggal Kehadiran & Tunjangan')
                                 ->schema([
                                     \Filament\Forms\Components\DatePicker::make('tanggal')
@@ -252,30 +350,6 @@ class PayrollSalesTable
                                 ->addable(false)
                                 ->deletable()
                                 ->reorderable(false)
-                                ->default(function ($record) {
-                                    $data = $record->tanggal_kehadiran ?? [];
-                                    return array_map(function ($item) use ($record) {
-                                        $dateStr = null;
-                                        $makan = $record->uang_makan_harian ?? 0;
-                                        $bensin = $record->uang_bensin_harian ?? 0;
-                                        
-                                        if (is_array($item)) {
-                                            $dateStr = $item['tanggal'] ?? null;
-                                            $makan = $item['uang_makan'] ?? $makan;
-                                            $bensin = $item['uang_bensin'] ?? $bensin;
-                                        } elseif (is_numeric($item)) {
-                                            $dateStr = \Carbon\Carbon::create($record->tahun, $record->bulan, (int)$item)->toDateString();
-                                        } else {
-                                            $dateStr = $item;
-                                        }
-                                        
-                                        return [
-                                            'tanggal' => $dateStr,
-                                            'uang_makan' => $makan,
-                                            'uang_bensin' => $bensin,
-                                        ];
-                                    }, $data);
-                                })
                                 ->deleteAction(
                                     fn ($action) => $action
                                         ->requiresConfirmation()
@@ -286,24 +360,35 @@ class PayrollSalesTable
                                 ),
                         ])
                         ->action(function ($record, array $data) {
+                            if ($record->status_pembayaran !== 'belum') {
+                                return; // Do not save if already paid
+                            }
                             $repeaterDates = $data['tanggal_kehadiran'] ?? [];
                             $tanggalKehadiran = [];
+                            $totalUangMakanList = 0;
+                            $totalUangBensinList = 0;
+                            
                             foreach ($repeaterDates as $item) {
                                 $dateStr = $item['tanggal'] ?? null;
                                 if ($dateStr) {
+                                    $makan = (int)($item['uang_makan'] ?? $record->uang_makan_harian ?? 0);
+                                    $bensin = (int)($item['uang_bensin'] ?? $record->uang_bensin_harian ?? 0);
+                                    
                                     $tanggalKehadiran[] = [
                                         'tanggal' => $dateStr,
-                                        'uang_makan' => (int)($item['uang_makan'] ?? $record->uang_makan_harian ?? 0),
-                                        'uang_bensin' => (int)($item['uang_bensin'] ?? $record->uang_bensin_harian ?? 0),
+                                        'uang_makan' => $makan,
+                                        'uang_bensin' => $bensin,
                                     ];
+                                    $totalUangMakanList += $makan;
+                                    $totalUangBensinList += $bensin;
                                 }
                             }
                             
                             $tanggalKehadiran = array_values($tanggalKehadiran);
                             $hariKerja = count($tanggalKehadiran);
                             
-                            $uangMakan = $hariKerja * $record->uang_makan_harian;
-                            $uangBensin = $hariKerja * $record->uang_bensin_harian;
+                            $uangMakan = $totalUangMakanList;
+                            $uangBensin = $totalUangBensinList;
                             $totalGaji = $record->gaji_pokok + $record->bonus_nominal + $uangMakan + $uangBensin;
                             
                             $record->update([
@@ -319,9 +404,11 @@ class PayrollSalesTable
                                 ->success()
                                 ->send();
                         }),
-                        EditAction::make()->color('gray'),
-                        \Filament\Actions\DeleteAction::make()->requiresConfirmation(),
+                        
+                        EditAction::make()->color('gray')->visible(fn ($record) => $record->status_pembayaran === 'belum'),
+                        \Filament\Actions\DeleteAction::make()->requiresConfirmation()->visible(fn ($record) => $record->status_pembayaran === 'belum'),
                 ])->icon('heroicon-m-ellipsis-vertical')
+                ->visible(fn ($record) => $record->status_pembayaran === 'belum')
             ]);
             // ->bulkActions([
             //     BulkActionGroup::make([
